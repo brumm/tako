@@ -1,0 +1,5 @@
+import '@/assets/icon-16.png'
+import '@/assets/icon-24.png'
+import '@/assets/icon-32.png'
+import '@/assets/icon-48.png'
+import '@/assets/icon-128.png'

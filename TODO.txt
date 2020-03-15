@@ -1,0 +1,9 @@
+[x] remove font-family and font-size from preview
+rework file prefetch to decide based on preview type
+  syntax|image|markdown
+  [x] done for markdown
+  [x] already done for syntax
+check whether we can fetch through extension context, circumventing ublock
+resizable panes
+check whether we can use monaco-textmate in a sandbox
+check whether we can add option to increase width of file table
