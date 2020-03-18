@@ -6,7 +6,7 @@ import App from '@/App'
 import PrependPortal from '@/PrependPortal'
 
 const AskForToken = () => {
-  const [token, setToken] = React.useState()
+  const [token, setToken] = React.useState('')
   const validToken = /[\da-f]{40}/.test(token)
 
   return (
