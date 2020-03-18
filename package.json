@@ -1,7 +1,7 @@
 {
   "name": "tako",
   "displayName": "Tako",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Inline expandable file tree with file preview for github",
   "main": "index.js",
   "scripts": {
