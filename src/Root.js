@@ -13,10 +13,11 @@ const AskForToken = () => {
     <div className="bg-yellow-light text-gray-dark p-3 d-flex flex-items-center lh-default">
       <div
         style={{
-          width: 48,
-          height: 48,
-          backgroundImage: `url(${chrome.runtime.getURL('icon-48.png')})`,
-          backgroundSize: 'contain',
+          width: 60,
+          height: 60,
+          backgroundImage: `url(${chrome.runtime.getURL('tako.svg')})`,
+          backgroundSize: '90%',
+          backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
           backgroundColor: '#fff',
           borderRadius: '50%',

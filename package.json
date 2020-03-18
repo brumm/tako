@@ -31,7 +31,7 @@
       "128": "icon-128.png"
     },
     "web_accessible_resources": [
-      "icon-48.png"
+      "tako.svg"
     ],
     "content_scripts": [
       {

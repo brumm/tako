@@ -19,10 +19,6 @@ module.exports = (_, { mode }) => {
     description: pkg.description,
   }
 
-  // if (isProduction) {
-  //   delete manifest.background
-  // }
-
   const config = {
     mode,
     devtool: 'inline-source-map',
@@ -46,12 +42,12 @@ module.exports = (_, { mode }) => {
     module: {
       rules: [
         {
-          test: /\.css$/,
+          test: /\.(css$)/,
           use: ['style-loader', 'css-loader'],
           exclude: /node_modules/,
         },
         {
-          test: /\.png/i,
+          test: /\.(png|svg)/i,
           use: {
             loader: 'file-loader',
             options: {
