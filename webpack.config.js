@@ -56,17 +56,6 @@ module.exports = (_, { mode }) => {
           },
         },
         {
-          test: /\.wasm$/,
-          use: {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[hash:6].[ext]',
-            },
-          },
-          type: 'javascript/auto',
-        },
-
-        {
           test: /\.(js)$/,
           exclude: /node_modules/,
           use: {
