@@ -72,10 +72,10 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   return (
     <Fragment>
       {data &&
-        data.map(file => (
+        data.map(node => (
           <Node
-            key={file.url}
-            {...file}
+            key={node.path}
+            {...node}
             level={level}
             parentCommitmessage={parentCommitmessage}
           />
@@ -84,7 +84,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   )
 }
 
-const Node = ({ sha, type, name, path, parentCommitmessage, level }) => {
+const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
   const { status: contentStatus } = useQueryState([
     'listing',
@@ -97,7 +97,7 @@ const Node = ({ sha, type, name, path, parentCommitmessage, level }) => {
     getLastCommitForNode
   )
 
-  const isExpanded = useStore(state => state.expandedNodes[sha] === true)
+  const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
   const selectedFilePath = useStore(state => state.selectedFilePath)
   const setSelectedFilePath = useStore(state => state.setSelectedFilePath)
@@ -174,7 +174,7 @@ const Node = ({ sha, type, name, path, parentCommitmessage, level }) => {
           onClick={event => {
             event.stopPropagation()
             if (isFolder) {
-              toggleExpandNode(sha)
+              toggleExpandNode(path)
             } else {
               setSelectedFilePath(path)
             }

@@ -34,12 +34,12 @@ const [useStore, api] = createStore((set, get) => {
       })
     },
 
-    toggleExpandNode: id => {
+    toggleExpandNode: path => {
       setState(state => {
-        if (state.expandedNodes[id]) {
-          delete state.expandedNodes[id]
+        if (state.expandedNodes[path]) {
+          delete state.expandedNodes[path]
         } else {
-          state.expandedNodes[id] = true
+          state.expandedNodes[path] = true
         }
       })
     },
