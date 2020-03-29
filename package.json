@@ -2,7 +2,7 @@
   "name": "tako",
   "displayName": "Tako",
   "version": "0.0.2",
-  "description": "Tako replaces the default Github repository file list with an expandable file tree and file preivew for rapid exploration of repositories.",
+  "description": "Tako replaces the default Github repository file list with an expandable file tree for rapid exploration of repositories.",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
