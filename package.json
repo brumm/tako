@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "start": "webpack --watch --mode=development"
+    "start": "webpack --watch --mode=development",
+    "lint": "eslint ./src/**/*.js"
   },
   "prettier": {
     "printWidth": 80,
