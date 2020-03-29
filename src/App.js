@@ -5,7 +5,7 @@ import useHover from 'react-use-hover'
 
 import { useStore } from '@/storage'
 import { MOUNT_SELECTOR, QUERY_CONFIG, INDENT_SIZE } from '@/constants'
-import { useQueryState } from '@/hooks'
+import { useQueryState, useIdleCallback } from '@/hooks'
 import {
   getNode,
   getLastCommitForNode,
@@ -25,26 +25,19 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
     getNode
   )
 
-  React.useEffect(
-    () => {
-      const handle = window.requestIdleCallback(() => {
-        if (data) {
-          data.forEach(({ path, type }) => {
-            if (type === 'dir') {
-              queryCache.prefetchQuery(
-                ['listing', { user, repo, branch, path }],
-                [{ isPrefetch: true }],
-                getNode
-              )
-            }
-          })
+  useIdleCallback(() => {
+    if (data) {
+      data.forEach(({ path, type }) => {
+        if (type === 'dir') {
+          queryCache.prefetchQuery(
+            ['listing', { user, repo, branch, path }],
+            [{ isPrefetch: true }],
+            getNode
+          )
         }
       })
-
-      return () => window.cancelIdleCallback(handle)
-    },
-    [status, branch, data, user, repo]
-  )
+    }
+  }, [status, branch, data, user, repo])
 
   if (status === 'loading') {
     if (level === 0) {
