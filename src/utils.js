@@ -1,3 +1,14 @@
+import arraySort from 'array-sort'
+
+import { SORT_ORDER } from '@/constants'
+
+export const sortContents = contents =>
+  arraySort(
+    contents,
+    (a, b) => SORT_ORDER.indexOf(a.type) - SORT_ORDER.indexOf(b.type),
+    (a, b) => a.name.localeCompare(b.name)
+  )
+
 export const getRepoDetails = () => {
   const [, user, repo, branch] = document
     .querySelector('link[type="application/atom+xml"]')

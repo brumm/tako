@@ -1,8 +1,6 @@
 import Bottleneck from 'bottleneck'
-import arraySort from 'array-sort'
 
-import { SORT_ORDER } from '@/constants'
-import { betterAtob } from '@/utils'
+import { betterAtob, sortContents } from '@/utils'
 import RelativeTime from '@/github-relative-time'
 import { getState } from '@/storage'
 
