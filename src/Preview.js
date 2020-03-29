@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useQuery } from 'react-query'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -9,8 +9,8 @@ import isBinaryPath from 'is-binary-path'
 import { getFileContent, getMarkdown } from '@/api'
 import { IMAGE_FILE_EXTENSIONS } from '@/constants'
 import { MarkdownContainer, FullScreenCenter } from '@/StyledComponents'
-import languages from '@/available-languages-prism'
 import Loading from '@/Loading'
+import CheckerPattern from '@/CheckerPattern'
 
 const LoadingComponent = () => (
   <FullScreenCenter
@@ -74,12 +74,9 @@ const CodePreview = ({ path, fileExtension }) => {
     getFileContent
   )
 
-  React.useEffect(
-    () => {
-      setOverrideLanguage()
-    },
-    [fileExtension]
-  )
+  React.useEffect(() => {
+    setOverrideLanguage()
+  }, [fileExtension])
 
   if (status === 'loading') {
     return <LoadingComponent />
@@ -143,12 +140,25 @@ const ImagePreview = ({ path, fileExtension }) => {
           backgroundColor: '#fff',
           maxHeight: '80vh',
           height: 'unset',
+          position: 'relative',
         }}
       >
+        <svg
+          style={{
+            position: 'absolute',
+            zIndex: 1,
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <CheckerPattern color="#F6F8FA" />
+        </svg>
         <img
           style={{
             maxWidth: '100%',
             display: 'block',
+            position: 'relative',
+            zIndex: 2,
           }}
           src={rawUrl}
           alt=""
@@ -177,10 +187,7 @@ const ImagePreview = ({ path, fileExtension }) => {
 }
 
 const Preview = ({ path }) => {
-  const fileExtension = path
-    .split('.')
-    .slice(-1)[0]
-    .toLowerCase()
+  const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 
   if (isBinaryPath(path)) {
     return <ImagePreview path={path} fileExtension={fileExtension} />
