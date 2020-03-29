@@ -15,7 +15,8 @@
     "singleQuote": true,
     "semi": false,
     "jsxBracketSameLine": false,
-    "bracketSpacing": true
+    "bracketSpacing": true,
+    "arrowParens": "avoid"
   },
   "extensionManifest": {
     "name": "Tako — Github File Tree",
