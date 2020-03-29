@@ -65,10 +65,6 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
     return error.message
   }
 
-  if (!data) {
-    debugger
-  }
-
   return (
     <Fragment>
       {data &&
