@@ -1,5 +1,4 @@
-export const MOUNT_SELECTOR =
-  'table.files, .Box.mt-3.position-relative .Box-body.p-0.blob-wrapper.data.type-text '
+export const MOUNT_SELECTOR = 'table.files'
 
 export const QUERY_CONFIG = {
   refetchAllOnWindowFocus: false,
