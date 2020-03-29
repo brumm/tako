@@ -87,12 +87,6 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     { user, repo, branch, path },
   ])
 
-  const { data: lastCommitData } = useQuery(
-    ['last-commit', { user, repo, branch, path }],
-    [{ isPrefetch: true }],
-    getLastCommitForNode
-  )
-
   const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
   const selectedFilePath = useStore(state => state.selectedFilePath)
@@ -108,59 +102,59 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
 
   const [isHovering, hoverProps] = useHover()
 
-  React.useEffect(
-    () => {
-      const handle = window.requestIdleCallback(() => {
-        if (isHovering) {
-          if (isFolder) {
-            queryCache
-              .prefetchQuery(
-                ['listing', { user, repo, branch, path }],
-                [{ isPrefetch: true }],
-                getNode
-              )
-              .then(items => {
-                items.forEach(({ path }) =>
-                  queryCache.prefetchQuery(
-                    ['last-commit', { user, repo, branch, path }],
-                    [{ isPrefetch: true }],
-                    getLastCommitForNode
-                  )
-                )
-              })
-          } else {
-            const fileExtension = path
-              .split('.')
-              .slice(-1)[0]
-              .toLowerCase()
-
-            if (fileExtension === 'md') {
-              queryCache
-                .prefetchQuery(
-                  ['file', { user, repo, branch, path }],
-                  getFileContent
-                )
-                .then(text => {
-                  queryCache.prefetchQuery(
-                    text && ['markdown', { user, repo, text }],
-                    getMarkdown
-                  )
-                })
-            } else {
-              queryCache.prefetchQuery(
-                ['file', { user, repo, branch, path }],
-                [{ isPrefetch: true }],
-                getFileContent
-              )
-            }
-          }
-        }
-      })
-
-      return () => window.cancelIdleCallback(handle)
-    },
-    [isHovering, branch, isFolder, path, repo, user]
+  const { data: lastCommitData } = useQuery(
+    selectedFilePath === null && ['last-commit', { user, repo, branch, path }],
+    [{ isPrefetch: true }],
+    getLastCommitForNode
   )
+
+  useIdleCallback(() => {
+    if (isHovering) {
+      if (isFolder) {
+        queryCache
+          .prefetchQuery(
+            ['listing', { user, repo, branch, path }],
+            [{ isPrefetch: true }],
+            getNode
+          )
+          .then(items => {
+            items.forEach(({ path }) =>
+              queryCache.prefetchQuery(
+                selectedFilePath === null && [
+                  'last-commit',
+                  { user, repo, branch, path },
+                ],
+                [{ isPrefetch: true }],
+                getLastCommitForNode
+              )
+            )
+          })
+      } else {
+        const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
+
+        if (fileExtension === 'md') {
+          queryCache
+            .prefetchQuery(
+              ['file', { user, repo, branch, path }],
+              getFileContent
+            )
+            .then(text => {
+              queryCache.prefetchQuery(
+                text && ['markdown', { user, repo, text }],
+                [{ isPrefetch: true }],
+                getMarkdown
+              )
+            })
+        } else {
+          queryCache.prefetchQuery(
+            ['file', { user, repo, branch, path }],
+            [{ isPrefetch: true }],
+            getFileContent
+          )
+        }
+      }
+    }
+  }, [isHovering, branch, isFolder, path, repo, user])
 
   return (
     <Fragment>
