@@ -55,7 +55,7 @@ function strftime(time, formatString) {
   const hour = time.getHours()
   const minute = time.getMinutes()
   const second = time.getSeconds()
-  return formatString.replace(/%([%aAbBcdeHIlmMpPSwyYZz])/g, function(
+  return formatString.replace(/%([%aAbBcdeHIlmMpPSwyYZz])/g, function (
     _,
     modifier
   ) {
@@ -125,7 +125,7 @@ function strftime(time, formatString) {
 
 function makeFormatter(options) {
   let format
-  return function() {
+  return function () {
     if (format) {
       return format
     }

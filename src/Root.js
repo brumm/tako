@@ -30,9 +30,7 @@ const AskForToken = () => {
           work.
         </div>
         <a
-          href={`https://github.com/settings/tokens/new?description=${
-            process.env.DISPLAY_NAME
-          }&scopes=repo`}
+          href={`https://github.com/settings/tokens/new?description=${process.env.DISPLAY_NAME}&scopes=repo`}
           target="_blank"
           rel="noopener noreferrer"
         >
