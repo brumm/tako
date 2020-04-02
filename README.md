@@ -1,4 +1,4 @@
-![](media/logo.png)
+<img width="50%" src="media/logo.png" alt="Tako extension logo" />
 
 # Tako
 
