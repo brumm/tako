@@ -61,8 +61,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   }
 
   if (status === 'error') {
-    console.log(error)
-    return error.message
+    throw error
   }
 
   return (
