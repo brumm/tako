@@ -103,16 +103,15 @@ const CodePreview = ({ path, fileExtension }) => {
         style: {
           fontFamily: 'inherit',
           fontSize: 'unset',
-          paddingLeft: 10,
+          paddingRight: 16,
         },
       }}
       showLineNumbers
       lineNumberContainerProps={{
         style: {
-          float: 'left',
-          minWidth: 32,
-          paddingLeft: 10,
+          textAlign: 'right',
           userSelect: 'none',
+          paddingRight: 8,
         },
       }}
       lineNumberProps={{
