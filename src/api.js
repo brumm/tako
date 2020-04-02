@@ -19,7 +19,7 @@ const githubFetch = (fragment, { importance, ...options } = {}) =>
     },
   }).then(response => {
     if (response.status < 200 || response.status > 299) {
-      throw new Error('Something went boom')
+      throw new Error(`${response.status}: ${response.statusText}`)
     }
 
     return response

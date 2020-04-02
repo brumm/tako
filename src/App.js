@@ -61,8 +61,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   }
 
   if (status === 'error') {
-    console.log(error)
-    return error.message
+    throw error
   }
 
   return (
@@ -130,7 +129,10 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             )
           })
       } else {
-        const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
+        const fileExtension = path
+          .split('.')
+          .slice(-1)[0]
+          .toLowerCase()
 
         if (fileExtension === 'md') {
           queryCache

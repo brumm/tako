@@ -136,6 +136,7 @@ const CodePreview = ({ path, fileExtension }) => {
       language={overrideLanguage || language}
       style={prism}
       customStyle={{
+        display: 'flex',
         margin: 0,
         border: 'none',
         padding: '12px 16px',
@@ -144,20 +145,22 @@ const CodePreview = ({ path, fileExtension }) => {
         borderLeft: '1px solid #EAECEF',
         overflow: 'auto',
         maxHeight: '80vh',
+        textShadow: 'none',
+        WebkitFontSmoothing: 'antialiased',
       }}
       codeTagProps={{
         style: {
-          fontFamily: 'monospace',
+          fontFamily: 'inherit',
           fontSize: 'unset',
+          paddingRight: 16,
         },
       }}
       showLineNumbers
       lineNumberContainerProps={{
         style: {
-          float: 'left',
-          minWidth: 50,
-          paddingLeft: 10,
-          paddingRight: 10,
+          textAlign: 'right',
+          userSelect: 'none',
+          paddingRight: 8,
         },
       }}
       lineNumberProps={{

@@ -31,5 +31,7 @@ const mountExtension = () => {
   })
 }
 
-document.addEventListener('pjax:end', () => setTimeout(mountExtension, 500))
+document.addEventListener('pjax:complete', () =>
+  setTimeout(mountExtension, 500)
+)
 setTimeout(mountExtension, 500)

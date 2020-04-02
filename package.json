@@ -1,11 +1,15 @@
 {
   "name": "tako",
   "displayName": "Tako",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Tako replaces the default Github repository file list with an expandable file tree for rapid exploration of repositories.",
   "main": "index.js",
+  "engines": {
+    "node": ">=12.14.1"
+  },
   "scripts": {
     "build": "webpack --mode=production",
+    "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
     "start": "webpack --watch --mode=development",
     "lint": "eslint ./src/**/*.js"
   },
