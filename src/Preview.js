@@ -87,6 +87,7 @@ const CodePreview = ({ path, fileExtension }) => {
       language={overrideLanguage || language}
       style={prism}
       customStyle={{
+        display: 'flex',
         margin: 0,
         border: 'none',
         padding: '12px 16px',
@@ -95,20 +96,23 @@ const CodePreview = ({ path, fileExtension }) => {
         borderLeft: '1px solid #EAECEF',
         overflow: 'auto',
         maxHeight: '80vh',
+        textShadow: 'none',
+        WebkitFontSmoothing: 'antialiased',
       }}
       codeTagProps={{
         style: {
-          fontFamily: 'monospace',
+          fontFamily: 'inherit',
           fontSize: 'unset',
+          paddingLeft: 10,
         },
       }}
       showLineNumbers
       lineNumberContainerProps={{
         style: {
           float: 'left',
-          minWidth: 50,
+          minWidth: 32,
           paddingLeft: 10,
-          paddingRight: 10,
+          userSelect: 'none',
         },
       }}
       lineNumberProps={{
@@ -187,7 +191,10 @@ const ImagePreview = ({ path, fileExtension }) => {
 }
 
 const Preview = ({ path }) => {
-  const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
+  const fileExtension = path
+    .split('.')
+    .slice(-1)[0]
+    .toLowerCase()
 
   if (isBinaryPath(path)) {
     return <ImagePreview path={path} fileExtension={fileExtension} />
