@@ -130,7 +130,10 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             )
           })
       } else {
-        const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
+        const fileExtension = path
+          .split('.')
+          .slice(-1)[0]
+          .toLowerCase()
 
         if (fileExtension === 'md') {
           queryCache
