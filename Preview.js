@@ -11,9 +11,7 @@ import { IMAGE_FILE_EXTENSIONS } from '@/constants'
 import { MarkdownContainer, FullScreenCenter } from '@/StyledComponents'
 import Loading from '@/Loading'
 import CheckerPattern from '@/CheckerPattern'
-import ReactMarkdown from 'react-markdown'
-import MarkdownHtmlParser from 'react-markdown/plugins/html-parser'
-import HtmlToReact from 'html-to-react'
+import MarkdownGithub from 'react-markdown-github'
 
 const LoadingComponent = () => (
   <FullScreenCenter
@@ -39,56 +37,19 @@ const MarkdownPreview = ({ path }) => {
     ['file', { user, repo, branch, path }],
     getFileContent
   )
+  /*
+  const { status, data: renderedMarkdown } = useQuery(
+    text && ['markdown', { user, repo, text }],
+    getMarkdown
+  )
 
-  const staticUrlRegex = new RegExp(/^https?:/)
-
-  const transformImageUri = uri => {
-    if (!staticUrlRegex.test(uri)) {
-      return `https://github.com/${user}/${repo}/raw/${branch}/${uri}`
-    } else {
-      return uri.replace('/blob/', '/raw/').replace('http://', 'https://')
-    }
+  if (status === 'loading') {
+    return <LoadingComponent />
   }
+  */
 
-  const processNodeDefinitions = new HtmlToReact.ProcessNodeDefinitions(React)
-  const parseHtml = MarkdownHtmlParser({
-    isValidNode: node => node.type !== 'script',
-    processingInstructions: [
-      {
-        // Custom <img> processing
-        shouldProcessNode: node =>
-          node.name === 'img' && !staticUrlRegex.test(node.attribs['src']),
-        processNode: node => {
-          const { src } = node.attribs
-          const url = `https://github.com/${user}/${repo}/raw/${branch}`
-
-          if (src.startsWith('/')) {
-            node.attribs['src'] = `${url}${src}`
-          } else {
-            node.attribs['src'] = `${url}/${src}`
-          }
-
-          return React.createElement('img', node.attribs)
-        },
-      },
-      {
-        shouldProcessNode: node =>
-          node.name === 'img' &&
-          new RegExp(/\/blob\//).test(node.attribs['src']),
-        processNode: node => {
-          const { src } = node.attribs
-          node.attribs['src'] = src
-            .replace('/blob/', '/raw/')
-            .replace('http://', 'https://')
-          return React.createElement('img', node.attribs)
-        },
-      },
-      {
-        shouldProcessNode: () => true,
-        processNode: processNodeDefinitions.processDefaultNode,
-      },
-    ],
-  })
+  console.log(user)
+  console.log(repo)
 
   return (
     <MarkdownContainer
@@ -104,11 +65,9 @@ const MarkdownPreview = ({ path }) => {
         maxHeight: '80vh',
       }}
     >
-      <ReactMarkdown
+      <MarkdownGithub
         source={text}
-        escapeHtml={false}
-        transformImageUri={transformImageUri}
-        astPlugins={[parseHtml]}
+        sourceUri={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
       />
     </MarkdownContainer>
   )
@@ -136,6 +95,7 @@ const CodePreview = ({ path, fileExtension }) => {
       language={overrideLanguage || language}
       style={prism}
       customStyle={{
+        display: 'flex',
         margin: 0,
         border: 'none',
         padding: '12px 16px',
@@ -144,20 +104,23 @@ const CodePreview = ({ path, fileExtension }) => {
         borderLeft: '1px solid #EAECEF',
         overflow: 'auto',
         maxHeight: '80vh',
+        textShadow: 'none',
+        '-webkit-font-smoothing': 'antialiased',
       }}
       codeTagProps={{
         style: {
-          fontFamily: 'monospace',
+          fontFamily: 'inherit',
           fontSize: 'unset',
+          paddingLeft: 10,
         },
       }}
       showLineNumbers
       lineNumberContainerProps={{
         style: {
           float: 'left',
-          minWidth: 50,
+          minWidth: 32,
           paddingLeft: 10,
-          paddingRight: 10,
+          userSelect: 'none',
         },
       }}
       lineNumberProps={{
