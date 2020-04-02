@@ -97,7 +97,7 @@ const CodePreview = ({ path, fileExtension }) => {
         overflow: 'auto',
         maxHeight: '80vh',
         textShadow: 'none',
-        '-webkit-font-smoothing': 'antialiased',
+        WebkitFontSmoothing: 'antialiased',
       }}
       codeTagProps={{
         style: {
