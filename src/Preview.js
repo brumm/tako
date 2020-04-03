@@ -8,7 +8,7 @@ import isBinaryPath from 'is-binary-path'
 
 import { getFileContent, getMarkdown } from '@/api'
 import { IMAGE_FILE_EXTENSIONS } from '@/constants'
-import { MarkdownContainer, FullScreenCenter } from '@/StyledComponents'
+import { MarkdownContainer, FullScreenCenter, SubtleButton } from '@/StyledComponents'
 import Loading from '@/Loading'
 import CheckerPattern from '@/CheckerPattern'
 
@@ -189,21 +189,55 @@ const ImagePreview = ({ path, fileExtension }) => {
   )
 }
 
+const Toolbar = ({ webUrl }) => {
+  const setSelectedPath = useStore(state => state.setSelectedFilePath)
+  return (
+    <div style={{
+      backgroundColor: '#def',
+      position: 'relative',
+      fontSize: '80%',
+      padding: '0.5ex 2ex 0.8ex 2ex',
+      display: 'flex',
+      flexFlow: 'row',
+    }}>
+      <a href={webUrl} target="_blank" rel="noopener noreferrer">
+        Open in a new tab
+      </a>
+      <SubtleButton style={{
+        marginLeft: 'auto',
+      }} onClick={event => {
+        setSelectedPath(null)
+        event.preventDefault()
+      }} title="Close preview">Close preview</SubtleButton>
+    </div>
+  )
+}
+
 const Preview = ({ path }) => {
+  const { user, repo, branch } = useStore(state => state.repoDetails)
+  const webUrl = `https://github.com/${user}/${repo}/blob/${branch}/${path}`
+
   const fileExtension = path
     .split('.')
     .slice(-1)[0]
     .toLowerCase()
 
-  if (isBinaryPath(path)) {
-    return <ImagePreview path={path} fileExtension={fileExtension} />
-  }
-
-  if (fileExtension === 'md') {
-    return <MarkdownPreview path={path} />
-  }
-
-  return <CodePreview path={path} fileExtension={fileExtension} />
+  return (
+    <div style={{
+      flex: '1 1 0%',
+      display: 'flex',
+      flexFlow: 'column',
+      minWidth: '0',
+    }}>
+      <Toolbar webUrl={webUrl} />
+      { isBinaryPath(path)
+          ? <ImagePreview path={path} fileExtension={fileExtension}/>
+          : fileExtension === 'md'
+            ? <MarkdownPreview path={path}/>
+            : <CodePreview path={path} fileExtension={fileExtension}/>
+      }
+    </div>
+  )
 }
 
 export default Preview

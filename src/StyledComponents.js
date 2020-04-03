@@ -72,3 +72,13 @@ export const FullScreenCenter = styled.div({
   alignItems: 'center',
   justifyContent: 'center',
 })
+
+export const SubtleButton = styled.button`
+  color: #0366d6;
+  background-color: rgba(0,0,0,0);
+  border: 0px none;
+  padding: 0;
+  &:hover {
+    text-decoration: underline;
+  }
+`
