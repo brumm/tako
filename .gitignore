@@ -1,2 +1,6 @@
-unpacked-extension
-tako-github-file-tree.zip
+dist/
+
+# ignore node modules
+node_modules/
+
+.DS_Store

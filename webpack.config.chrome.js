@@ -8,13 +8,15 @@ const ZipPlugin = require('zip-webpack-plugin')
 
 const pkg = require('./package.json')
 
-const distFolderName = 'unpacked-extension'
+const distFolderName = 'dist/chrome/unpacked-extension'
+const contentScriptFolderName = 'src/chrome'
+const zipFileName = 'tako-github-file-tree-chrome.zip'
 
 module.exports = (_, { mode }) => {
   const isProduction = mode === 'production'
 
   const manifest = {
-    ...pkg.extensionManifest,
+    ...pkg.extensionManifest.chrome,
     version: pkg.version,
     description: pkg.description,
   }
@@ -24,7 +26,11 @@ module.exports = (_, { mode }) => {
     devtool: 'inline-source-map',
 
     entry: {
-      'content-script': path.join(__dirname, 'src', 'content-script.js'),
+      'content-script': path.join(
+        __dirname,
+        contentScriptFolderName,
+        'content-script.js'
+      ),
       background: path.join(__dirname, 'src', 'background.js'),
     },
 
@@ -78,6 +84,7 @@ module.exports = (_, { mode }) => {
         'process.env.NODE_ENV': JSON.stringify(mode),
         'process.env.DISPLAY_NAME': JSON.stringify(pkg.displayName),
         'process.env.VERSION': JSON.stringify(pkg.version),
+        'process.env.BROWSER': JSON.stringify('chrome'),
       }),
       new GenerateJsonPlugin('manifest.json', manifest),
       new ExtensionReloader({
@@ -90,7 +97,7 @@ module.exports = (_, { mode }) => {
     config.devtool = false
     config.plugins[config.plugins.length - 1] = new ZipPlugin({
       path: '../',
-      filename: 'tako-github-file-tree.zip',
+      filename: zipFileName,
     })
   }
 

@@ -2,6 +2,7 @@ import React from 'react'
 
 import { MOUNT_SELECTOR } from '@/constants'
 import { useStore } from '@/storage'
+import { setToken as setBrowserToken } from '@/utils'
 import App from '@/App'
 import PrependPortal from '@/PrependPortal'
 
@@ -42,7 +43,7 @@ const AskForToken = () => {
         onSubmit={event => {
           event.preventDefault()
           if (validToken) {
-            chrome.storage.sync.set({ token: token || null })
+            setBrowserToken(token);
           }
         }}
       >
@@ -72,11 +73,13 @@ const AskForToken = () => {
 
 const Root = () => {
   const token = useStore(state => state.token)
+  /* If I didn't check for keys length, `token` was being passed as truthy, even when empty */
+  const tokenExists = token && Object.keys(token).length > 0;
 
   return (
     <PrependPortal targetSelector={MOUNT_SELECTOR}>
-      {!token && <AskForToken />}
-      {token && <App />}
+      {!tokenExists && <AskForToken />}
+      {tokenExists && <App />}
     </PrependPortal>
   )
 }

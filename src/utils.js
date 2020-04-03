@@ -1,5 +1,6 @@
 import arraySort from 'array-sort'
 
+import { getState, setState } from '@/storage'
 import { SORT_ORDER } from '@/constants'
 
 export const sortContents = contents =>
@@ -36,3 +37,38 @@ export const betterAtob = str =>
       .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
       .join('')
   )
+
+export const removeToken = () =>
+  new Promise((resolve, reject) =>
+    process.env.BROWSER === 'chrome'
+      ? chrome.storage.sync.remove('token', () => {
+          setState(state => ({ ...state, token: undefined }))
+          return resolve()
+        })
+      : process.env.BROWSER === 'firefox'
+      ? browser.storage.sync
+          .remove('token')
+          .then(() => {
+            setState(state => ({ ...state, token: undefined }))
+            return resolve()
+          })
+          .catch(e => reject(e))
+      : reject()
+  )
+
+export const getToken = () =>
+  process.env.BROWSER === 'chrome'
+    ? getState().token
+    : process.env.BROWSER === 'firefox'
+    ? // This is the only way I could get it to work in Firefox
+      JSON.parse(JSON.stringify(getState().token)).token
+    : null
+
+export const setToken = token =>
+  process.env.BROWSER === 'chrome'
+    ? chrome.storage.sync.set({ token: token || null })
+    : process.env.BROWSER === 'firefox'
+    ? // In Firefox, I had a better user experience by reloading here
+      browser.storage.sync.set({ token: token || null }) &&
+      window.location.reload()
+    : null

@@ -1,8 +1,7 @@
 import Bottleneck from 'bottleneck'
 
-import { betterAtob, sortContents } from '@/utils'
+import { betterAtob, sortContents, removeToken, getToken } from '@/utils'
 import RelativeTime from '@/github-relative-time'
-import { getState } from '@/storage'
 
 const MAX_REQUESTS = 10
 
@@ -10,20 +9,31 @@ const limiter = new Bottleneck({
   maxConcurrent: MAX_REQUESTS,
 })
 
-const githubFetch = (fragment, { importance, ...options } = {}) =>
-  fetch(`https://api.github.com/${fragment}`, {
+const githubFetch = (fragment, { importance, ...options } = {}) => {
+  const token = getToken()
+
+  return fetch(`https://api.github.com/${fragment}`, {
     ...options,
     importance,
     headers: {
-      Authorization: `token ${getState().token}`,
+      Authorization: `token ${token}`,
     },
   }).then(response => {
     if (response.status < 200 || response.status > 299) {
+      // A user may have manually removed token from GitHub account,
+      // if they have, this should prompt them for a new token
+      if (response.status === 401 && token) {
+        removeToken().then(() => {
+          throw new Error('Token went boom.')
+        })
+      }
+
       throw new Error('Something went boom')
     }
 
     return response
   })
+}
 
 export const getNode = (
   type,
