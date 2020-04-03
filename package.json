@@ -1,15 +1,20 @@
 {
   "name": "tako",
   "displayName": "Tako",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Tako replaces the default Github repository file list with an expandable file tree for rapid exploration of repositories.",
   "main": "index.js",
+  "engines": {
+    "node": ">=12.14.1"
+  },
   "scripts": {
     "build:chrome": "webpack --mode=production --config=webpack.config.chrome.js",
     "start:chrome": "webpack --watch --mode=development --config=webpack.config.chrome.js",
     "build:firefox": "webpack --mode=production --config=webpack.config.firefox.js",
     "start:firefox": "webpack --watch --mode=development --config=webpack.config.firefox.js",
     "build": "yarn build:chrome && yarn build:firefox",
+    "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
+    "start": "webpack --watch --mode=development",
     "lint": "eslint ./src/**/*.js"
   },
   "prettier": {

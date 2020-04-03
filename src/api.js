@@ -28,7 +28,7 @@ const githubFetch = (fragment, { importance, ...options } = {}) => {
         })
       }
 
-      throw new Error('Something went boom')
+      throw new Error(`${response.status}: ${response.statusText}`)
     }
 
     return response
