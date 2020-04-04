@@ -1,6 +1,7 @@
 import Bottleneck from 'bottleneck'
 
-import { betterAtob, sortContents, removeToken, getToken } from '@/utils'
+import { getState } from '@/storage'
+import { betterAtob, sortContents, removeToken } from '@/utils'
 import RelativeTime from '@/github-relative-time'
 
 const MAX_REQUESTS = 10
@@ -10,7 +11,7 @@ const limiter = new Bottleneck({
 })
 
 const githubFetch = (fragment, { importance, ...options } = {}) => {
-  const token = getToken()
+  const { token } = getState()
 
   return fetch(`https://api.github.com/${fragment}`, {
     ...options,
@@ -24,7 +25,9 @@ const githubFetch = (fragment, { importance, ...options } = {}) => {
       // if they have, this should prompt them for a new token
       if (response.status === 401 && token) {
         removeToken().then(() => {
-          throw new Error('Token went boom.')
+          throw new Error(
+            `${response.status}: ([tako] It is possible the associated token has been revoked) ${response.statusText}`
+          )
         })
       }
 

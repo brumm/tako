@@ -1,6 +1,6 @@
 import arraySort from 'array-sort'
 
-import { getState, setState } from '@/storage'
+import { setState } from '@/storage'
 import { SORT_ORDER } from '@/constants'
 
 export const sortContents = contents =>
@@ -55,14 +55,6 @@ export const removeToken = () =>
           .catch(e => reject(e))
       : reject()
   )
-
-export const getToken = () =>
-  process.env.BROWSER === 'chrome'
-    ? getState().token
-    : process.env.BROWSER === 'firefox'
-    ? // This is the only way I could get it to work in Firefox
-      JSON.parse(JSON.stringify(getState().token)).token
-    : null
 
 export const setToken = token =>
   process.env.BROWSER === 'chrome'

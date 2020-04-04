@@ -16,7 +16,7 @@ const mountExtension = () => {
     return
   }
 
-  browser.storage.sync.get('token').then(token => {
+  browser.storage.sync.get('token').then(({ token }) => {
     setState(state => {
       state.token = token
       state.repoDetails = getRepoDetails()

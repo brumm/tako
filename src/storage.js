@@ -1,6 +1,7 @@
 import produce from 'immer'
 import createStore from 'zustand'
 import { queryCache } from 'react-query'
+import { removeToken } from '@/utils'
 
 const [useStore, api] = createStore((set, get) => {
   const setState = fn => set(produce(fn))
@@ -49,15 +50,32 @@ const [useStore, api] = createStore((set, get) => {
 const { setState, getState } = api.getState()
 
 window.clearToken = () => {
-  chrome.storage.sync.remove('token')
+  removeToken()
 }
 window.queryCache = queryCache
 window.getState = getState
 
-chrome.storage.onChanged.addListener(({ token: { newValue: token } }) =>
-  setState(state => {
-    state.token = token
-  })
-)
+switch (process.env.BROWSER) {
+  case 'chrome': {
+    chrome.storage.onChanged.addListener(
+      ({ token: { newValue: token } }) =>
+        setState(state => {
+          state.token = token
+        })
+    );
+    break;
+  }
+  case 'firefox': {
+    browser.storage.onChanged.addListener(
+      ({ token: { newValue: token } }) =>
+        setState(state => {
+          state.token = token
+        })
+    );
+    break;
+  }
+  default:
+    break
+}
 
 export { useStore, setState, getState }
