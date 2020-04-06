@@ -37,3 +37,12 @@ export const useIdleCallback = (userFn, deps = []) => {
     return () => window.cancelIdleCallback(handle)
   }, [userCallback])
 }
+
+export const useHideElementWhileMounted = element => {
+  React.useEffect(() => {
+    element.setAttribute('hidden', '')
+    return () => {
+      element.removeAttribute('hidden')
+    }
+  }, [element])
+}

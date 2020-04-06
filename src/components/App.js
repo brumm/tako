@@ -5,7 +5,11 @@ import useHover from 'react-use-hover'
 
 import { useStore } from '@/storage'
 import { MOUNT_SELECTOR, QUERY_CONFIG, INDENT_SIZE } from '@/constants'
-import { useQueryState, useIdleCallback } from '@/hooks'
+import {
+  useQueryState,
+  useIdleCallback,
+  useHideElementWhileMounted,
+} from '@/hooks'
 import {
   getNode,
   getLastCommitForNode,
@@ -322,12 +326,7 @@ const RepoExplorer = () => {
 }
 
 const App = () => {
-  React.useEffect(() => {
-    document.querySelector(MOUNT_SELECTOR).setAttribute('hidden', '')
-    return () => {
-      document.querySelector(MOUNT_SELECTOR).removeAttribute('hidden')
-    }
-  }, [])
+  useHideElementWhileMounted(document.querySelector(MOUNT_SELECTOR))
 
   return (
     <ReactQueryConfigProvider config={QUERY_CONFIG}>
