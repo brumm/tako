@@ -1,4 +1,4 @@
-import '@/extension-assets'
+import '@/import-extension-assets'
 import React from 'react'
 import { createRoot } from 'react-dom'
 
