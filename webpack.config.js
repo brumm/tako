@@ -24,8 +24,8 @@ module.exports = (_, { mode }) => {
     devtool: 'inline-source-map',
 
     entry: {
-      'content-script': path.join(__dirname, 'src', 'content-script.js'),
-      background: path.join(__dirname, 'src', 'background.js'),
+      'content-script': path.join(__dirname, 'src', 'entry-content-script.js'),
+      background: path.join(__dirname, 'src', 'entry-background.js'),
     },
 
     output: {
