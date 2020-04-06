@@ -47,7 +47,9 @@ export const getNode = (
     .schedule(
       { priority: isPrefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${path}?ref=${branch}`,
+      `repos/${user}/${repo}/contents/${encodeURIComponent(
+        path
+      )}?ref=${branch}`,
       {
         importance: isPrefetch ? 'low' : 'auto',
       }
@@ -75,7 +77,9 @@ export const getFileContent = (
     .schedule(
       { priority: isPrefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${path}?ref=${branch}`,
+      `repos/${user}/${repo}/contents/${encodeURIComponent(
+        path
+      )}?ref=${branch}`,
       {
         importance: isPrefetch ? 'low' : 'auto',
       }
@@ -108,7 +112,9 @@ export const getLastCommitForNode = (
     .schedule(
       { priority: isPrefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/commits?page=1&per_page=1&sha=${branch}&path=${path}`,
+      `repos/${user}/${repo}/commits?page=1&per_page=1&sha=${branch}&path=${encodeURIComponent(
+        path
+      )}`,
       {
         importance: isPrefetch ? 'low' : 'auto',
       }
