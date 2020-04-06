@@ -1,4 +1,6 @@
-<img width="50%" src="media/logo.png" alt="Tako extension logo" />
+<div style="text-align:center;">
+  <img width="50%" src="media/logo.png" alt="Tako extension logo" />
+</div>
 
 # Tako
 
