@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
 import { MOUNT_SELECTOR } from '@/constants'
-import PrependPortal from '@/PrependPortal'
+import PrependPortal from '@/components/PrependPortal'
 
 const ErrorReport = ({ error }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)

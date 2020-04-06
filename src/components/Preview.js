@@ -8,9 +8,9 @@ import isBinaryPath from 'is-binary-path'
 
 import { getFileContent, getMarkdown } from '@/api'
 import { IMAGE_FILE_EXTENSIONS } from '@/constants'
-import { MarkdownContainer, FullScreenCenter } from '@/StyledComponents'
-import Loading from '@/Loading'
-import CheckerPattern from '@/CheckerPattern'
+import { MarkdownContainer, FullScreenCenter } from '@/components/styled'
+import Loading from '@/components/Loading'
+import CheckerPattern from '@/components/CheckerPattern'
 
 const LoadingComponent = () => (
   <FullScreenCenter

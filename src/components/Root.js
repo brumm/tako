@@ -2,8 +2,8 @@ import React from 'react'
 
 import { MOUNT_SELECTOR } from '@/constants'
 import { useStore } from '@/storage'
-import App from '@/App'
-import PrependPortal from '@/PrependPortal'
+import App from '@/components/App'
+import PrependPortal from '@/components/PrependPortal'
 
 const AskForToken = () => {
   const [token, setToken] = React.useState('')

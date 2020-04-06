@@ -12,11 +12,11 @@ import {
   getFileContent,
   getMarkdown,
 } from '@/api'
-import { Table, Row, Cell, Truncateable } from '@/StyledComponents'
-import Placeholder from '@/Placeholder'
-import Loading from '@/Loading'
-import Preview from '@/Preview'
-import { FolderIcon, FileIcon, ChevronIcon } from '@/Icons'
+import { Table, Row, Cell, Truncateable } from '@/components/styled'
+import Placeholder from '@/components/Placeholder'
+import Loading from '@/components/Loading'
+import Preview from '@/components/Preview'
+import { FolderIcon, FileIcon, ChevronIcon } from '@/components/icons'
 
 const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
