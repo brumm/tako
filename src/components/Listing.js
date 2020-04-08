@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react'
-import { useQuery, queryCache } from 'react-query'
+import { useQuery } from 'react-query'
 
 import { useIdleCallback } from '@/hooks'
 import { useStore } from '@/storage'
 import { getNode } from '@/api'
+import { prefetchQuery } from '@/utils'
 import Loading from '@/components/Loading'
 import Node from '@/components/Node'
 
@@ -18,11 +19,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
     if (data) {
       data.forEach(({ path, type }) => {
         if (type === 'dir') {
-          queryCache.prefetchQuery(
-            ['listing', { user, repo, branch, path }],
-            [{ isPrefetch: true }],
-            getNode
-          )
+          prefetchQuery(['listing', { user, repo, branch, path }], getNode)
         }
       })
     }

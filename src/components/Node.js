@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react'
 import useHover from 'react-use-hover'
-import { useQuery, queryCache } from 'react-query'
+import { useQuery } from 'react-query'
 import Spinner from 'react-svg-spinner'
 
 import { INDENT_SIZE } from '@/constants'
 import { useStore } from '@/storage'
+import { prefetchQuery } from '@/utils'
 import { useQueryState, useIdleCallback } from '@/hooks'
 import {
   getNode,
@@ -48,24 +49,19 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   useIdleCallback(() => {
     if (isHovering) {
       if (isFolder) {
-        queryCache
-          .prefetchQuery(
-            ['listing', { user, repo, branch, path }],
-            [{ isPrefetch: true }],
-            getNode
-          )
-          .then(items => {
+        prefetchQuery(['listing', { user, repo, branch, path }], getNode).then(
+          items => {
             items.forEach(({ path }) =>
-              queryCache.prefetchQuery(
+              prefetchQuery(
                 selectedFilePath === null && [
                   'last-commit',
                   { user, repo, branch, path },
                 ],
-                [{ isPrefetch: true }],
                 getLastCommitForNode
               )
             )
-          })
+          }
+        )
       } else {
         const fileExtension = path
           .split('.')
@@ -73,24 +69,17 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           .toLowerCase()
 
         if (fileExtension === 'md') {
-          queryCache
-            .prefetchQuery(
-              ['file', { user, repo, branch, path }],
-              getFileContent
-            )
-            .then(text => {
-              queryCache.prefetchQuery(
-                text && ['markdown', { user, repo, text }],
-                [{ isPrefetch: true }],
-                getMarkdown
-              )
-            })
-        } else {
-          queryCache.prefetchQuery(
+          prefetchQuery(
             ['file', { user, repo, branch, path }],
-            [{ isPrefetch: true }],
             getFileContent
-          )
+          ).then(text => {
+            prefetchQuery(
+              text && ['markdown', { user, repo, text }],
+              getMarkdown
+            )
+          })
+        } else {
+          prefetchQuery(['file', { user, repo, branch, path }], getFileContent)
         }
       }
     }
