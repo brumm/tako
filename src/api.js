@@ -10,10 +10,9 @@ const limiter = new Bottleneck({
   maxConcurrent: MAX_REQUESTS,
 })
 
-const githubFetch = (fragment, { importance, ...options } = {}) =>
+const githubFetch = (fragment, options = {}) =>
   fetch(`https://api.github.com/${fragment}`, {
     ...options,
-    importance,
     headers: {
       Authorization: `token ${getState().token}`,
     },
