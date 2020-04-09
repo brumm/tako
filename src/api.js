@@ -1,7 +1,7 @@
 import Bottleneck from 'bottleneck'
 
 import { getState } from '@/storage'
-import { betterAtob, sortContents, removeToken } from '@/utils'
+import { betterAtob, sortContents } from '@/utils'
 import RelativeTime from '@/github-relative-time'
 
 const MAX_REQUESTS = 10
@@ -21,16 +21,6 @@ const githubFetch = (fragment, { importance, ...options } = {}) => {
     },
   }).then(response => {
     if (response.status < 200 || response.status > 299) {
-      // A user may have manually removed token from GitHub account,
-      // if they have, this should prompt them for a new token
-      if (response.status === 401 && token) {
-        removeToken().then(() => {
-          throw new Error(
-            `${response.status}: ([tako] It is possible the associated token has been revoked) ${response.statusText}`
-          )
-        })
-      }
-
       throw new Error(`${response.status}: ${response.statusText}`)
     }
 
