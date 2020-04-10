@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Placeholder = ({ text, scale = 0.85 }) => {
+const Placeholder = ({ text, scale = 0.71, spacing = 0.65 }) => {
   const blocks = text
     .replace(/\W/gi, ' ')
     .replace(/\s+/gi, ' ')
@@ -19,7 +19,7 @@ const Placeholder = ({ text, scale = 0.85 }) => {
             height: '1.5ch',
             backgroundColor: '#EAECEF',
             borderRadius: 1,
-            marginRight: '0.7ch',
+            marginRight: `${spacing}ch`,
           }}
         />
       ))}
