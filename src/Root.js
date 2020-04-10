@@ -5,6 +5,8 @@ import { useStore } from '@/storage'
 import App from '@/App'
 import PrependPortal from '@/PrependPortal'
 
+import { PromptForNewToken } from '@/GlobalErrorBoundary'
+
 const AskForToken = () => {
   const [token, setToken] = React.useState('')
   const validToken = /[\da-f]{40}/.test(token)
@@ -71,12 +73,18 @@ const AskForToken = () => {
 }
 
 const Root = () => {
-  const token = useStore(state => state.token)
+  const { token, requestError } = useStore(state => state)
+  const unauthorizedError = requestError && Number(requestError.status) === 401
 
   return (
     <PrependPortal targetSelector={MOUNT_SELECTOR}>
-      {!token && <AskForToken />}
-      {token && <App />}
+      {token && unauthorizedError && (
+        <PromptForNewToken
+          error={`${requestError.status}: ${requestError.statusText}\r\n\r\nToken is invalid!  Use the 'Prompt For New Token' button below to update your token.`}
+        />
+      )}
+      {!token && !unauthorizedError && <AskForToken />}
+      {token && !unauthorizedError && <App />}
     </PrependPortal>
   )
 }

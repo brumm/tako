@@ -2,8 +2,9 @@ import React, { Fragment } from 'react'
 
 import { MOUNT_SELECTOR } from '@/constants'
 import PrependPortal from '@/PrependPortal'
+import { removeToken } from '@/utils'
 
-const ErrorReport = ({ error }) => {
+const ErrorReport = ({ error, children }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)
 
   return (
@@ -17,7 +18,7 @@ const ErrorReport = ({ error }) => {
           type="button"
           onClick={() => setIsExpanded(b => !b)}
         >
-          Show Details
+          {isExpanded ? 'Hide' : 'Show'} Details
         </button>
         <button
           className="ml-2 btn btn-sm btn-primary"
@@ -31,6 +32,8 @@ const ErrorReport = ({ error }) => {
       <div
         hidden={!isExpanded}
         className="text-gray-dark p-2 bg-red-light border-top border-black-fade"
+        // In testing, some errors would flow off screen, allowing `overflowX: scroll` fixed this
+        style={{ overflowX: 'scroll' }}
       >
         <pre
           css={{
@@ -41,11 +44,48 @@ const ErrorReport = ({ error }) => {
             },
           }}
         >
+          {/**
+           * Rendering `String(error)` helped make the error more clear. The stack alone
+           * was not providing enough info in some cases (specifically http status 401 errors)
+           */}
+          {String(error)}
+          <br />
           {error.stack}
         </pre>
+        {children}
       </div>
     </Fragment>
   )
+}
+
+class PromptForNewToken extends React.Component {
+  constructor(props) {
+    super(props)
+    this.error = props.error
+    this.handleRemoveToken = this.handleRemoveToken.bind(this)
+  }
+
+  handleRemoveToken() {
+    removeToken().then(() => window.location.reload())
+  }
+
+  render() {
+    return this.error ? (
+      <ErrorReport error={this.error}>
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button
+            className="btn btn-danger"
+            type="button"
+            onClick={this.handleRemoveToken}
+          >
+            Prompt For New Token
+          </button>
+        </div>
+      </ErrorReport>
+    ) : (
+      <React.Fragment />
+    )
+  }
 }
 
 class GlobalErrorBoundary extends React.Component {
@@ -77,3 +117,4 @@ class GlobalErrorBoundary extends React.Component {
 }
 
 export default GlobalErrorBoundary
+export { PromptForNewToken }

@@ -19,6 +19,15 @@ const [useStore, api] = createStore((set, get) => {
     token: null,
     expandedNodes: {},
 
+    requestError: null,
+
+    setRequestError: err => {
+      setState(state => ({
+        ...state,
+        requestError: err,
+      }))
+    },
+
     setPath: path =>
       setState(state => {
         state.repoDetails.path = path

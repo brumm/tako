@@ -1,6 +1,7 @@
 import arraySort from 'array-sort'
 
 import { SORT_ORDER } from '@/constants'
+import { setState } from '@/storage'
 
 export const sortContents = contents =>
   arraySort(
@@ -36,3 +37,15 @@ export const betterAtob = str =>
       .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
       .join('')
   )
+
+export const removeToken = () =>
+  new Promise((resolve, reject) => {
+    chrome.storage.sync.remove('token', err => {
+      if (err) {
+        return reject(err)
+      }
+
+      setState(state => ({ ...state, token: undefined }))
+      return resolve()
+    })
+  })
