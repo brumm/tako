@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "webpack --mode=production",
-    "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
+    "postinstall": "yarn build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
     "start": "webpack --watch --mode=development",
     "lint": "eslint ./src/**/*.js"
   },

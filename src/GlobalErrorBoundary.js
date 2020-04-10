@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import { MOUNT_SELECTOR } from '@/constants'
 import PrependPortal from '@/PrependPortal'
 import { removeToken } from '@/utils'
+import { TakoLogo } from '@/Components'
 
 const ErrorReport = ({ error, children }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)
@@ -10,8 +11,16 @@ const ErrorReport = ({ error, children }) => {
   return (
     <Fragment>
       <div className="bg-red-light text-red p-2 d-flex flex-items-center">
+        <TakoLogo
+          style={{
+            height: 30,
+            width: 30,
+            float: 'left',
+            margin: 'auto 1rem auto 0',
+          }}
+        />
         <div className="flex-auto">
-          Something went wrong while tring to load {process.env.DISPLAY_NAME}
+          Something went wrong while trying to load {process.env.DISPLAY_NAME}
         </div>
         <button
           className="btn btn-sm"
@@ -32,8 +41,6 @@ const ErrorReport = ({ error, children }) => {
       <div
         hidden={!isExpanded}
         className="text-gray-dark p-2 bg-red-light border-top border-black-fade"
-        // In testing, some errors would flow off screen, allowing `overflowX: scroll` fixed this
-        style={{ overflowX: 'scroll' }}
       >
         <pre
           css={{
@@ -42,6 +49,21 @@ const ErrorReport = ({ error, children }) => {
               fontSize: 14,
               lineHeight: '30px',
             },
+            // Persists vertical scrollbar on OSX if overflowY
+            '::-webkit-scrollbar': {
+              '-webkit-appearance': 'none',
+              width: '7px',
+            },
+            // Persists vertical scrollbar on OSX if overflowY
+            '::-webkit-scrollbar-thumb': {
+              borderRadius: '4px',
+              backgroundColor: 'rgba(0, 0, 0, .5)',
+              boxShadow: '0 0 1px rgba(255, 255, 255, .5)',
+            },
+            overflowX: 'auto',
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word',
+            maxHeight: '120px',
           }}
         >
           {/**
