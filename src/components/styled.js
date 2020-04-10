@@ -1,26 +1,20 @@
 import styled from 'styled-components'
 
-export const Table = styled.div(
-  ({ hasSelectedFilePath, initialTableHeight }) => ({
-    flex: 1,
-    display: 'grid',
-    gridTemplateColumns: hasSelectedFilePath
-      ? '1fr'
-      : 'minmax(300px, auto) minmax(0, 1fr) 150px',
-    gridAutoRows: 37,
-    minHeight: Math.min(initialTableHeight, window.innerHeight * 0.8),
-    maxHeight: '80vh',
-    maxWidth: hasSelectedFilePath && 300,
-    overflow: 'auto',
-    color: '#6a737d',
-    position: 'relative',
-  })
-)
+export const Table = styled.div(({ singleColumn }) => ({
+  display: 'grid',
+  gridTemplateColumns: singleColumn
+    ? '1fr'
+    : 'minmax(300px, auto) minmax(0, 1fr) 150px',
+  gridAutoRows: 37,
+  width: singleColumn && 300,
+  position: 'relative',
+}))
 
 export const Cell = styled.div({
   whiteSpace: 'nowrap',
   display: 'flex',
   alignItems: 'center',
+
   ':nth-child(1)': {
     paddingLeft: 16,
     paddingRight: 4,
@@ -46,7 +40,7 @@ export const Row = styled.div(({ highlighted }) => ({
   },
 
   [Cell]: highlighted && {
-    backgroundColor: '#F1F8FF',
+    backgroundColor: '#F1F8FF !important',
   },
 }))
 
@@ -57,12 +51,6 @@ export const Truncateable = styled.span({
   textOverflow: 'ellipsis',
   verticalAlign: 'top',
   whiteSpace: 'nowrap',
-})
-
-export const MarkdownContainer = styled.article({
-  width: '100%',
-  maxHeight: '80vh',
-  overflow: 'auto',
 })
 
 export const FullScreenCenter = styled.div({

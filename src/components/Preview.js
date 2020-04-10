@@ -8,24 +8,12 @@ import isBinaryPath from 'is-binary-path'
 
 import { getFileContent, getMarkdown } from '@/api'
 import { IMAGE_FILE_EXTENSIONS } from '@/constants'
-import { MarkdownContainer, FullScreenCenter } from '@/components/styled'
+import { FullScreenCenter } from '@/components/styled'
 import Loading from '@/components/Loading'
 import CheckerPattern from '@/components/CheckerPattern'
 
 const LoadingComponent = () => (
-  <FullScreenCenter
-    style={{
-      flex: 1,
-      overflow: 'auto',
-      padding: '12px 16px',
-      border: 'none',
-      borderLeft: '1px solid #EAECEF',
-      margin: 0,
-      backgroundColor: '#fff',
-      maxHeight: '80vh',
-      height: 'unset',
-    }}
-  >
+  <FullScreenCenter>
     <Loading />
   </FullScreenCenter>
 )
@@ -46,17 +34,10 @@ const MarkdownPreview = ({ path }) => {
   }
 
   return (
-    <MarkdownContainer
+    <div
       className="markdown-body entry-content"
       css={{
-        flex: 1,
-        overflow: 'auto',
         padding: '12px 16px',
-        border: 'none',
-        borderLeft: '1px solid #EAECEF',
-        margin: 0,
-        backgroundColor: '#fff',
-        maxHeight: '80vh',
       }}
       dangerouslySetInnerHTML={{
         __html: renderedMarkdown,
@@ -89,15 +70,9 @@ const CodePreview = ({ path, fileExtension }) => {
       customStyle={{
         display: 'flex',
         margin: 0,
-        border: 'none',
         padding: '12px 16px',
-        backgroundColor: '#fff',
-        flex: 1,
-        borderLeft: '1px solid #EAECEF',
-        overflow: 'auto',
-        maxHeight: '80vh',
         textShadow: 'none',
-        WebkitFontSmoothing: 'antialiased',
+        background: 'none',
       }}
       codeTagProps={{
         style: {
@@ -132,20 +107,7 @@ const ImagePreview = ({ path, fileExtension }) => {
 
   if (IMAGE_FILE_EXTENSIONS.includes(fileExtension)) {
     return (
-      <FullScreenCenter
-        css={{
-          flex: 1,
-          overflow: 'auto',
-          padding: '12px 16px',
-          border: 'none',
-          borderLeft: '1px solid #EAECEF',
-          margin: 0,
-          backgroundColor: '#fff',
-          maxHeight: '80vh',
-          height: 'unset',
-          position: 'relative',
-        }}
-      >
+      <FullScreenCenter css={{ position: 'relative', padding: '12px 16px' }}>
         <svg
           style={{
             position: 'absolute',
@@ -171,19 +133,7 @@ const ImagePreview = ({ path, fileExtension }) => {
   }
 
   return (
-    <FullScreenCenter
-      css={{
-        flex: 1,
-        overflow: 'auto',
-        padding: '12px 16px',
-        border: 'none',
-        borderLeft: '1px solid #EAECEF',
-        margin: 0,
-        backgroundColor: '#fff',
-        maxHeight: '80vh',
-        height: 'unset',
-      }}
-    >
+    <FullScreenCenter>
       <a href={rawUrl}>View raw</a>
     </FullScreenCenter>
   )
