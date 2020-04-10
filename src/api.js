@@ -20,20 +20,11 @@ const githubFetch = (fragment, { importance, ...options } = {}) => {
       Authorization: `token ${token}`,
     },
   }).then(response => {
-    if (response.status < 200 || response.status > 299) {
-      const { status, statusText } = response;
-      
+    const { status, statusText } = response;
+
+    if (status < 200 || status > 299) {
       setRequestError({ status, statusText })
-
-      // A user may have manually removed token from GitHub account,
-      // if they have, this should prompt them for a new token
-      if (response.status === 401 && token) {
-          throw new Error(
-            `${response.status}: ${response.statusText}\r\n\r\nToken is invalid!  Use the 'Prompt For New Token' button below to update your token.`
-          )
-      } 
-
-      throw new Error(`${response.status}: ${response.statusText}`)
+      throw new Error(`${status}: ${statusText}`)
     }
 
     return response
