@@ -17,3 +17,8 @@ Tako is an inline, expandable file tree with file preview for github. [Get it on
 - [Turn on dev mode for chrome extensions](https://developer.chrome.com/extensions/faq#faq-dev-01)
 - Click "Load unpacked" and select `tako/unpacked-extension`
 - Navigate to any github repository and open dev tools
+
+## Building
+
+- `yarn build:{chrome,firefox}`
+- Drop resulting file `tako-github-file-tree-{chrome,firefox}.zip` onto your browser's extension page

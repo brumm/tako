@@ -10,13 +10,18 @@ const pkg = require('./package.json')
 
 const distFolderName = 'unpacked-extension'
 
-module.exports = (_, { mode }) => {
+module.exports = ({ browser } = {}, { mode }) => {
   const isProduction = mode === 'production'
+  const isChrome = browser === 'chrome'
 
   const manifest = {
     ...pkg.extensionManifest,
     version: pkg.version,
     description: pkg.description,
+  }
+
+  if (isProduction && isChrome) {
+    delete manifest.applications
   }
 
   const config = {
@@ -87,10 +92,11 @@ module.exports = (_, { mode }) => {
   }
 
   if (isProduction) {
-    config.devtool = false
+    delete config.devtool
+
     config.plugins[config.plugins.length - 1] = new ZipPlugin({
       path: '../',
-      filename: 'tako-github-file-tree.zip',
+      filename: `tako-github-file-tree-${browser}.zip`,
     })
   }
 

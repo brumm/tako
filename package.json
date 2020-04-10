@@ -8,7 +8,8 @@
     "node": ">=12.14.1"
   },
   "scripts": {
-    "build": "webpack --mode=production",
+    "build:chrome": "webpack --mode=production --env.browser=chrome",
+    "build:firefox": "webpack --mode=production --env.browser=firefox",
     "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
     "start": "webpack --watch --mode=development",
     "lint": "eslint ./src/**/*.js"
@@ -27,8 +28,14 @@
     "manifest_version": 2,
     "permissions": [
       "activeTab",
-      "storage"
+      "storage",
+      "*://*.github.com/*"
     ],
+    "applications": {
+      "gecko": {
+        "id": "tako@brumm.af"
+      }
+    },
     "icons": {
       "16": "icon-16.png",
       "24": "icon-24.png",

@@ -13,7 +13,6 @@ const PrependPortal = ({ targetSelector, children }) => {
         .insertAdjacentElement('beforebegin', containerElement)
     } catch (error) {
       console.log(error)
-      debugger
     }
 
     return () => {

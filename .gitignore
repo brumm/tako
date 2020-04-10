@@ -1,3 +1,4 @@
 unpacked-extension
-tako-github-file-tree.zip
+tako-github-file-tree*
 node_modules
+.DS_Store
