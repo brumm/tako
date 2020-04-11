@@ -54,7 +54,7 @@ window.clearToken = () => {
 window.queryCache = queryCache
 window.getState = getState
 
-chrome.storage.onChanged.addListener(({ token: { newValue: token } }) =>
+chrome.storage.onChanged.addListener(({ token: { newValue: token = null } }) =>
   setState(state => {
     state.token = token
   })

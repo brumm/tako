@@ -16,7 +16,7 @@ const mountExtension = () => {
     return
   }
 
-  chrome.storage.sync.get('token', ({ token }) => {
+  chrome.storage.sync.get('token', ({ token = null }) => {
     setState(state => {
       state.token = token
       state.repoDetails = getRepoDetails()
