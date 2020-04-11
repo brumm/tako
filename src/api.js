@@ -10,6 +10,15 @@ const limiter = new Bottleneck({
   maxConcurrent: MAX_REQUESTS,
 })
 
+class ApiError extends Error {
+  constructor({ status, message }) {
+    super(`${message} [${status}]`)
+    this.name = 'ApiError'
+    this.status = status
+    this.message = `${message} [${status}]`
+  }
+}
+
 const githubFetch = (fragment, options = {}) =>
   fetch(`https://api.github.com/${fragment}`, {
     ...options,
@@ -18,7 +27,10 @@ const githubFetch = (fragment, options = {}) =>
     },
   }).then(response => {
     if (response.status < 200 || response.status > 299) {
-      throw new Error(`${response.status}: ${response.statusText}`)
+      throw new ApiError({
+        status: response.status,
+        message: response.statusText,
+      })
     }
 
     return response
