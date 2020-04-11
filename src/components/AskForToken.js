@@ -1,24 +1,14 @@
 import React from 'react'
 
+import TakoLogo from '@/components/TakoLogo'
+
 const AskForToken = () => {
   const [token, setToken] = React.useState('')
   const validToken = /[\da-f]{40}/.test(token)
 
   return (
     <div className="bg-yellow-light text-gray-dark p-3 d-flex flex-items-center lh-default">
-      <div
-        style={{
-          width: 60,
-          height: 60,
-          backgroundImage: `url(${chrome.runtime.getURL('tako.svg')})`,
-          backgroundSize: '90%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundColor: '#fff',
-          borderRadius: '50%',
-          boxShadow: '0 0 0 5px white',
-        }}
-      />
+      <TakoLogo />
       <div className="flex-auto pl-3">
         <div>
           {process.env.DISPLAY_NAME} needs a <b>personal access token</b> to
