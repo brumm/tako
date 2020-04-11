@@ -21,14 +21,14 @@ const RepoFileTree = () => {
       {!pathIsAtRoot && (
         <Row>
           <Cell
-            style={{
+            css={{
               display: 'inline-grid',
               gridTemplateColumns: '18px 18px 1fr',
               alignItems: 'center',
             }}
           >
             <div
-              style={{ gridColumnStart: 3 }}
+              css={{ gridColumnStart: 3 }}
               onClick={() => setPath(parentPath)}
             >
               <span

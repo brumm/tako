@@ -117,7 +117,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           />
 
           <Truncateable
-            style={{
+            css={{
               marginLeft: 5,
               overflow: selectedFilePath && 'visible',
             }}

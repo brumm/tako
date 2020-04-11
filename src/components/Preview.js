@@ -109,7 +109,7 @@ const ImagePreview = ({ path, fileExtension }) => {
     return (
       <FullScreenCenter css={{ position: 'relative', padding: '12px 16px' }}>
         <svg
-          style={{
+          css={{
             position: 'absolute',
             zIndex: 1,
             width: '100%',
@@ -119,7 +119,7 @@ const ImagePreview = ({ path, fileExtension }) => {
           <CheckerPattern color="#F6F8FA" />
         </svg>
         <img
-          style={{
+          css={{
             maxWidth: '100%',
             display: 'block',
             position: 'relative',

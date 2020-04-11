@@ -9,7 +9,7 @@ const Placeholder = ({ text, scale = 0.71, spacing = 0.65 }) => {
     .map(({ length }) => length)
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div css={{ display: 'flex' }}>
       {blocks.map((width, index) => (
         <div
           key={`${index}-${width}`}
