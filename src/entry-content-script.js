@@ -5,9 +5,9 @@ import { createRoot } from 'react-dom'
 import { setState } from '@/storage'
 import { getRepoDetails } from '@/utils'
 import { MOUNT_SELECTOR } from '@/constants'
-
 import Root from '@/components/Root'
 import GlobalErrorBoundary from '@/components/GlobalErrorBoundary'
+import InvalidTokenErrorBoundary from '@/components/InvalidTokenErrorBoundary'
 
 const mountExtension = () => {
   const mount = document.querySelector(MOUNT_SELECTOR)
@@ -25,7 +25,9 @@ const mountExtension = () => {
 
     createRoot(mount).render(
       <GlobalErrorBoundary>
-        <Root />
+        <InvalidTokenErrorBoundary>
+          <Root />
+        </InvalidTokenErrorBoundary>
       </GlobalErrorBoundary>
     )
   })
