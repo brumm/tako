@@ -10,10 +10,11 @@ export const Table = styled.div(({ singleColumn }) => ({
   position: 'relative',
 }))
 
-export const Cell = styled.div({
+export const Cell = styled.div(({ alignRight }) => ({
   whiteSpace: 'nowrap',
   display: 'flex',
   alignItems: 'center',
+  justifyContent: alignRight ? 'flex-end' : 'flex-start',
 
   ':nth-child(1)': {
     paddingLeft: 16,
@@ -27,7 +28,7 @@ export const Cell = styled.div({
     paddingLeft: 4,
     paddingRight: 16,
   },
-})
+}))
 
 export const Row = styled.div(({ highlighted }) => ({
   display: 'contents',

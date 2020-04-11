@@ -147,7 +147,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
                 </Truncateable>
               </Cell>
 
-              <Cell style={{ justifyContent: 'flex-end' }}>
+              <Cell alignRight>
                 <Truncateable>{lastCommitData.date}</Truncateable>
               </Cell>
             </Fragment>
@@ -161,7 +161,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
                 </Truncateable>
               </Cell>
 
-              <Cell style={{ justifyContent: 'flex-end' }}>
+              <Cell alignRight>
                 <Truncateable>
                   <Placeholder text="2 days ago" />
                 </Truncateable>
