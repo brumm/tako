@@ -2,6 +2,8 @@ import produce from 'immer'
 import createStore from 'zustand'
 import { queryCache } from 'react-query'
 
+import { removeToken } from '@/utils'
+
 const [useStore, api] = createStore((set, get) => {
   const setState = fn => set(produce(fn))
 
@@ -19,10 +21,11 @@ const [useStore, api] = createStore((set, get) => {
     token: null,
     expandedNodes: {},
 
-    setPath: path =>
+    setPath: path => {
       setState(state => {
         state.repoDetails.path = path
-      }),
+      })
+    },
 
     setSelectedFilePath: selectedFilePath => {
       setState(state => {
@@ -48,9 +51,7 @@ const [useStore, api] = createStore((set, get) => {
 
 const { setState, getState } = api.getState()
 
-window.clearToken = () => {
-  chrome.storage.sync.remove('token')
-}
+window.removeToken = () => removeToken()
 window.queryCache = queryCache
 window.getState = getState
 

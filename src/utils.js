@@ -40,3 +40,14 @@ export const betterAtob = str =>
 
 export const prefetchQuery = (key, fetchFn) =>
   queryCache.prefetchQuery(key, [{ isPrefetch: true }], fetchFn)
+
+export const removeToken = () =>
+  new Promise((resolve, reject) => {
+    chrome.storage.sync.remove('token', () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError)
+      }
+
+      resolve()
+    })
+  })
