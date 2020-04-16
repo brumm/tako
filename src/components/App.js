@@ -21,7 +21,6 @@ const App = () => {
           gridTemplateColumns: hasSelectedFilePath ? 'auto 1fr' : '1fr',
           gridTemplateAreas: hasSelectedFilePath ? '"tree preview"' : '"tree"',
           minHeight: Math.min(initialTableHeight, window.innerHeight * 0.8),
-          color: '#6a737d',
         }}
       >
         <div css={{ gridArea: 'tree', overflowY: 'auto', maxHeight: '85vh' }}>

@@ -147,7 +147,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
                 </Truncateable>
               </Cell>
 
-              <Cell alignRight>
+              <Cell alignRight style={{ color: '#6a737d' }}>
                 <Truncateable>{lastCommitData.date}</Truncateable>
               </Cell>
             </Fragment>
