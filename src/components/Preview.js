@@ -5,6 +5,10 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useStore } from '@/storage'
 import langMap from 'lang-map'
 import isBinaryPath from 'is-binary-path'
+import unified from 'unified'
+import parse from 'rehype-dom-parse'
+import stringify from 'rehype-dom-stringify'
+import visit from 'unist-util-visit'
 
 import { getFileContent, getMarkdown } from '@/api'
 import { IMAGE_FILE_EXTENSIONS } from '@/constants'
@@ -33,6 +37,44 @@ const MarkdownPreview = ({ path }) => {
     return <LoadingComponent />
   }
 
+  const processor = unified()
+    .use(parse)
+    .use(() => tree =>
+      visit(tree, [{ tagName: 'img' }, { tagName: 'a' }], node => {
+        switch (node.tagName) {
+          case 'img': {
+            if (!node.properties.src.match(/https?:\/\//)) {
+              node.properties.src = `https://raw.githubusercontent.com/${user}/${repo}/master/${node.properties.src}`
+            }
+
+            break
+          }
+
+          case 'a': {
+            // TODO handle these by scrolling the preview container
+            if (node.properties.href.startsWith('#')) {
+              break
+            }
+
+            if (!node.properties.href.match(/https?:\/\//)) {
+              node.properties.href = `https://github.com/${user}/${repo}/blob/master/${node.properties.href}`
+            }
+
+            break
+          }
+
+          // no default
+        }
+
+        return node
+      })
+    )
+    .use(stringify)
+
+  const renderedAndProcessedMarkdown = processor
+    .processSync(renderedMarkdown)
+    .toString()
+
   return (
     <div
       className="markdown-body entry-content"
@@ -40,7 +82,7 @@ const MarkdownPreview = ({ path }) => {
         padding: '12px 16px',
       }}
       dangerouslySetInnerHTML={{
-        __html: renderedMarkdown,
+        __html: renderedAndProcessedMarkdown,
       }}
     />
   )
