@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -15,6 +15,8 @@ import { IMAGE_FILE_EXTENSIONS } from '@/constants'
 import { FullScreenCenter } from '@/components/styled'
 import Loading from '@/components/Loading'
 import CheckerPattern from '@/components/CheckerPattern'
+import { useHideElementWhileMounted } from '@/hooks'
+import PrependPortal from '@/components/PrependPortal'
 
 const LoadingComponent = () => (
   <FullScreenCenter>
@@ -182,20 +184,81 @@ const ImagePreview = ({ path, fileExtension }) => {
 }
 
 const Preview = ({ path }) => {
+  const setSelectedFilePath = useStore(state => state.setSelectedFilePath)
+  const { user, repo, branch } = useStore(state => state.repoDetails)
+
+  useHideElementWhileMounted(
+    document.querySelector('.commit-tease > div:nth-child(3)')
+  )
+
   const fileExtension = path
     .split('.')
     .slice(-1)[0]
     .toLowerCase()
 
+  let preview = <CodePreview path={path} fileExtension={fileExtension} />
+
   if (isBinaryPath(path)) {
-    return <ImagePreview path={path} fileExtension={fileExtension} />
+    preview = <ImagePreview path={path} fileExtension={fileExtension} />
   }
 
   if (fileExtension === 'md') {
-    return <MarkdownPreview path={path} />
+    preview = <MarkdownPreview path={path} />
   }
 
-  return <CodePreview path={path} fileExtension={fileExtension} />
+  return (
+    <Fragment>
+      <PrependPortal targetSelector=".commit-tease > div:nth-child(3)">
+        <div style={{ display: 'flex' }}>
+          <a
+            style={{
+              background: 'none',
+              border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+            className="mr-3 message text-inherit"
+            title="Open"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10.604 1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1zM3.75 2A1.75 1.75 0 002 3.75v8.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 12.25v-3.5a.75.75 0 00-1.5 0v3.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-8.5a.25.25 0 01.25-.25h3.5a.75.75 0 000-1.5h-3.5z"
+              ></path>
+            </svg>
+            <span className="ml-1">Open on Github</span>
+          </a>
+
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+            className="message text-inherit"
+            onClick={() => {
+              setSelectedFilePath(null)
+            }}
+          >
+            <svg height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9.036 7.976a.75.75 0 00-1.06 1.06L10.939 12l-2.963 2.963a.75.75 0 101.06 1.06L12 13.06l2.963 2.964a.75.75 0 001.061-1.06L13.061 12l2.963-2.964a.75.75 0 10-1.06-1.06L12 10.939 9.036 7.976z"></path>
+              <path
+                fillRule="evenodd"
+                d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"
+              />
+            </svg>
+            <span className="ml-1">Close Preview</span>
+          </button>
+        </div>
+      </PrependPortal>
+
+      {preview}
+    </Fragment>
+  )
 }
 
 export default Preview
