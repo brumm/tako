@@ -37,7 +37,7 @@ export const Row = styled.div(({ highlighted }) => ({
   },
 
   [`& + & ${Cell}`]: {
-    borderTop: '1px solid #EAECEF',
+    // borderTop: '1px solid #EAECEF',
   },
 
   [Cell]: highlighted && {

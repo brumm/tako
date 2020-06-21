@@ -189,10 +189,7 @@ const Preview = ({ path }) => {
 
   useHideElementWhileMounted(document.querySelector(TOOLBAR_MOUNT_SELECTOR))
 
-  const fileExtension = path
-    .split('.')
-    .slice(-1)[0]
-    .toLowerCase()
+  const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 
   let preview = <CodePreview path={path} fileExtension={fileExtension} />
 

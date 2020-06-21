@@ -27,6 +27,7 @@ const maybeHijackClick = event => {
     macosCmdKey ||
     event.nativeEvent.ctrlKey ||
     event.nativeEvent.altKey ||
+    // middle click
     event.nativeEvent.which === 2
   ) {
     // stop event from bubbling up, where it would otherwise cause expansion or preview
@@ -54,8 +55,12 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const isFolder = type === 'dir'
   const isLoadingContents = contentStatus === 'loading'
 
-  let TypeIcon = isFolder ? FolderIcon : FileIcon
-  TypeIcon = isLoadingContents && isExpanded ? Spinner : TypeIcon
+  let typeIcon = isFolder ? (
+    <FolderIcon style={{ color: '#79b8ff', position: 'relative', top: 1 }} />
+  ) : (
+    <FileIcon style={{ color: '#6a737d', position: 'relative', top: 1 }} />
+  )
+  typeIcon = isLoadingContents && isExpanded ? <Spinner /> : typeIcon
   const ExpandoIcon = isFolder ? ChevronIcon : 'div'
 
   const [isHovering, hoverProps] = useHover()
@@ -118,20 +123,20 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           style={{
             paddingLeft: INDENT_SIZE * level + 10,
             display: 'grid',
-            gridTemplateColumns: '18px 18px 1fr',
+            gridTemplateColumns: '16px 32px 1fr',
             alignItems: 'center',
           }}
         >
           <ExpandoIcon
             style={{
               color: '#7D94AE',
+              position: 'relative',
+              left: isExpanded ? -4 : -3,
               transform: isExpanded ? 'rotate(180deg)' : 'rotate(90deg)',
             }}
           />
 
-          <TypeIcon
-            style={{ color: '#7D94AE', position: 'relative', top: 1 }}
-          />
+          {typeIcon}
 
           <Truncateable
             css={{
