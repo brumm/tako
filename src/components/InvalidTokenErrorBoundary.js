@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MOUNT_SELECTOR } from '@/constants'
+import { APP_MOUNT_SELECTOR } from '@/constants'
 import PrependPortal from '@/components/PrependPortal'
 import ReEnterOnInvalidToken from '@/components/ReEnterOnInvalidToken'
 
@@ -27,7 +27,7 @@ class InvalidTokenErrorBoundary extends React.Component {
     }
 
     return (
-      <PrependPortal targetSelector={MOUNT_SELECTOR}>
+      <PrependPortal targetSelector={APP_MOUNT_SELECTOR}>
         <ReEnterOnInvalidToken />
       </PrependPortal>
     )

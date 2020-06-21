@@ -11,7 +11,7 @@ import stringify from 'rehype-dom-stringify'
 import visit from 'unist-util-visit'
 
 import { getFileContent, getMarkdown } from '@/api'
-import { IMAGE_FILE_EXTENSIONS } from '@/constants'
+import { IMAGE_FILE_EXTENSIONS, TOOLBAR_MOUNT_SELECTOR } from '@/constants'
 import { FullScreenCenter } from '@/components/styled'
 import Loading from '@/components/Loading'
 import CheckerPattern from '@/components/CheckerPattern'
@@ -187,9 +187,7 @@ const Preview = ({ path }) => {
   const setSelectedFilePath = useStore(state => state.setSelectedFilePath)
   const { user, repo, branch } = useStore(state => state.repoDetails)
 
-  useHideElementWhileMounted(
-    document.querySelector('.commit-tease > div:nth-child(3)')
-  )
+  useHideElementWhileMounted(document.querySelector(TOOLBAR_MOUNT_SELECTOR))
 
   const fileExtension = path
     .split('.')
@@ -208,7 +206,7 @@ const Preview = ({ path }) => {
 
   return (
     <Fragment>
-      <PrependPortal targetSelector=".commit-tease > div:nth-child(3)">
+      <PrependPortal targetSelector={TOOLBAR_MOUNT_SELECTOR}>
         <div style={{ display: 'flex' }}>
           <a
             style={{

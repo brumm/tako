@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
 
 import { useStore } from '@/storage'
-import { MOUNT_SELECTOR, QUERY_CONFIG } from '@/constants'
+import { APP_MOUNT_SELECTOR, QUERY_CONFIG } from '@/constants'
 import { useHideElementWhileMounted } from '@/hooks'
 import RepoFileTree from '@/components/RepoFileTree'
 import Preview from '@/components/Preview'
@@ -11,7 +11,7 @@ const App = () => {
   const selectedFilePath = useStore(state => state.selectedFilePath)
   const initialTableHeight = useStore(state => state.initialTableHeight)
   const hasSelectedFilePath = selectedFilePath !== null
-  useHideElementWhileMounted(document.querySelector(MOUNT_SELECTOR))
+  useHideElementWhileMounted(document.querySelector(APP_MOUNT_SELECTOR))
 
   return (
     <ReactQueryConfigProvider config={QUERY_CONFIG}>

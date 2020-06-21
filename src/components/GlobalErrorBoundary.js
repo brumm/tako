@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-import { MOUNT_SELECTOR } from '@/constants'
+import { APP_MOUNT_SELECTOR } from '@/constants'
 import PrependPortal from '@/components/PrependPortal'
 import ErrorReport from '@/components/ErrorReport'
 
@@ -22,7 +22,7 @@ class GlobalErrorBoundary extends React.Component {
 
     if (error !== null) {
       return (
-        <PrependPortal targetSelector={MOUNT_SELECTOR}>
+        <PrependPortal targetSelector={APP_MOUNT_SELECTOR}>
           <ErrorReport error={error} />
         </PrependPortal>
       )

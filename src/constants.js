@@ -1,4 +1,8 @@
-export const MOUNT_SELECTOR = 'table.files'
+export const APP_MOUNT_SELECTOR =
+  'table.files, .file-navigation + div .Details [role=grid]'
+
+export const TOOLBAR_MOUNT_SELECTOR =
+  '.commit-tease > div:nth-child(3), .file-navigation + div ul.list-style-none.d-flex'
 
 export const QUERY_CONFIG = {
   refetchAllOnWindowFocus: false,
