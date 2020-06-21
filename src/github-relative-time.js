@@ -204,8 +204,6 @@ function isThisYear(date) {
 function makeRelativeFormat(locale, options) {
   if ('Intl' in window && 'RelativeTimeFormat' in window.Intl) {
     try {
-      // eslint-disable-next-line flowtype/no-flow-fix-me-comments
-      // $FlowFixMe: missing RelativeTimeFormat type
       return new Intl.RelativeTimeFormat(locale, options)
     } catch (e) {
       if (!(e instanceof RangeError)) {
