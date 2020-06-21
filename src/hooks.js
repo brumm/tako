@@ -15,18 +15,34 @@ export const useMountedCallback = callback => {
   )
 }
 
-export const useQueryState = queryKey => {
-  const [state, setState] = React.useState({})
-  const queryHash = stableStringify(queryKey)
+export const useOtherQuery = queryKey => {
+  const [, setState] = React.useState({})
+  const query = queryCache.getQuery(queryKey)
 
-  useMountedCallback(() => queryCache.subscribe(() => setState({})), [])
+  React.useEffect(() => {
+    if (query) {
+      query.subscribe({
+        id: Math.random().toString(32).slice(2),
+        onStateUpdate: setState,
+      })
+    }
+  }, [query])
 
-  return React.useMemo(() => {
-    const queryKey = JSON.parse(queryHash)
-    const query = queryCache.getQuery(queryKey)
-    // `state` is only here so eslint shuts up
-    return (query && state && query.state) || {}
-  }, [state, queryHash])
+  if (query) {
+    return {
+      status: query.state.status,
+      error: query.state.error,
+      isFetching: query.state.isFetching,
+      data: query.state.data,
+    }
+  }
+
+  return {
+    status: 'loading',
+    error: null,
+    isFetching: true,
+    data: undefined,
+  }
 }
 
 export const useIdleCallback = (userFn, deps = []) => {

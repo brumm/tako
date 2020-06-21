@@ -6,7 +6,7 @@ import Spinner from 'react-svg-spinner'
 import { INDENT_SIZE } from '@/constants'
 import { useStore } from '@/storage'
 import { prefetchQuery } from '@/utils'
-import { useQueryState, useIdleCallback } from '@/hooks'
+import { useOtherQuery, useIdleCallback } from '@/hooks'
 import {
   getNode,
   getLastCommitForNode,
@@ -40,7 +40,7 @@ const maybeHijackClick = event => {
 
 const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
-  const { status: contentStatus } = useQueryState([
+  const { status: contentStatus } = useOtherQuery([
     'listing',
     { user, repo, branch, path },
   ])
