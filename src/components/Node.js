@@ -63,10 +63,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           }
         )
       } else {
-        const fileExtension = path
-          .split('.')
-          .slice(-1)[0]
-          .toLowerCase()
+        const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 
         if (fileExtension === 'md') {
           prefetchQuery(
@@ -126,7 +123,19 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
               title={name}
               href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
               onClick={event => {
-                if (event.nativeEvent.which !== 2) {
+                // The macOS "command" key
+                const macosCmdKey =
+                  window.navigator.platform.indexOf('Mac') > -1 &&
+                  event.nativeEvent.metaKey
+
+                if (
+                  macosCmdKey ||
+                  event.nativeEvent.ctrlKey ||
+                  // middle click
+                  event.nativeEvent.which === 2
+                ) {
+                  event.stopPropagation()
+                } else {
                   event.preventDefault()
                 }
               }}
