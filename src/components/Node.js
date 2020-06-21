@@ -18,6 +18,26 @@ import Listing from '@/components/Listing'
 import Placeholder from '@/components/Placeholder'
 import { FolderIcon, FileIcon, ChevronIcon } from '@/components/icons'
 
+const maybeHijackClick = event => {
+  // The macOS "command" key
+  const macosCmdKey =
+    window.navigator.platform.indexOf('Mac') > -1 && event.nativeEvent.metaKey
+
+  if (
+    macosCmdKey ||
+    event.nativeEvent.ctrlKey ||
+    event.nativeEvent.altKey ||
+    event.nativeEvent.which === 2
+  ) {
+    // stop event from bubbling up, where it would otherwise cause expansion or preview
+    event.stopPropagation()
+  } else {
+    // this is the default case, where we
+    // prevent browser navigation so we can handle the click further up
+    event.preventDefault()
+  }
+}
+
 const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
   const { status: contentStatus } = useQueryState([
@@ -122,23 +142,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             <a
               title={name}
               href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
-              onClick={event => {
-                // The macOS "command" key
-                const macosCmdKey =
-                  window.navigator.platform.indexOf('Mac') > -1 &&
-                  event.nativeEvent.metaKey
-
-                if (
-                  macosCmdKey ||
-                  event.nativeEvent.ctrlKey ||
-                  // middle click
-                  event.nativeEvent.which === 2
-                ) {
-                  event.stopPropagation()
-                } else {
-                  event.preventDefault()
-                }
-              }}
+              onClick={maybeHijackClick}
             >
               {name}
             </a>
