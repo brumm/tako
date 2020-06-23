@@ -118,7 +118,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           style={{
             paddingLeft: INDENT_SIZE * level + 10,
             display: 'grid',
-            gridTemplateColumns: '18px 18px 1fr',
+            gridTemplateColumns: '26px 26px 1fr',
             alignItems: 'center',
           }}
         >
@@ -129,9 +129,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             }}
           />
 
-          <TypeIcon
-            style={{ color: '#7D94AE', position: 'relative', top: 1 }}
-          />
+          <TypeIcon style={{ position: 'relative', top: 1 }} />
 
           <Truncateable
             css={{
@@ -140,6 +138,9 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             }}
           >
             <a
+              style={{
+                color: '#24292e',
+              }}
               title={name}
               href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
               onClick={maybeHijackClick}

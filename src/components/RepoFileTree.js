@@ -11,10 +11,7 @@ const RepoFileTree = () => {
 
   const hasSelectedFilePath = selectedFilePath !== null
   const pathIsAtRoot = path === ''
-  const parentPath = path
-    .split('/')
-    .slice(0, -1)
-    .join('/')
+  const parentPath = path.split('/').slice(0, -1).join('/')
 
   return (
     <Table singleColumn={hasSelectedFilePath}>
@@ -23,7 +20,7 @@ const RepoFileTree = () => {
           <Cell
             css={{
               display: 'inline-grid',
-              gridTemplateColumns: '18px 18px 1fr',
+              gridTemplateColumns: '22px 22px 1fr',
               alignItems: 'center',
             }}
           >

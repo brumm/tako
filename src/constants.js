@@ -1,4 +1,4 @@
-export const MOUNT_SELECTOR = 'table.files'
+export const MOUNT_SELECTOR = '.Details [role="grid"]'
 
 export const QUERY_CONFIG = {
   refetchAllOnWindowFocus: false,
