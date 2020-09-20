@@ -123,7 +123,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           style={{
             paddingLeft: INDENT_SIZE * level + 10,
             display: 'grid',
-            gridTemplateColumns: '16px 32px 1fr',
+            gridTemplateColumns: '16px 26px 1fr',
             alignItems: 'center',
           }}
         >
@@ -146,6 +146,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           >
             <a
               title={name}
+              className="link-gray-dark"
               href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
               onClick={maybeHijackClick}
             >

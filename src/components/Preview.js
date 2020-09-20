@@ -204,7 +204,7 @@ const Preview = ({ path }) => {
   return (
     <Fragment>
       <PrependPortal targetSelector={TOOLBAR_MOUNT_SELECTOR}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', marginLeft: 16 }}>
           <a
             style={{
               background: 'none',
