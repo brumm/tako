@@ -1,7 +1,7 @@
-export const APP_MOUNT_SELECTOR = '.file-navigation + div .Details [role=grid]'
+export const APP_MOUNT_SELECTOR = '.file-navigation ~ div .Details [role=grid]'
 
 export const TOOLBAR_MOUNT_SELECTOR =
-  '.file-navigation + div ul.list-style-none.d-flex'
+  '.file-navigation ~ div ul.list-style-none.d-flex'
 
 export const QUERY_CONFIG = {
   refetchAllOnWindowFocus: false,
