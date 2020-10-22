@@ -1,6 +1,6 @@
 import '@/import-extension-assets'
 import React from 'react'
-import { createRoot } from 'react-dom'
+import { render } from 'react-dom'
 
 import { setState } from '@/storage'
 import { getRepoDetails } from '@/utils'
@@ -23,12 +23,13 @@ const mountExtension = () => {
       state.initialTableHeight = mount.offsetHeight
     })
 
-    createRoot(mount).render(
+    render(
       <GlobalErrorBoundary>
         <InvalidTokenErrorBoundary>
           <Root />
         </InvalidTokenErrorBoundary>
-      </GlobalErrorBoundary>
+      </GlobalErrorBoundary>,
+      mount
     )
   })
 }

@@ -1,5 +1,6 @@
 import React from 'react'
-import { queryCache, stableStringify } from 'react-query'
+
+import cache from '@/cache'
 
 export const useMountedCallback = callback => {
   const mounted = React.useRef(false)
@@ -16,25 +17,19 @@ export const useMountedCallback = callback => {
 }
 
 export const useOtherQuery = queryKey => {
-  const [, setState] = React.useState({})
-  const query = queryCache.getQuery(queryKey)
+  const [state, setState] = React.useState()
 
   React.useEffect(() => {
-    if (query) {
-      query.subscribe({
-        id: Math.random().toString(32).slice(2),
-        onStateUpdate: setState,
-      })
-    }
-  }, [query])
+    const query = cache.getQuery(queryKey)
 
-  if (query) {
-    return {
-      status: query.state.status,
-      error: query.state.error,
-      isFetching: query.state.isFetching,
-      data: query.state.data,
+    if (query) {
+      setState(query.state)
+      query.subscribe(setState)
     }
+  }, [queryKey])
+
+  if (state) {
+    return state
   }
 
   return {
@@ -43,15 +38,6 @@ export const useOtherQuery = queryKey => {
     isFetching: true,
     data: undefined,
   }
-}
-
-export const useIdleCallback = (userFn, deps = []) => {
-  const userCallback = useMountedCallback(userFn, deps)
-
-  React.useEffect(() => {
-    const handle = window.requestIdleCallback(userCallback)
-    return () => window.cancelIdleCallback(handle)
-  }, [userCallback])
 }
 
 export const useHideElementWhileMounted = element => {

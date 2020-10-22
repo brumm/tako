@@ -1,6 +1,6 @@
 import arraySort from 'array-sort'
-import { queryCache } from 'react-query'
 
+import cache from '@/cache'
 import { SORT_ORDER } from '@/constants'
 
 export const sortContents = contents =>
@@ -37,9 +37,6 @@ export const betterAtob = str =>
       .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
       .join('')
   )
-
-export const prefetchQuery = (key, fetchFn) =>
-  queryCache.prefetchQuery(key, [{ isPrefetch: true }], fetchFn)
 
 export const removeToken = () =>
   new Promise((resolve, reject) => {

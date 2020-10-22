@@ -3,9 +3,9 @@ import useHover from 'react-use-hover'
 import { useQuery } from 'react-query'
 import Spinner from 'react-svg-spinner'
 
+import cache from '@/cache'
 import { INDENT_SIZE } from '@/constants'
 import { useStore } from '@/storage'
-import { prefetchQuery } from '@/utils'
 import { useOtherQuery, useIdleCallback } from '@/hooks'
 import {
   getNode,
@@ -50,58 +50,67 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
   const selectedFilePath = useStore(state => state.selectedFilePath)
   const setSelectedFilePath = useStore(state => state.setSelectedFilePath)
+  const hasNoSelectedFilePath = selectedFilePath === null
 
   const isSelected = path === selectedFilePath
   const isFolder = type === 'dir'
-  const isLoadingContents = contentStatus === 'loading'
+  // const isLoadingContents = contentStatus === 'loading'
+  const isLoadingContents = isExpanded
 
   let typeIcon = isFolder ? (
     <FolderIcon style={{ color: '#79b8ff', position: 'relative', top: 1 }} />
   ) : (
     <FileIcon style={{ color: '#6a737d', position: 'relative', top: 1 }} />
   )
-  typeIcon = isLoadingContents && isExpanded ? <Spinner /> : typeIcon
+  typeIcon =
+    isLoadingContents && isExpanded ? (
+      <div style={{ display: 'flex', alignItems: 'center', width: 16 }}>
+        <Spinner size="100%" />
+      </div>
+    ) : (
+      typeIcon
+    )
   const ExpandoIcon = isFolder ? ChevronIcon : 'div'
 
   const [isHovering, hoverProps] = useHover()
 
   const { data: lastCommitData } = useQuery(
-    selectedFilePath === null && ['last-commit', { user, repo, branch, path }],
-    [{ isPrefetch: true }],
-    getLastCommitForNode
+    ['last-commit', { user, repo, branch, path }],
+    getLastCommitForNode,
+    { enabled: hasNoSelectedFilePath }
   )
 
-  useIdleCallback(() => {
+  React.useEffect(() => {
     if (isHovering) {
       if (isFolder) {
-        prefetchQuery(['listing', { user, repo, branch, path }], getNode).then(
-          items => {
+        cache
+          .prefetchQuery(['listing', { user, repo, branch, path }], getNode)
+          .then(items => {
             items.forEach(({ path }) =>
-              prefetchQuery(
-                selectedFilePath === null && [
-                  'last-commit',
-                  { user, repo, branch, path },
-                ],
-                getLastCommitForNode
+              cache.prefetchQuery(
+                ['last-commit', { user, repo, branch, path }],
+                getLastCommitForNode,
+                { enabled: hasNoSelectedFilePath }
               )
             )
-          }
-        )
+          })
       } else {
         const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 
         if (fileExtension === 'md') {
-          prefetchQuery(
+          cache
+            .prefetchQuery(
+              ['file', { user, repo, branch, path }],
+              getFileContent
+            )
+            .then(text => {
+              cache.prefetchQuery(getMarkdown, { enabled: text })
+            })
+        } else {
+          cache.prefetchQuery(
             ['file', { user, repo, branch, path }],
             getFileContent
-          ).then(text => {
-            prefetchQuery(
-              text && ['markdown', { user, repo, text }],
-              getMarkdown
-            )
-          })
-        } else {
-          prefetchQuery(['file', { user, repo, branch, path }], getFileContent)
+          )
         }
       }
     }

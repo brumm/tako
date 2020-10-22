@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
 
+import cache from '@/cache'
 import { useIdleCallback } from '@/hooks'
 import { useStore } from '@/storage'
 import { getNode } from '@/api'
-import { prefetchQuery } from '@/utils'
 import Node from '@/components/Node'
 
 const Listing = ({ path, parentCommitmessage, level = 0 }) => {
@@ -14,11 +14,14 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
     getNode
   )
 
-  useIdleCallback(() => {
+  React.useEffect(() => {
     if (data) {
       data.forEach(({ path, type }) => {
         if (type === 'dir') {
-          prefetchQuery(['listing', { user, repo, branch, path }], getNode)
+          cache.prefetchQuery(
+            ['listing', { user, repo, branch, path }],
+            getNode
+          )
         }
       })
     }

@@ -4,7 +4,7 @@ import { queryCache } from 'react-query'
 
 import { removeToken } from '@/utils'
 
-const [useStore, api] = createStore((set, get) => {
+const useStore = createStore((set, get) => {
   const setState = fn => set(produce(fn))
 
   return {
@@ -49,7 +49,7 @@ const [useStore, api] = createStore((set, get) => {
   }
 })
 
-const { setState, getState } = api.getState()
+const { setState, getState } = useStore.getState()
 
 window.removeToken = () => removeToken()
 window.queryCache = queryCache

@@ -36,21 +36,11 @@ const githubFetch = (fragment, options = {}) =>
     return response
   })
 
-export const getNode = (
-  type,
-  { user, repo, path, branch },
-  { isPrefetch = false } = {}
-) =>
+export const getNode = (type, { user, repo, path, branch }) =>
   limiter
     .schedule(
-      { priority: isPrefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${encodeURIComponent(
-        path
-      )}?ref=${branch}`,
-      {
-        importance: isPrefetch ? 'low' : 'auto',
-      }
+      `repos/${user}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`
     )
     .then(response => response.json())
     .then(contents => {
@@ -66,32 +56,18 @@ export const getNode = (
       return null
     })
 
-export const getFileContent = (
-  type,
-  { user, repo, path, branch },
-  { isPrefetch = false } = {}
-) =>
+export const getFileContent = (type, { user, repo, path, branch }) =>
   limiter
     .schedule(
-      { priority: isPrefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${encodeURIComponent(
-        path
-      )}?ref=${branch}`,
-      {
-        importance: isPrefetch ? 'low' : 'auto',
-      }
+      `repos/${user}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`
     )
     .then(response => response.json())
     .then(json => betterAtob(json.content))
 
-export const getMarkdown = (
-  type,
-  { user, repo, text },
-  { isPrefetch = false } = {}
-) =>
+export const getMarkdown = (type, { user, repo, text }) =>
   limiter
-    .schedule({ priority: isPrefetch ? 1 : 9 }, githubFetch, 'markdown', {
+    .schedule(githubFetch, 'markdown', {
       method: 'POST',
       body: JSON.stringify({
         text,
@@ -101,21 +77,13 @@ export const getMarkdown = (
     })
     .then(response => response.text())
 
-export const getLastCommitForNode = (
-  type,
-  { user, repo, path, branch },
-  { isPrefetch = false } = {}
-) =>
+export const getLastCommitForNode = (type, { user, repo, path, branch }) =>
   limiter
     .schedule(
-      { priority: isPrefetch ? 1 : 9 },
       githubFetch,
       `repos/${user}/${repo}/commits?page=1&per_page=1&sha=${branch}&path=${encodeURIComponent(
         path
-      )}`,
-      {
-        importance: isPrefetch ? 'low' : 'auto',
-      }
+      )}`
     )
     .then(response => response.json())
     .then(json => {
