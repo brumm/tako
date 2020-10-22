@@ -11,7 +11,12 @@ import stringify from 'rehype-dom-stringify'
 import visit from 'unist-util-visit'
 
 import { getFileContent, getMarkdown } from '@/api'
-import { IMAGE_FILE_EXTENSIONS, TOOLBAR_MOUNT_SELECTOR } from '@/constants'
+import {
+  IMAGE_FILE_EXTENSIONS,
+  TOOLBAR_MOUNT_SELECTOR,
+  REPOSITORY_INFO,
+  FILE_LIST_LAYOUT_CONTAINER,
+} from '@/constants'
 import { FullScreenCenter } from '@/components/styled'
 import Loading from '@/components/Loading'
 import CheckerPattern from '@/components/CheckerPattern'
@@ -188,6 +193,19 @@ const Preview = ({ path }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
 
   useHideElementWhileMounted(document.querySelector(TOOLBAR_MOUNT_SELECTOR))
+  useHideElementWhileMounted(document.querySelector(REPOSITORY_INFO))
+  const element = document.querySelector(FILE_LIST_LAYOUT_CONTAINER)
+  React.useEffect(() => {
+    if (element) {
+      element.classList.remove('col-md-9')
+    }
+
+    return () => {
+      if (element) {
+        element.classList.add('col-md-9')
+      }
+    }
+  }, [element])
 
   const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 

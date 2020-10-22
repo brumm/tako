@@ -56,16 +56,20 @@ export const useIdleCallback = (userFn, deps = []) => {
 
 export const useHideElementWhileMounted = element => {
   React.useEffect(() => {
-    element.setAttribute('hidden', '')
-    document.querySelector(
-      '.Box-header.Box-header--blue.position-relative'
-    ).style.marginBottom = 0
-
-    return () => {
-      element.removeAttribute('hidden')
+    if (element) {
+      element.setAttribute('hidden', '')
       document.querySelector(
         '.Box-header.Box-header--blue.position-relative'
-      ).style.marginBottom = -1
+      ).style.marginBottom = 0
+    }
+
+    return () => {
+      if (element) {
+        element.removeAttribute('hidden')
+        document.querySelector(
+          '.Box-header.Box-header--blue.position-relative'
+        ).style.marginBottom = -1
+      }
     }
   }, [element])
 }
