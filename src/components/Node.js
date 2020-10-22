@@ -54,8 +54,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
 
   const isSelected = path === selectedFilePath
   const isFolder = type === 'dir'
-  // const isLoadingContents = contentStatus === 'loading'
-  const isLoadingContents = isExpanded
+  const isLoadingContents = contentStatus === 'loading'
 
   let typeIcon = isFolder ? (
     <FolderIcon style={{ color: '#79b8ff', position: 'relative', top: 1 }} />
@@ -63,13 +62,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     <FileIcon style={{ color: '#6a737d', position: 'relative', top: 1 }} />
   )
   typeIcon =
-    isLoadingContents && isExpanded ? (
-      <div style={{ display: 'flex', alignItems: 'center', width: 16 }}>
-        <Spinner size="100%" />
-      </div>
-    ) : (
-      typeIcon
-    )
+    isLoadingContents && isExpanded ? <Spinner size="16px" /> : typeIcon
   const ExpandoIcon = isFolder ? ChevronIcon : 'div'
 
   const [isHovering, hoverProps] = useHover()
