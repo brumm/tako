@@ -97,7 +97,11 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
               getFileContent
             )
             .then(text => {
-              cache.prefetchQuery(getMarkdown, { enabled: text })
+              cache.prefetchQuery(
+                ['markdown', { user, repo, text }],
+                getMarkdown,
+                { enabled: text }
+              )
             })
         } else {
           cache.prefetchQuery(
