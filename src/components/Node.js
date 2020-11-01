@@ -13,6 +13,7 @@ import {
   getFileContent,
   getMarkdown,
 } from '@/api'
+import { markAsPrefetch } from '@/utils'
 import { Row, Cell, Truncateable } from '@/components/styled'
 import Listing from '@/components/Listing'
 import Placeholder from '@/components/Placeholder'
@@ -77,12 +78,15 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     if (isHovering) {
       if (isFolder) {
         cache
-          .prefetchQuery(['listing', { user, repo, branch, path }], getNode)
+          .prefetchQuery(
+            ['listing', { user, repo, branch, path }],
+            markAsPrefetch(getNode)
+          )
           .then(items => {
             items.forEach(({ path }) =>
               cache.prefetchQuery(
                 ['last-commit', { user, repo, branch, path }],
-                getLastCommitForNode,
+                markAsPrefetch(getLastCommitForNode),
                 { enabled: hasNoSelectedFilePath }
               )
             )
@@ -94,7 +98,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
           cache
             .prefetchQuery(
               ['file', { user, repo, branch, path }],
-              getFileContent
+              markAsPrefetch(getFileContent)
             )
             .then(text => {
               cache.prefetchQuery(
@@ -106,7 +110,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
         } else {
           cache.prefetchQuery(
             ['file', { user, repo, branch, path }],
-            getFileContent
+            markAsPrefetch(getFileContent)
           )
         }
       }

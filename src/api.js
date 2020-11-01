@@ -36,11 +36,15 @@ const githubFetch = (fragment, options = {}) =>
     return response
   })
 
-export const getNode = (type, { user, repo, path, branch }) =>
+export const getNode = (type, { user, repo, path, branch }, prefetch = false) =>
   limiter
     .schedule(
+      { priority: prefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`
+      `repos/${user}/${repo}/contents/${encodeURIComponent(
+        path
+      )}?ref=${branch}`,
+      { importance: prefetch ? 'low' : 'auto' }
     )
     .then(response => response.json())
     .then(contents => {
@@ -56,11 +60,19 @@ export const getNode = (type, { user, repo, path, branch }) =>
       return null
     })
 
-export const getFileContent = (type, { user, repo, path, branch }) =>
+export const getFileContent = (
+  type,
+  { user, repo, path, branch },
+  prefetch = false
+) =>
   limiter
     .schedule(
+      { priority: prefetch ? 1 : 9 },
       githubFetch,
-      `repos/${user}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`
+      `repos/${user}/${repo}/contents/${encodeURIComponent(
+        path
+      )}?ref=${branch}`,
+      { importance: prefetch ? 'low' : 'auto' }
     )
     .then(response => response.json())
     .then(json => betterAtob(json.content))
@@ -77,13 +89,19 @@ export const getMarkdown = (type, { user, repo, text }) =>
     })
     .then(response => response.text())
 
-export const getLastCommitForNode = (type, { user, repo, path, branch }) =>
+export const getLastCommitForNode = (
+  type,
+  { user, repo, path, branch },
+  prefetch = false
+) =>
   limiter
     .schedule(
+      { priority: prefetch ? 1 : 9 },
       githubFetch,
       `repos/${user}/${repo}/commits?page=1&per_page=1&sha=${branch}&path=${encodeURIComponent(
         path
-      )}`
+      )}`,
+      { importance: prefetch ? 'low' : 'auto' }
     )
     .then(response => response.json())
     .then(json => {

@@ -5,13 +5,14 @@ import cache from '@/cache'
 import { useIdleCallback } from '@/hooks'
 import { useStore } from '@/storage'
 import { getNode } from '@/api'
+import { markAsPrefetch } from '@/utils'
 import Node from '@/components/Node'
 
 const Listing = ({ path, parentCommitmessage, level = 0 }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
   const { status, data, error } = useQuery(
     ['listing', { user, repo, branch, path }],
-    getNode
+    markAsPrefetch(getNode)
   )
 
   React.useEffect(() => {
@@ -20,7 +21,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
         if (type === 'dir') {
           cache.prefetchQuery(
             ['listing', { user, repo, branch, path }],
-            getNode
+            (...args) => getNode(...args, true)
           )
         }
       })

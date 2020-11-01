@@ -48,3 +48,5 @@ export const removeToken = () =>
       resolve()
     })
   })
+
+export const markAsPrefetch = fn => (...args) => fn(...args, true)
