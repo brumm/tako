@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { prism, darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useStore } from '@/storage'
 import langMap from 'lang-map'
 import isBinaryPath from 'is-binary-path'
@@ -95,7 +95,32 @@ const MarkdownPreview = ({ path }) => {
   )
 }
 
+const getSyntaxTheme = () => {
+  switch (document.querySelector('[data-color-mode]')?.dataset.colorMode) {
+    case 'dark': {
+      return darcula
+      break
+    }
+
+    case 'auto': {
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        return darcula
+        break
+      }
+    }
+
+    case 'light':
+    default: {
+      return prism
+    }
+  }
+}
+
 const CodePreview = ({ path, fileExtension }) => {
+  const [syntaxTheme, setSyntaxTheme] = React.useState(getSyntaxTheme)
   const [overrideLanguage, setOverrideLanguage] = React.useState()
   const [language] = langMap.languages(fileExtension)
   const { user, repo, branch } = useStore(state => state.repoDetails)
@@ -103,6 +128,21 @@ const CodePreview = ({ path, fileExtension }) => {
     ['file', { user, repo, branch, path }],
     getFileContent
   )
+
+  React.useEffect(() => {
+    const foo = () => {
+      setSyntaxTheme(getSyntaxTheme)
+    }
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', foo)
+
+    return () =>
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .removeEventListener('change', foo)
+  }, [])
 
   React.useEffect(() => {
     setOverrideLanguage()
@@ -115,7 +155,7 @@ const CodePreview = ({ path, fileExtension }) => {
   return (
     <SyntaxHighlighter
       language={overrideLanguage || language}
-      style={prism}
+      style={syntaxTheme}
       customStyle={{
         display: 'flex',
         margin: 0,
