@@ -6,6 +6,8 @@
 
 Tako is an inline, expandable file tree with file preview for github.
 
+**Supports new Github dark mode!** 🎉
+
 - [Get it on the Chrome Webstore!](https://chrome.google.com/webstore/detail/tako-%E2%80%94-github-file-tree/fdmdpnmffpjdkjaapcbdnkhnidhgoabe)
 - [Get it on Firefox Add-ons!](https://addons.mozilla.org/en-US/firefox/addon/tako-github-file-tree/)
 
