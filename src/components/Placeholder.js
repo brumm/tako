@@ -17,7 +17,7 @@ const Placeholder = ({ text, scale = 0.71, spacing = 0.65 }) => {
             flexShrink: 0,
             width: `calc(1ch * ${width} * ${scale})`,
             height: '1.5ch',
-            backgroundColor: '#EAECEF',
+            backgroundColor: 'var(--color-text-tertiary)',
             borderRadius: 1,
             marginRight: `${spacing}ch`,
           }}

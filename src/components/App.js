@@ -32,10 +32,9 @@ const App = () => {
           <div
             css={{
               gridArea: 'preview',
-              borderLeft: '1px solid #EAECEF',
+              borderLeft: '1px solid var(--color-border-primary)',
               overflowY: 'auto',
               maxHeight: '85vh',
-              backgroundColor: '#fff',
             }}
           >
             <Preview path={selectedFilePath} />

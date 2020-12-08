@@ -58,9 +58,21 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const isLoadingContents = contentStatus === 'loading'
 
   let typeIcon = isFolder ? (
-    <FolderIcon style={{ color: '#79b8ff', position: 'relative', top: 1 }} />
+    <FolderIcon
+      style={{
+        color: 'var(--color-files-explorer-icon)',
+        position: 'relative',
+        top: 1,
+      }}
+    />
   ) : (
-    <FileIcon style={{ color: '#6a737d', position: 'relative', top: 1 }} />
+    <FileIcon
+      style={{
+        color: 'var(--color-text-tertiary)',
+        position: 'relative',
+        top: 1,
+      }}
+    />
   )
   typeIcon =
     isLoadingContents && isExpanded ? <Spinner size="16px" /> : typeIcon
@@ -139,7 +151,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
         >
           <ExpandoIcon
             style={{
-              color: '#7D94AE',
+              color: 'var(--color-files-explorer-icon)',
               position: 'relative',
               left: isExpanded ? -4 : -3,
               transform: isExpanded ? 'rotate(180deg)' : 'rotate(90deg)',
@@ -176,7 +188,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
                 </Truncateable>
               </Cell>
 
-              <Cell alignRight style={{ color: '#6a737d' }}>
+              <Cell alignRight style={{ color: 'var(--color-text-tertiary)' }}>
                 <Truncateable>{lastCommitData.date}</Truncateable>
               </Cell>
             </Fragment>

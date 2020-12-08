@@ -33,15 +33,15 @@ export const Cell = styled.div(({ alignRight }) => ({
 export const Row = styled.div(({ highlighted }) => ({
   display: 'contents',
   [`&:hover ${Cell}`]: {
-    backgroundColor: '#F6F8FA',
+    backgroundColor: 'var(--color-bg-tertiary)',
   },
 
   [`& + & ${Cell}`]: {
-    borderTop: '1px solid #e2e4e8',
+    borderTop: '1px solid var(--color-border-secondary)',
   },
 
   [Cell]: highlighted && {
-    backgroundColor: '#F1F8FF !important',
+    backgroundColor: 'var(--color-bg-tertiary) !important',
   },
 }))
 
