@@ -162,11 +162,13 @@ const CodePreview = ({ path, fileExtension }) => {
         padding: '12px 16px',
         textShadow: 'none',
         background: 'none',
+        fontSize: null,
+        fontFamily: null,
       }}
       codeTagProps={{
         style: {
-          fontFamily: 'inherit',
-          fontSize: 'unset',
+          fontSize: null,
+          fontFamily: null,
           paddingRight: 16,
         },
       }}
@@ -180,7 +182,8 @@ const CodePreview = ({ path, fileExtension }) => {
       }}
       lineNumberProps={{
         style: {
-          fontFamily: 'monospace',
+          fontSize: null,
+          fontFamily: null,
           color: 'rgba(27, 31, 35, 0.3)',
         },
       }}
