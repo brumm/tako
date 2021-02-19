@@ -6,7 +6,7 @@ import Spinner from 'react-svg-spinner'
 import cache from '@/cache'
 import { INDENT_SIZE } from '@/constants'
 import { useStore } from '@/storage'
-import { useOtherQuery, useIdleCallback } from '@/hooks'
+import { useOtherQuery } from '@/hooks'
 import {
   getNode,
   getLastCommitForNode,
@@ -75,7 +75,12 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     />
   )
   typeIcon =
-    isLoadingContents && isExpanded ? <Spinner size="16px" /> : typeIcon
+    isLoadingContents && isExpanded ? (
+      <Spinner size="16px" color="var(--color-files-explorer-icon)" />
+    ) : (
+      typeIcon
+    )
+
   const ExpandoIcon = isFolder ? ChevronIcon : 'div'
 
   const [isHovering, hoverProps] = useHover()
