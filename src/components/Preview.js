@@ -238,6 +238,7 @@ const Preview = ({ path }) => {
   useHideElementWhileMounted(document.querySelector(TOOLBAR_MOUNT_SELECTOR))
   useHideElementWhileMounted(document.querySelector(REPOSITORY_INFO))
   const element = document.querySelector(FILE_LIST_LAYOUT_CONTAINER)
+
   React.useEffect(() => {
     if (element) {
       element.classList.remove('col-md-9')
