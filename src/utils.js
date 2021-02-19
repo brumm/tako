@@ -1,6 +1,5 @@
 import arraySort from 'array-sort'
 
-import cache from '@/cache'
 import { SORT_ORDER } from '@/constants'
 
 export const sortContents = contents =>
@@ -17,7 +16,7 @@ export const getRepoDetails = () => {
     .replace('.atom', '')
     .replace(/\?token=.*/, '')
     .match(
-      /([a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38})\/([a-z0-9]+(?:[._-][a-z0-9]+)*)\/commits\/(.*)/i
+      /([a-z\d](?:[a-z\d]|-(?=[a-z\d])?){0,38})\/([a-z0-9]+(?:[._-][a-z0-9]+)*)\/commits\/(.*)/i
     )
 
   const [, path] = window.location.href
