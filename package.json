@@ -1,7 +1,7 @@
 {
   "name": "tako",
   "displayName": "Tako",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Tako replaces the default Github repository file list with an expandable file tree for rapid exploration of repositories.",
   "main": "index.js",
   "engines": {
