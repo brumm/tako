@@ -12,7 +12,7 @@
     "build:chrome": "webpack --mode=production --env.browser=chrome",
     "build:firefox": "webpack --mode=production --env.browser=firefox",
     "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
-    "start": "webpack --watch --mode=development",
+    "start": "webpack --watch --mode=development --env.browser=chrome",
     "lint": "eslint ./src/**/*.js"
   },
   "prettier": {

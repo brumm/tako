@@ -20,7 +20,7 @@ module.exports = ({ browser } = {}, { mode }) => {
     description: pkg.description,
   }
 
-  if (isProduction && isChrome) {
+  if (isChrome) {
     delete manifest.applications
   }
 
