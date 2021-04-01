@@ -11,12 +11,10 @@ export const sortContents = contents =>
 
 export const getRepoDetails = () => {
   const [, user, repo, branch] = document
-    .querySelector('link[type="application/atom+xml"]')
+    .querySelector('[data-open-app="link"]')
     ?.href.replace('https://github.com/', '')
-    .replace('.atom', '')
-    .replace(/\?token=.*/, '')
     .match(
-      /([a-z\d](?:[a-z\d]|-(?=[a-z\d])?){0,38})\/([a-z0-9]+(?:[._-][a-z0-9]+)*)\/commits\/(.*)/i
+      /^([a-z\d](?:[a-z\d]|-(?=[a-z\d])?){0,38})\/([a-z0-9]+(?:[._-][a-z0-9]+)*)\/archive\/refs\/heads\/(.*)\.zip$/i
     )
 
   const [, path] = window.location.href
