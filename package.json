@@ -8,7 +8,7 @@
     "node": ">=12.14.1"
   },
   "scripts": {
-    "build": "npm run build:chrome && npm run build:firefox",
+    "build": "npm run build:firefox && npm run build:chrome",
     "build:chrome": "webpack --mode=production --env.browser=chrome",
     "build:firefox": "webpack --mode=production --env.browser=firefox",
     "postinstall": "npm run build > /dev/null && find ./unpacked-extension -type f -not -name 'manifest.json' -delete",
