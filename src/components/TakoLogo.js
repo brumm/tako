@@ -5,6 +5,7 @@ const TakoLogo = () => (
     css={{
       width: 60,
       height: 60,
+      flexShrink: 0,
       backgroundImage: `url(${chrome.runtime.getURL('tako.svg')})`,
       backgroundSize: '90%',
       backgroundRepeat: 'no-repeat',
