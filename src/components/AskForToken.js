@@ -4,11 +4,12 @@ import TakoLogo from '@/components/TakoLogo'
 
 const AskForToken = () => {
   const [token, setToken] = React.useState('')
-  const validToken = /[\da-f]{40}/.test(token)
+  const validToken = /\w{40}/.test(token)
 
   return (
     <div className="bg-yellow-light text-gray-dark p-3 d-flex flex-items-center lh-default">
       <TakoLogo />
+
       <div className="flex-auto pl-3">
         <div>
           {process.env.DISPLAY_NAME} needs a <b>personal access token</b> to
@@ -33,7 +34,6 @@ const AskForToken = () => {
       >
         <input
           css={{
-            width: '41ch',
             textAlign: 'left',
           }}
           value={token}
