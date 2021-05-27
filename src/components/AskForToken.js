@@ -4,7 +4,6 @@ import TakoLogo from '@/components/TakoLogo'
 
 const AskForToken = () => {
   const [token, setToken] = React.useState('')
-  const validToken = /\w{40}/.test(token)
 
   return (
     <div className="bg-yellow-light text-gray-dark p-3 d-flex flex-items-center lh-default">
@@ -27,9 +26,7 @@ const AskForToken = () => {
       <form
         onSubmit={event => {
           event.preventDefault()
-          if (validToken) {
-            chrome.storage.sync.set({ token: token || null })
-          }
+          chrome.storage.sync.set({ token: token || null })
         }}
       >
         <input
@@ -41,15 +38,11 @@ const AskForToken = () => {
           spellCheck="false"
           autoComplete="off"
           size="40"
-          maxLength="40"
-          pattern="[\da-f]{40}"
           type="password"
           placeholder="Personal Access Token"
           onChange={({ target: { value } }) => setToken(value)}
         />
-        <button className="ml-2 btn btn-sm btn-primary" disabled={!validToken}>
-          Save
-        </button>
+        <button className="ml-2 btn btn-sm btn-primary">Save</button>
       </form>
     </div>
   )
