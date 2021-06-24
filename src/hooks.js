@@ -44,17 +44,11 @@ export const useHideElementWhileMounted = element => {
   React.useEffect(() => {
     if (element) {
       element.setAttribute('hidden', '')
-      document.querySelector(
-        '.Box-header.Box-header--blue.position-relative'
-      ).style.marginBottom = 0
     }
 
     return () => {
       if (element) {
         element.removeAttribute('hidden')
-        document.querySelector(
-          '.Box-header.Box-header--blue.position-relative'
-        ).style.marginBottom = -1
       }
     }
   }, [element])

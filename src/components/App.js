@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactQueryCacheProvider } from 'react-query'
 
 import { useStore } from '@/storage'
-import { APP_MOUNT_SELECTOR, QUERY_CONFIG } from '@/constants'
+import { APP_MOUNT_SELECTOR } from '@/constants'
 import { useHideElementWhileMounted } from '@/hooks'
 import RepoFileTree from '@/components/RepoFileTree'
 import Preview from '@/components/Preview'
@@ -12,7 +12,11 @@ const App = () => {
   const selectedFilePath = useStore(state => state.selectedFilePath)
   const initialTableHeight = useStore(state => state.initialTableHeight)
   const hasSelectedFilePath = selectedFilePath !== null
-  useHideElementWhileMounted(document.querySelector(APP_MOUNT_SELECTOR))
+  const element = React.useMemo(
+    () => document.querySelector(APP_MOUNT_SELECTOR),
+    []
+  )
+  useHideElementWhileMounted(element)
 
   return (
     <ReactQueryCacheProvider queryCache={cache}>
