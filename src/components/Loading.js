@@ -11,7 +11,7 @@ const DelayLoadingSpinner = ({ wait = 1000, children }) => {
 
 const Loading = () => (
   <DelayLoadingSpinner>
-    <Spinner size="40px" />
+    <Spinner size="40px" color="var(--color-files-explorer-icon)" />
   </DelayLoadingSpinner>
 )
 
