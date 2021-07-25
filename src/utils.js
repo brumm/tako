@@ -27,13 +27,18 @@ export const getRepoDetails = () => {
   return { user, repo, branch, path }
 }
 
-export const betterAtob = str =>
-  decodeURIComponent(
-    atob(str)
-      .split('')
-      .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join('')
-  )
+export const betterAtob = str => {
+  try {
+    return decodeURIComponent(
+      atob(str)
+        .split('')
+        .map(c => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join('')
+    )
+  } catch {
+    return null
+  }
+}
 
 export const removeToken = () =>
   new Promise((resolve, reject) => {
