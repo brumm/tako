@@ -28,7 +28,14 @@ const App = () => {
           minHeight: Math.min(initialTableHeight, window.innerHeight * 0.8),
         }}
       >
-        <div css={{ gridArea: 'tree', overflowY: 'auto', maxHeight: '85vh' }}>
+        <div
+          css={{
+            gridArea: 'tree',
+            overflowY: 'auto',
+            overflowBehavior: 'contain',
+            maxHeight: '85vh',
+          }}
+        >
           <RepoFileTree />
         </div>
 
@@ -43,6 +50,7 @@ const App = () => {
               gridArea: 'preview',
               borderLeft: '1px solid var(--color-border-primary)',
               overflowY: 'auto',
+              overflowBehavior: 'contain',
               maxHeight: '85vh',
             }}
           >
