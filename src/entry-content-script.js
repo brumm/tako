@@ -9,45 +9,36 @@ import Root from '@/components/Root'
 import GlobalErrorBoundary from '@/components/GlobalErrorBoundary'
 import InvalidTokenErrorBoundary from '@/components/InvalidTokenErrorBoundary'
 
-let retries = 0
-
-const mountExtension = () => {
-  console.log({ retries })
-
-  const mount = document.querySelector(APP_MOUNT_SELECTOR)
-  if (!mount) {
-    if (retries < 10) {
-      retries += 1
-      setTimeout(mountExtension, 500)
+const mountExtension = () =>
+  setTimeout(() => {
+    const mount = document.querySelector(APP_MOUNT_SELECTOR)
+    if (!mount) {
       return
     }
 
-    return
-  }
+    const previousAppContainer = document.querySelector(APP_CONTAINER_SELECTOR)
+    if (previousAppContainer) {
+      console.log('removing!')
+      previousAppContainer.remove()
+    }
 
-  const previousAppContainer = document.querySelector(APP_CONTAINER_SELECTOR)
-  if (previousAppContainer) {
-    previousAppContainer.remove()
-  }
+    chrome.storage.sync.get('token', ({ token = null }) => {
+      setState(state => {
+        state.token = token
+        state.repoDetails = getRepoDetails()
+        state.initialTableHeight = mount.offsetHeight
+      })
 
-  chrome.storage.sync.get('token', ({ token = null }) => {
-    setState(state => {
-      state.token = token
-      state.repoDetails = getRepoDetails()
-      state.initialTableHeight = mount.offsetHeight
+      render(
+        <GlobalErrorBoundary>
+          <InvalidTokenErrorBoundary>
+            <Root />
+          </InvalidTokenErrorBoundary>
+        </GlobalErrorBoundary>,
+        mount
+      )
     })
-
-    render(
-      <GlobalErrorBoundary>
-        <InvalidTokenErrorBoundary>
-          <Root />
-        </InvalidTokenErrorBoundary>
-      </GlobalErrorBoundary>,
-      mount
-    )
-  })
-}
+  }, 500)
 
 mountExtension()
-
 document.addEventListener('pjax:end', mountExtension)
