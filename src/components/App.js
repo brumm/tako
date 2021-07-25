@@ -34,6 +34,11 @@ const App = () => {
 
         {hasSelectedFilePath && (
           <div
+            ref={element => {
+              if (element) {
+                element.scrollTop = 0
+              }
+            }}
             css={{
               gridArea: 'preview',
               borderLeft: '1px solid var(--color-border-primary)',
