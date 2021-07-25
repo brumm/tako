@@ -42,20 +42,6 @@ const maybeHijackClick = event => {
 
 const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
-  const childListingObserver = React.useMemo(
-    () =>
-      new QueryObserver(queryClient, {
-        queryKey: ['listing', { user, repo, branch, path }],
-      }),
-    [branch, path, repo, user]
-  )
-  const isLoadingContents = useObserver(
-    childListingObserver,
-    ({ isLoading }) => isLoading
-  )
-
-  // const isLoadingContents = false
-
   const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
   const selectedFilePath = useStore(state => state.selectedFilePath)
@@ -64,6 +50,21 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
 
   const isSelected = path === selectedFilePath
   const isFolder = type === 'dir'
+
+  const childListingObserver = React.useMemo(
+    () =>
+      new QueryObserver(queryClient, {
+        queryKey: ['listing', { user, repo, branch, path }],
+      }),
+    [branch, path, repo, user]
+  )
+
+  const isLoadingContents = useObserver(
+    childListingObserver,
+    ({ isLoading }) => isLoading
+  )
+
+  console.log({ isLoadingContents })
 
   let typeIcon = isFolder ? (
     <FolderIcon

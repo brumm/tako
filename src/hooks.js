@@ -37,7 +37,6 @@ export const useObserver = (observer, selectorFn, dependencies = []) => {
   )
 
   React.useEffect(() => {
-    console.log('useobserver useeffect')
     set(memoizedSelectorFn(observer.currentResult))
 
     return observer.subscribe(query => {
