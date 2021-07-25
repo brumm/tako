@@ -1,12 +1,13 @@
 import React from 'react'
-import { ReactQueryCacheProvider } from 'react-query'
+import { QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { useStore } from '@/storage'
 import { APP_MOUNT_SELECTOR } from '@/constants'
 import { useHideElementWhileMounted } from '@/hooks'
 import RepoFileTree from '@/components/RepoFileTree'
 import Preview from '@/components/Preview'
-import cache from '@/cache'
+import queryClient from '@/queryClient'
 
 const App = () => {
   const selectedFilePath = useStore(state => state.selectedFilePath)
@@ -19,7 +20,7 @@ const App = () => {
   useHideElementWhileMounted(element)
 
   return (
-    <ReactQueryCacheProvider queryCache={cache}>
+    <QueryClientProvider client={queryClient}>
       <div
         css={{
           display: 'grid',
@@ -58,7 +59,9 @@ const App = () => {
           </div>
         )}
       </div>
-    </ReactQueryCacheProvider>
+
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 

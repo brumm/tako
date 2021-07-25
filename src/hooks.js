@@ -1,7 +1,5 @@
 import React from 'react'
 
-import cache from '@/cache'
-
 export const useMountedCallback = callback => {
   const mounted = React.useRef(false)
 
@@ -16,30 +14,6 @@ export const useMountedCallback = callback => {
   )
 }
 
-export const useOtherQuery = queryKey => {
-  const [state, setState] = React.useState()
-
-  React.useEffect(() => {
-    const query = cache.getQuery(queryKey)
-
-    if (query) {
-      setState(query.state)
-      query.subscribe(setState)
-    }
-  }, [queryKey])
-
-  if (state) {
-    return state
-  }
-
-  return {
-    status: 'loading',
-    error: null,
-    isFetching: true,
-    data: undefined,
-  }
-}
-
 export const useHideElementWhileMounted = element => {
   React.useEffect(() => {
     if (element) {
@@ -52,4 +26,24 @@ export const useHideElementWhileMounted = element => {
       }
     }
   }, [element])
+}
+
+export const useObserver = (observer, selectorFn, dependencies = []) => {
+  // eslint-disable-next-line
+  const memoizedSelectorFn = React.useCallback(selectorFn, dependencies)
+
+  const [state, set] = React.useState(() =>
+    memoizedSelectorFn(observer.currentResult)
+  )
+
+  React.useEffect(() => {
+    console.log('useobserver useeffect')
+    set(memoizedSelectorFn(observer.currentResult))
+
+    return observer.subscribe(query => {
+      set(memoizedSelectorFn(query))
+    })
+  }, [observer, memoizedSelectorFn])
+
+  return state
 }

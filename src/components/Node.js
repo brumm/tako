@@ -1,18 +1,18 @@
 import React, { Fragment } from 'react'
 import useHover from 'react-use-hover'
-import { useQuery } from 'react-query'
+import { QueryObserver, useQuery } from 'react-query'
 import Spinner from 'react-svg-spinner'
 
-import cache from '@/cache'
+import queryClient from '@/queryClient'
 import { INDENT_SIZE } from '@/constants'
 import { useStore } from '@/storage'
-import { useOtherQuery } from '@/hooks'
 import {
   getNode,
   getLastCommitForNode,
   getFileContent,
   getMarkdown,
 } from '@/api'
+import { useObserver } from '@/hooks'
 import { markAsPrefetch } from '@/utils'
 import { Row, Cell, Truncateable } from '@/components/styled'
 import Listing from '@/components/Listing'
@@ -42,10 +42,19 @@ const maybeHijackClick = event => {
 
 const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
-  const { status: contentStatus } = useOtherQuery([
-    'listing',
-    { user, repo, branch, path },
-  ])
+  const childListingObserver = React.useMemo(
+    () =>
+      new QueryObserver(queryClient, {
+        queryKey: ['listing', { user, repo, branch, path }],
+      }),
+    [branch, path, repo, user]
+  )
+  const isLoadingContents = useObserver(
+    childListingObserver,
+    ({ isLoading }) => isLoading
+  )
+
+  // const isLoadingContents = false
 
   const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
@@ -55,7 +64,6 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
 
   const isSelected = path === selectedFilePath
   const isFolder = type === 'dir'
-  const isLoadingContents = contentStatus === 'loading'
 
   let typeIcon = isFolder ? (
     <FolderIcon
@@ -94,14 +102,14 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   React.useEffect(() => {
     if (isHovering) {
       if (isFolder) {
-        cache
+        queryClient
           .prefetchQuery(
             ['listing', { user, repo, branch, path }],
             markAsPrefetch(getNode)
           )
-          .then(items => {
+          .then((items = []) => {
             items.forEach(({ path }) =>
-              cache.prefetchQuery(
+              queryClient.prefetchQuery(
                 ['last-commit', { user, repo, branch, path }],
                 markAsPrefetch(getLastCommitForNode),
                 { enabled: hasNoSelectedFilePath }
@@ -112,20 +120,20 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
         const fileExtension = path.split('.').slice(-1)[0].toLowerCase()
 
         if (fileExtension === 'md') {
-          cache
+          queryClient
             .prefetchQuery(
               ['file', { user, repo, branch, path }],
               markAsPrefetch(getFileContent)
             )
             .then(text => {
-              cache.prefetchQuery(
+              queryClient.prefetchQuery(
                 ['markdown', { user, repo, text }],
                 getMarkdown,
                 { enabled: text }
               )
             })
         } else {
-          cache.prefetchQuery(
+          queryClient.prefetchQuery(
             ['file', { user, repo, branch, path }],
             markAsPrefetch(getFileContent)
           )

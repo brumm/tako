@@ -36,7 +36,10 @@ const githubFetch = (fragment, options = {}) =>
     return response
   })
 
-export const getNode = (type, { user, repo, path, branch }, prefetch = false) =>
+export const getNode = (
+  { queryKey: [_type, { user, repo, path, branch }] },
+  prefetch = false
+) =>
   limiter
     .schedule(
       { priority: prefetch ? 1 : 9 },
@@ -61,8 +64,7 @@ export const getNode = (type, { user, repo, path, branch }, prefetch = false) =>
     })
 
 export const getFileContent = (
-  type,
-  { user, repo, path, branch },
+  { queryKey: [_type, { user, repo, path, branch }] },
   prefetch = false
 ) =>
   limiter
@@ -77,7 +79,7 @@ export const getFileContent = (
     .then(response => response.json())
     .then(json => betterAtob(json.content))
 
-export const getMarkdown = (type, { user, repo, text }) =>
+export const getMarkdown = ({ queryKey: [_type, { user, repo, text }] }) =>
   limiter
     .schedule(githubFetch, 'markdown', {
       method: 'POST',
@@ -90,8 +92,7 @@ export const getMarkdown = (type, { user, repo, text }) =>
     .then(response => response.text())
 
 export const getLastCommitForNode = (
-  type,
-  { user, repo, path, branch },
+  { queryKey: [_type, { user, repo, path, branch }] },
   prefetch = false
 ) =>
   limiter

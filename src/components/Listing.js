@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react'
 import { useQuery } from 'react-query'
 
-import cache from '@/cache'
-import { useIdleCallback } from '@/hooks'
+import queryClient from '@/queryClient'
 import { useStore } from '@/storage'
 import { getNode } from '@/api'
 import { markAsPrefetch } from '@/utils'
@@ -19,7 +18,7 @@ const Listing = ({ path, parentCommitmessage, level = 0 }) => {
     if (data) {
       data.forEach(({ path, type }) => {
         if (type === 'dir') {
-          cache.prefetchQuery(
+          queryClient.prefetchQuery(
             ['listing', { user, repo, branch, path }],
             (...args) => getNode(...args, true)
           )

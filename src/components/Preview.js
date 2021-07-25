@@ -5,10 +5,10 @@ import { prism, darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useStore } from '@/storage'
 import langMap from 'lang-map'
 import isBinaryPath from 'is-binary-path'
-import unified from 'unified'
+import { unified } from 'unified'
 import parse from 'rehype-dom-parse'
 import stringify from 'rehype-dom-stringify'
-import visit from 'unist-util-visit'
+import { visit } from 'unist-util-visit'
 
 import { getFileContent, getMarkdown } from '@/api'
 import {
