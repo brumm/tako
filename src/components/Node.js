@@ -55,16 +55,15 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     () =>
       new QueryObserver(queryClient, {
         queryKey: ['listing', { user, repo, branch, path }],
+        enabled: isExpanded,
       }),
-    [branch, path, repo, user]
+    [branch, isExpanded, path, repo, user]
   )
 
   const isLoadingContents = useObserver(
     childListingObserver,
     ({ isLoading }) => isLoading
   )
-
-  console.log({ isLoadingContents })
 
   let typeIcon = isFolder ? (
     <FolderIcon
