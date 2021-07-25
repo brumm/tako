@@ -208,7 +208,7 @@ const ImagePreview = ({ path, fileExtension }) => {
             height: '100%',
           }}
         >
-          <CheckerPattern color="#F6F8FA" />
+          <CheckerPattern color="rgb(120 120 120 / 50%)" />
         </svg>
         <img
           css={{
