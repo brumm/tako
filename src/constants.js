@@ -1,5 +1,7 @@
 export const APP_MOUNT_SELECTOR = '.file-navigation ~ div .Details [role=grid]'
 
+export const APP_CONTAINER_SELECTOR = '#tako-container'
+
 export const TOOLBAR_MOUNT_SELECTOR =
   '.file-navigation ~ div ul.list-style-none.d-flex'
 

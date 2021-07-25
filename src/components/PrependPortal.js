@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 
 const PrependPortal = ({ targetSelector, children }) => {
   const container = React.useRef(document.createElement('div'))
+  container.current.setAttribute('id', 'tako-container')
 
   React.useEffect(() => {
     const containerElement = container.current
