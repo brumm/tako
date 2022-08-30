@@ -17,7 +17,12 @@ import { markAsPrefetch } from '@/utils'
 import { Row, Cell, Truncateable } from '@/components/styled'
 import Listing from '@/components/Listing'
 import Placeholder from '@/components/Placeholder'
-import { FolderIcon, FileIcon, ChevronIcon } from '@/components/icons'
+import {
+  FolderIcon,
+  FileIcon,
+  ChevronIcon,
+  SubmoduleIcon,
+} from '@/components/icons'
 
 const maybeHijackClick = event => {
   // The macOS "command" key
@@ -49,6 +54,7 @@ const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
   const hasNoSelectedFilePath = selectedFilePath === null
 
   const isSelected = path === selectedFilePath
+  const isSubmodule = type === 'submodule'
   const isFolder = type === 'dir'
 
   const childListingObserver = React.useMemo(
@@ -65,23 +71,40 @@ const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
     ({ isLoading }) => isLoading
   )
 
-  let typeIcon = isFolder ? (
-    <FolderIcon
-      style={{
-        color: 'var(--color-files-explorer-icon)',
-        position: 'relative',
-        top: 1,
-      }}
-    />
-  ) : (
-    <FileIcon
-      style={{
-        color: 'var(--color-text-tertiary)',
-        position: 'relative',
-        top: 1,
-      }}
-    />
-  )
+  let typeIcon = undefined
+
+  if (isFolder) {
+    typeIcon = (
+      <FolderIcon
+        style={{
+          color: 'var(--color-files-explorer-icon)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  } else if (isSubmodule) {
+    typeIcon = (
+      <SubmoduleIcon
+        style={{
+          color: 'var(--color-files-explorer-icon)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  } else {
+    typeIcon = (
+      <FileIcon
+        style={{
+          color: 'var(--color-text-tertiary)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  }
+
   typeIcon =
     isLoadingContents && isExpanded ? (
       <Spinner size="16px" color="var(--color-files-explorer-icon)" />
@@ -151,7 +174,7 @@ const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
             event.stopPropagation()
             if (isFolder) {
               toggleExpandNode(path)
-            } else {
+            } else if (!isSubmodule) {
               setSelectedFilePath(path)
             }
           }}
@@ -183,7 +206,12 @@ const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
               title={name}
               className="link-gray-dark"
               href={html_url}
-              onClick={maybeHijackClick}
+              target={isSubmodule ? '_blank' : undefined}
+              onClick={e => {
+                if (!isSubmodule) {
+                  maybeHijackClick(e)
+                }
+              }}
             >
               {name}
             </a>

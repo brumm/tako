@@ -52,13 +52,49 @@ export const getNode = (
     .then(response => response.json())
     .then(contents => {
       if (Array.isArray(contents)) {
-        return sortContents(contents).map(
-          ({ path, name, type, sha, html_url }) => ({
-            path,
-            name,
-            type,
-            sha,
-            html_url,
+        return sortContents(
+          contents.map(({ path, name, type, sha, html_url, url }) => {
+            // https://docs.github.com/en/rest/repos/contents#if-the-content-is-a-directory
+            // On github's current API, the type of a submodule node is still 'file'
+            // We manually detect a submodule by checking the urls, and we coerce the
+            // type into our own 'submodule', though it differs from the github API
+            if (type === 'file') {
+              // Our detection of submodule simply consists of checking the repo where
+              // we are standing (`url`) against the repo we are being linked to
+              // (`html_url`)
+
+              // This makes the assumption that there are no nested submodules (i.e,
+              // submodule always points to another repo instead of itself)
+
+              // url example: https://api.github.com/repos/brumm/tako/contents/README.md?ref=master
+              // html_url example: https://github.com/brumm/tako/blob/master/README.md
+
+              const { pathname: urlPath } = new URL(url)
+
+              const { pathname: submodulePath } = new URL(html_url)
+
+              const urlRepo = urlPath
+                .replace('/repos', '')
+                .split('/')
+                .slice(0, 3)
+                .join('/')
+              const submoduleRepo = submodulePath
+                .split('/')
+                .slice(0, 3)
+                .join('/')
+
+              if (urlRepo !== submoduleRepo) {
+                type = 'submodule'
+              }
+            }
+
+            return {
+              path,
+              name,
+              type,
+              sha,
+              html_url,
+            }
           })
         )
       }
