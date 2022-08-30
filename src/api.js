@@ -52,12 +52,15 @@ export const getNode = (
     .then(response => response.json())
     .then(contents => {
       if (Array.isArray(contents)) {
-        return sortContents(contents).map(({ path, name, type, sha }) => ({
-          path,
-          name,
-          type,
-          sha,
-        }))
+        return sortContents(contents).map(
+          ({ path, name, type, sha, html_url }) => ({
+            path,
+            name,
+            type,
+            sha,
+            html_url,
+          })
+        )
       }
 
       return null

@@ -40,7 +40,7 @@ const maybeHijackClick = event => {
   }
 }
 
-const Node = ({ type, name, path, parentCommitmessage, level }) => {
+const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
   const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
@@ -182,7 +182,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             <a
               title={name}
               className="link-gray-dark"
-              href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
+              href={html_url}
               onClick={maybeHijackClick}
             >
               {name}
