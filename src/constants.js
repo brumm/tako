@@ -5,7 +5,7 @@ export const APP_CONTAINER_SELECTOR = '.tako-container'
 export const TOOLBAR_MOUNT_SELECTOR =
   '.file-navigation ~ div ul.list-style-none.d-flex'
 
-export const SORT_ORDER = ['dir', 'file']
+export const SORT_ORDER = ['dir', 'file', 'submodule']
 
 export const INDENT_SIZE = 24
 

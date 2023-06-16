@@ -17,7 +17,12 @@ import { markAsPrefetch } from '@/utils'
 import { Row, Cell, Truncateable } from '@/components/styled'
 import Listing from '@/components/Listing'
 import Placeholder from '@/components/Placeholder'
-import { FolderIcon, FileIcon, ChevronIcon } from '@/components/icons'
+import {
+  FolderIcon,
+  FileIcon,
+  ChevronIcon,
+  SubmoduleIcon,
+} from '@/components/icons'
 
 const maybeHijackClick = event => {
   // The macOS "command" key
@@ -40,7 +45,7 @@ const maybeHijackClick = event => {
   }
 }
 
-const Node = ({ type, name, path, parentCommitmessage, level }) => {
+const Node = ({ type, name, path, parentCommitmessage, level, html_url }) => {
   const { user, repo, branch } = useStore(state => state.repoDetails)
   const isExpanded = useStore(state => state.expandedNodes[path] === true)
   const toggleExpandNode = useStore(state => state.toggleExpandNode)
@@ -49,6 +54,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
   const hasNoSelectedFilePath = selectedFilePath === null
 
   const isSelected = path === selectedFilePath
+  const isSubmodule = type === 'submodule'
   const isFolder = type === 'dir'
 
   const childListingObserver = React.useMemo(
@@ -65,23 +71,40 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
     ({ isLoading }) => isLoading
   )
 
-  let typeIcon = isFolder ? (
-    <FolderIcon
-      style={{
-        color: 'var(--color-files-explorer-icon)',
-        position: 'relative',
-        top: 1,
-      }}
-    />
-  ) : (
-    <FileIcon
-      style={{
-        color: 'var(--color-text-tertiary)',
-        position: 'relative',
-        top: 1,
-      }}
-    />
-  )
+  let typeIcon = undefined
+
+  if (isFolder) {
+    typeIcon = (
+      <FolderIcon
+        style={{
+          color: 'var(--color-files-explorer-icon)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  } else if (isSubmodule) {
+    typeIcon = (
+      <SubmoduleIcon
+        style={{
+          color: 'var(--color-files-explorer-icon)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  } else {
+    typeIcon = (
+      <FileIcon
+        style={{
+          color: 'var(--color-text-tertiary)',
+          position: 'relative',
+          top: 1,
+        }}
+      />
+    )
+  }
+
   typeIcon =
     isLoadingContents && isExpanded ? (
       <Spinner size="16px" color="var(--color-files-explorer-icon)" />
@@ -151,7 +174,7 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             event.stopPropagation()
             if (isFolder) {
               toggleExpandNode(path)
-            } else {
+            } else if (!isSubmodule) {
               setSelectedFilePath(path)
             }
           }}
@@ -182,8 +205,13 @@ const Node = ({ type, name, path, parentCommitmessage, level }) => {
             <a
               title={name}
               className="link-gray-dark"
-              href={`https://github.com/${user}/${repo}/blob/${branch}/${path}`}
-              onClick={maybeHijackClick}
+              href={html_url}
+              target={isSubmodule ? '_blank' : undefined}
+              onClick={e => {
+                if (!isSubmodule) {
+                  maybeHijackClick(e)
+                }
+              }}
             >
               {name}
             </a>
