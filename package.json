@@ -52,6 +52,9 @@
         "matches": [
           "*://*.github.com/*"
         ],
+        "exclude_matches": [
+          "*://docs.github.com/*"
+        ],
         "js": [
           "content-script.js"
         ],
