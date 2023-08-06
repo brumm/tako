@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Tako",
+  "version": "0.0.1",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["*://github.com/*/*"],
+      "run_at": "document_start",
+      "js": ["content.tsx"]
+    }
+  ]
+}
