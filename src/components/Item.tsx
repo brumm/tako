@@ -24,7 +24,7 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
   const query = useRepoContents(path, {
     enabled: isHovering,
   })
-  const isLoading = useDeferredLoading(query.isLoading, 500)
+  const isLoading = useDeferredLoading(query.isLoading)
   return (
     <>
       <Row
@@ -154,7 +154,7 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
   const query = useRepoContents(path, {
     enabled: isHovering,
   })
-  const isLoading = useDeferredLoading(query.isLoading, 500)
+  const isLoading = useDeferredLoading(query.isLoading)
   return (
     <>
       <Row
@@ -357,21 +357,6 @@ const LoadingSpinnerIcon = () => (
   </svg>
 )
 
-function useDeferredLoading(isLoading: boolean, delay = 500) {
-  const [deferredIsLoading, setDeferredIsLoading] = useState(false)
-
-  useEffect(() => {
-    if (!isLoading) {
-      return setDeferredIsLoading(false)
-    }
-
-    const timeoutId = setTimeout(() => setDeferredIsLoading(true), delay)
-    return () => clearTimeout(timeoutId)
-  }, [isLoading, delay])
-
-  return deferredIsLoading
-}
-
 const Link = ({
   path,
   type,
@@ -392,4 +377,19 @@ const Link = ({
     }
   }
   return createElement('a', { ...props, href, onClick })
+}
+
+const useDeferredLoading = (isLoading: boolean, delay = 500) => {
+  const [deferredIsLoading, setDeferredIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading) {
+      return setDeferredIsLoading(false)
+    }
+
+    const timeoutId = setTimeout(() => setDeferredIsLoading(true), delay)
+    return () => clearTimeout(timeoutId)
+  }, [isLoading, delay])
+
+  return deferredIsLoading
 }
