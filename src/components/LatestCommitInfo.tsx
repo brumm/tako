@@ -16,11 +16,15 @@ const useLatestCommitInfo = (path: string, options = {}) => {
         per_page: 1,
       })
       const item = response.data[0]
-      return {
-        message: item.commit.message,
-        date: item.commit.committer?.date,
-        htmlUrl: item.html_url,
+      if (item) {
+        return {
+          message: item.commit.message,
+          date: item.commit.committer?.date,
+          htmlUrl: item.html_url,
+        }
       }
+
+      return null
     },
     ...options,
   })
