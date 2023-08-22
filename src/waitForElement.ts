@@ -1,7 +1,5 @@
 export const waitForElement = (selector: string, timeout = 2_000) =>
   new Promise<HTMLElement>((resolve, reject) => {
-    let timerId: number
-
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         for (const addedNode of mutation.addedNodes.values()) {
@@ -28,8 +26,8 @@ export const waitForElement = (selector: string, timeout = 2_000) =>
       subtree: true,
     })
 
-    // timerId = setTimeout(() => {
-    //   reject(new Error('Not found element match the selector:' + selector))
-    //   observer.disconnect()
-    // }, timeout)
+    const timerId = setTimeout(() => {
+      reject(new Error('Not found element match the selector:' + selector))
+      observer.disconnect()
+    }, timeout)
   })
