@@ -17,7 +17,7 @@ export const useRepoContents = (path: string, options = {}) => {
   const tako = useTako()
   return useQuery({
     queryKey: ['contents', tako.repository, path],
-    queryFn: (a) => tako.client.repos.getContent({ ...tako.repository, path }),
+    queryFn: () => tako.client.repos.getContent({ ...tako.repository, path }),
     select: ({ data }) => {
       invariant(Array.isArray(data))
 

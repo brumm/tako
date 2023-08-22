@@ -6,9 +6,9 @@ import { useTako } from './Tako'
 
 const useLatestCommitInfo = (path: string, options: UseQueryOptions = {}) => {
   const tako = useTako()
-  return useQuery(
-    ['lastCommit', tako.repository, path],
-    async () => {
+  return useQuery({
+    queryKey: ['lastCommit', tako.repository, path],
+    queryFn: async () => {
       const response = await tako.client.repos.listCommits({
         ...tako.repository,
         path,
@@ -22,8 +22,8 @@ const useLatestCommitInfo = (path: string, options: UseQueryOptions = {}) => {
         htmlUrl: item.html_url,
       }
     },
-    options,
-  )
+    ...options,
+  })
 }
 
 export const LatestCommitInfo = ({ path }) => {

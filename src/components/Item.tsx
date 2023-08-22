@@ -208,7 +208,7 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
   )
 }
 
-export const SymlinkItem = ({}: ItemProps) => {
+export const SymlinkItem = () => {
   return 'SymlinkItem'
 }
 
@@ -343,16 +343,16 @@ const LoadingSpinnerIcon = () => (
       cy="8"
       r="7"
       stroke="currentColor"
-      stroke-opacity="0.25"
-      stroke-width="2"
-      vector-effect="non-scaling-stroke"
+      strokeOpacity="0.25"
+      strokeWidth="2"
+      vectorEffect="non-scaling-stroke"
     ></circle>
     <path
       d="M15 8a7.002 7.002 0 00-7-7"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      vector-effect="non-scaling-stroke"
+      strokeWidth="2"
+      strokeLinecap="round"
+      vectorEffect="non-scaling-stroke"
     ></path>
   </svg>
 )

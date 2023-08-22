@@ -19,9 +19,7 @@ const start = async () => {
 }
 
 const renderTako = async () => {
-  const [sourceTreeElement] = await Promise.all([
-    waitForElement('.Layout-main .js-details-container[data-hpc]'),
-  ])
+  const [sourceTreeElement] = await Promise.all([waitForElement('[data-hpc]')])
   sourceTreeElement.classList.add('d-none')
 
   const containerElement = document.createElement('div')
@@ -60,15 +58,13 @@ const renderTako = async () => {
 }
 
 const renderTokenPrompt = async () => {
-  const containerElement = await waitForElement(
-    '.Layout-main .js-details-container[data-hpc]',
-  )
+  const containerElement = await waitForElement('[data-hpc]')
   const rootElement = document.createElement('div')
   containerElement.prepend(rootElement)
   createRoot(rootElement).render(<TokenPrompt />)
 }
 
 if (isRepoRoot() || isRepoTree()) {
-  document.addEventListener('DOMContentLoaded', start)
-  document.addEventListener('turbo:render', start)
+  document.addEventListener('DOMContentLoaded', () => setTimeout(start, 200))
+  document.addEventListener('turbo:render', () => setTimeout(start, 200))
 }

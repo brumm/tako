@@ -11,9 +11,15 @@ const useHighlightedFile = (
   options: UseQueryOptions = {},
 ) => {
   const tako = useTako()
-  return useQuery(
-    ['highlightedFile', tako.repository, raw],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'highlightedFile',
+      tako.repository.owner,
+      tako.repository.repo,
+      raw,
+      extension,
+    ],
+    queryFn: async () => {
       if (extension === 'md') {
         const html = await tako.client.markdown.render({
           text: raw || '',
@@ -27,15 +33,15 @@ const useHighlightedFile = (
       })
       return html.data
     },
-    options,
-  )
+    ...options,
+  })
 }
 
 const useRawFile = ({ file }: { file: PreviewFile }) => {
   const tako = useTako()
-  return useQuery(
-    ['file', file],
-    async () => {
+  return useQuery({
+    queryKey: ['file', file],
+    queryFn: async () => {
       const blob = await tako.client.git.getBlob({
         ...file.repository,
         file_sha: file.sha!,
@@ -44,10 +50,8 @@ const useRawFile = ({ file }: { file: PreviewFile }) => {
       const raw = betterAtob(blob.data.content)
       return raw
     },
-    {
-      enabled: !!file,
-    },
-  )
+    enabled: !!file,
+  })
 }
 
 export const Preview = () => {
@@ -68,7 +72,7 @@ export const Preview = () => {
 
     return (
       <div className="border-left d-flex flex-items-center flex-justify-center width-full">
-        Can't preview this file
+        Can&apos;t preview this file
       </div>
     )
   }
