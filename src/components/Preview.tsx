@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import isBinaryPath from 'is-binary-path'
 
 import clsx from 'clsx'
@@ -8,7 +8,7 @@ import { useTako } from './Tako'
 
 const useHighlightedFile = (
   { raw, extension }: { raw?: string; extension: string },
-  options: UseQueryOptions = {},
+  options = {},
 ) => {
   const tako = useTako()
   return useQuery({

@@ -1,10 +1,10 @@
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { format } from 'timeago.js'
 
 import { useStore } from '../store'
 import { useTako } from './Tako'
 
-const useLatestCommitInfo = (path: string, options: UseQueryOptions = {}) => {
+const useLatestCommitInfo = (path: string, options = {}) => {
   const tako = useTako()
   return useQuery({
     queryKey: ['lastCommit', tako.repository, path],
