@@ -21,10 +21,11 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
-  const query = useRepoContents(path, {
+  const dirContentsQuery = useRepoContents(path, {
     enabled: isHovering,
   })
-  const isLoading = useDeferredLoading(query.isLoading)
+  const isLoadingDirContents = useDeferredLoading(dirContentsQuery.isLoading)
+
   return (
     <>
       <Row
@@ -48,7 +49,7 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
           style={{ width: 16 }}
         >
           {isExpanded ? (
-            isLoading ? (
+            isLoadingDirContents ? (
               <LoadingSpinnerIcon />
             ) : (
               <DirectoryOpenIcon />
