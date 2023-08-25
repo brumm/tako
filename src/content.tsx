@@ -15,7 +15,6 @@ const start = async () => {
   }
 
   onElementRemoval('.tako', () => {
-    console.log('remount tako')
     start()
   })
   const { token } = await storage.sync.get('token')
