@@ -65,7 +65,7 @@ export const Tako = () => {
           >
             <Contents />
           </div>
-          <Preview />
+          {hasPreviewedFile && <Preview />}
         </div>
       </QueryClientProvider>
     </div>

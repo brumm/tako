@@ -55,13 +55,7 @@ const useRawFile = ({ file }: { file: PreviewFile }) => {
 }
 
 export const Preview = () => {
-  const previewedFile = useStore((state) => state.previewedFile)
-  const hasPreviewedFile = previewedFile !== null
-
-  if (!hasPreviewedFile) {
-    return null
-  }
-
+  const previewedFile = useStore((state) => state.previewedFile)!
   const isBinary = isBinaryPath(previewedFile.path)
 
   if (isBinary) {
