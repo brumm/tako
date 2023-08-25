@@ -19,14 +19,23 @@ const start = async () => {
   })
 
   const { token } = await storage.sync.get('token')
-  if (token) {
-    renderTako(token)
-  } else {
-    renderTokenPrompt()
+  if (!token) {
+    return renderTokenPrompt()
   }
+
+  const octokit = new Octokit({ auth: token })
+  try {
+    await octokit.users.getAuthenticated()
+  } catch (error) {
+    if (error.status === 401) {
+      return renderTokenPrompt(true)
+    }
+  }
+
+  return renderTako(octokit)
 }
 
-const renderTako = async (token: string) => {
+const renderTako = async (octokit: Octokit) => {
   const [sourceTreeElement] = await Promise.all([waitForElement('[data-hpc]')])
   sourceTreeElement.classList.add('d-none')
 
@@ -34,7 +43,6 @@ const renderTako = async (token: string) => {
   containerElement.classList.add('tako')
   sourceTreeElement.insertAdjacentElement('beforebegin', containerElement)
 
-  const octokit = new Octokit({ auth: token })
   const info = utils.getRepositoryInfo()
   invariant(info)
   const { owner, name: repo, path } = info
@@ -64,12 +72,12 @@ const renderTako = async (token: string) => {
   )
 }
 
-const renderTokenPrompt = async () => {
+const renderTokenPrompt = async (invalidToken: boolean = false) => {
   const containerElement = await waitForElement('[data-hpc]')
   const rootElement = document.createElement('div')
   rootElement.classList.add('tako')
   containerElement.prepend(rootElement)
-  createRoot(rootElement).render(<TokenPrompt />)
+  createRoot(rootElement).render(<TokenPrompt invalidToken={invalidToken} />)
 }
 
 document.addEventListener('DOMContentLoaded', start)

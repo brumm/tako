@@ -71,3 +71,23 @@ export const Tako = () => {
     </div>
   )
 }
+
+export const TakoLogo = () => (
+  <div
+    style={{
+      margin: 15,
+      width: 40,
+      height: 40,
+      backgroundImage: `url(https://github.com/brumm/tako/blob/master/src/assets/icon-48.png?raw=true)`,
+      backgroundSize: '90%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+      backgroundColor: '#fff',
+      borderRadius: '50%',
+      boxShadow: `
+          0 0 0 5px white,
+          0 0 0 6px rgba(0, 0, 0, 0.1)
+        `,
+    }}
+  />
+)
