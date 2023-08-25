@@ -92,6 +92,7 @@ export const Contents = ({ path = '', level = 1 }: Props) => {
             return (
               <TakoProvider repository={repository}>
                 <SubmoduleItem
+                  key={node.path}
                   level={level}
                   name={`${node.name} @ ${ref.slice(0, 7)}`}
                   path=""
