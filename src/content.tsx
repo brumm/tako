@@ -12,13 +12,13 @@ import { waitForElement } from './waitForElement'
 const start = async () => {
   const { token } = await storage.sync.get('token')
   if (token) {
-    renderTako()
+    renderTako(token)
   } else {
     renderTokenPrompt()
   }
 }
 
-const renderTako = async () => {
+const renderTako = async (token: string) => {
   const [sourceTreeElement] = await Promise.all([waitForElement('[data-hpc]')])
   sourceTreeElement.classList.add('d-none')
 
@@ -26,7 +26,6 @@ const renderTako = async () => {
   containerElement.classList.add('tako')
   sourceTreeElement.insertAdjacentElement('beforebegin', containerElement)
 
-  const { token } = await storage.sync.get('token')
   const octokit = new Octokit({ auth: token })
   const info = utils.getRepositoryInfo()
   invariant(info)
