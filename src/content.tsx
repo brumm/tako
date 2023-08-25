@@ -10,13 +10,14 @@ import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const start = async () => {
-  if (!isRepoRoot() || !isRepoTree()) {
+  if (!isRepoRoot() || !isRepoTree() || document.querySelector('.tako')) {
     return
   }
 
   onElementRemoval('.tako', () => {
     start()
   })
+
   const { token } = await storage.sync.get('token')
   if (token) {
     renderTako()
