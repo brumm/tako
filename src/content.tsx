@@ -7,9 +7,17 @@ import { storage } from 'webextension-polyfill'
 import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
 import { useStore } from './store'
-import { waitForElement } from './waitForElement'
+import { onElementRemoval, waitForElement } from './waitForElement'
 
 const start = async () => {
+  if (!isRepoRoot() || !isRepoTree() || document.querySelector('.tako')) {
+    return
+  }
+
+  onElementRemoval('.tako', () => {
+    start()
+  })
+
   const { token } = await storage.sync.get('token')
   if (token) {
     renderTako(token)
@@ -59,11 +67,10 @@ const renderTako = async (token: string) => {
 const renderTokenPrompt = async () => {
   const containerElement = await waitForElement('[data-hpc]')
   const rootElement = document.createElement('div')
+  rootElement.classList.add('tako')
   containerElement.prepend(rootElement)
   createRoot(rootElement).render(<TokenPrompt />)
 }
 
-if (isRepoRoot() || isRepoTree()) {
-  document.addEventListener('DOMContentLoaded', () => setTimeout(start, 200))
-  document.addEventListener('turbo:render', () => setTimeout(start, 200))
-}
+document.addEventListener('DOMContentLoaded', start)
+document.addEventListener('turbo:render', start)
