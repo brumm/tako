@@ -6,6 +6,7 @@ import invariant from 'tiny-invariant'
 import { storage } from 'webextension-polyfill'
 import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
+import { queryClient } from './queryClient'
 import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
@@ -27,14 +28,8 @@ const start = async () => {
 }
 
 const renderTako = async (token: string) => {
-  const [sourceTreeElement] = await Promise.all([waitForElement('[data-hpc]')])
-  sourceTreeElement.classList.add('d-none')
-
-  const containerElement = document.createElement('div')
-  containerElement.classList.add('tako')
-  sourceTreeElement.insertAdjacentElement('beforebegin', containerElement)
-
   const octokit = new Octokit({ auth: token })
+
   const info = utils.getRepositoryInfo()
   invariant(info)
   const { owner, name: repo, path } = info
@@ -48,6 +43,12 @@ const renderTako = async (token: string) => {
   }
   const repository = { owner, repo, ref: branch }
 
+  queryClient.setQueryData(
+    ['contents', repository, path],
+    await octokit.repos.getContent({ ...repository, path: '' }),
+  )
+
+  const sourceTreeElement = await waitForElement('[data-hpc]')
   const layoutElement = document.querySelector('[data-view-component].Layout')
   const sidebarElement = document.querySelector('.Layout-sidebar')
 
@@ -57,7 +58,7 @@ const renderTako = async (token: string) => {
     sidebarElement?.classList.toggle('d-none', hasPreviewedFile)
   })
 
-  createRoot(containerElement).render(
+  createRoot(sourceTreeElement).render(
     <TakoProvider client={octokit} repository={repository}>
       <Tako />
     </TakoProvider>,
