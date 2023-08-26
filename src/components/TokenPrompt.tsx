@@ -4,7 +4,7 @@ import logo from '../assets/tako.svg'
 export const TokenPrompt = ({ invalidToken }) => {
   return (
     <form
-      className="p-3 d-flex"
+      className="d-flex flex-items-center gap-3 p-3"
       onSubmit={async (event) => {
         event.preventDefault()
         const token = new FormData(event.target as HTMLFormElement).get('token')
@@ -23,22 +23,23 @@ export const TokenPrompt = ({ invalidToken }) => {
       <div className="flex-1">
         <div className="pb-2">
           {invalidToken ? (
-            <span style={{ color: "var(--color-danger-fg)" }}>
-              Your token seems invalid or expired.{" "}
+            <span className="color-fg-danger">
+              Your token seems invalid or expired.{' '}
             </span>
           ) : (
             <span>
-              Tako needs a <b>personal acccess token</b> to work.{" "}
+              Tako needs a <b>personal acccess token</b> to work.{' '}
             </span>
           )}
           <a
-            href={`https://github.com/settings/tokens/new?description=tako&scopes=repo`}
+            href="https://github.com/settings/tokens/new?description=tako&scopes=repo"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Generate {invalidToken && "a new"} one!
+            Generate {invalidToken && 'a new'} one!
           </a>
         </div>
+
         <div className="input-group">
           <input
             className="form-control"
@@ -47,11 +48,7 @@ export const TokenPrompt = ({ invalidToken }) => {
             placeholder="Your token"
           />
           <span className="input-group-button">
-            <button
-              type="submit"
-              data-view-component="true"
-              className="js-add-new-user btn"
-            >
+            <button type="submit" className="btn">
               Set Token
             </button>
           </span>
