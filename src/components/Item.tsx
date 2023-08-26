@@ -217,7 +217,7 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
   )
 }
 
-export const SymlinkItem = () => {
+export const SymlinkItem = (_props: ItemProps) => {
   return 'SymlinkItem'
 }
 
