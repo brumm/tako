@@ -1,5 +1,4 @@
 import { storage } from 'webextension-polyfill'
-import logo from '../assets/tako.svg'
 
 export const TokenPrompt = ({ invalidToken }) => {
   return (
@@ -13,7 +12,7 @@ export const TokenPrompt = ({ invalidToken }) => {
       }}
     >
       <img
-        src={logo}
+        src="https://github.com/brumm/tako/blob/master/src/assets/tako.svg?raw=true"
         alt=""
         width={80}
         height={80}
