@@ -1,5 +1,5 @@
 import { storage } from 'webextension-polyfill'
-import { TakoLogo } from './Tako'
+import logo from '../assets/tako.svg'
 
 export const TokenPrompt = ({ invalidToken }) => {
   return (
@@ -12,8 +12,15 @@ export const TokenPrompt = ({ invalidToken }) => {
         window.location.reload()
       }}
     >
-      <TakoLogo />
-      <div className='flex-1'>
+      <img
+        src={logo}
+        alt=""
+        width={80}
+        height={80}
+        className="circle color-bg-subtle p-2"
+      />
+
+      <div className="flex-1">
         <div className="pb-2">
           {invalidToken ? (
             <span style={{ color: "var(--color-danger-fg)" }}>
