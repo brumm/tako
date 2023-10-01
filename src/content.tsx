@@ -37,7 +37,6 @@ const start = async () => {
 
 const renderTako = async (octokit: Octokit) => {
   const [sourceTreeElement] = await Promise.all([waitForElement('[data-hpc]')])
-  sourceTreeElement.classList.add('d-none')
 
   const containerElement = document.createElement('div')
   containerElement.classList.add('tako')
@@ -65,6 +64,7 @@ const renderTako = async (octokit: Octokit) => {
     sidebarElement?.classList.toggle('d-none', hasPreviewedFile)
   })
 
+  sourceTreeElement.classList.add('d-none')
   createRoot(containerElement).render(
     <TakoProvider client={octokit} repository={repository}>
       <Tako />
