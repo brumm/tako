@@ -37,18 +37,8 @@ const start = async () => {
 }
 
 const renderTako = async (octokit: Octokit) => {
-  const info = utils.getRepositoryInfo()
-  invariant(info)
-  const { owner, name: repo, path } = info
+  const repository = await getRepository(octokit)
 
-  let branch: string
-  if (path?.startsWith('tree/')) {
-    branch = path.replace('tree/', '')
-  } else {
-    const repoResponse = await octokit.repos.get({ owner, repo })
-    branch = repoResponse.data.default_branch
-  }
-  const repository = { owner, repo, ref: branch }
 
   queryClient.setQueryData(
     ['contents', repository, path],
@@ -82,3 +72,18 @@ const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
 
 document.addEventListener('DOMContentLoaded', start)
 document.addEventListener('turbo:render', start)
+
+const getRepository = async (octokit: Octokit) => {
+  const info = utils.getRepositoryInfo()
+  invariant(info)
+  const { owner, name: repo, path } = info
+  let branch: string
+  if (path?.startsWith('tree/')) {
+    branch = path.replace('tree/', '')
+  } else {
+    const repoResponse = await octokit.repos.get({ owner, repo })
+    branch = repoResponse.data.default_branch
+  }
+  const repository = { owner, repo, ref: branch }
+  return repository
+}
