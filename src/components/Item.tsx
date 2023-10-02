@@ -4,6 +4,7 @@ import { ReactNode, createElement, useEffect, useState } from 'react'
 import { useStore } from '../store'
 import { Contents, useRepoContents } from './Contents'
 import { LatestCommitInfo } from './LatestCommitInfo'
+import { useRawFile } from './Preview'
 import { useTako } from './Tako'
 
 type ItemProps = {
@@ -21,10 +22,11 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
-  const query = useRepoContents(path, {
+  const dirContentsQuery = useRepoContents(path, {
     enabled: isHovering,
   })
-  const isLoading = useDeferredLoading(query.isLoading)
+  const isLoadingDirContents = useDeferredLoading(dirContentsQuery.isLoading)
+
   return (
     <>
       <Row
@@ -48,7 +50,7 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
           style={{ width: 16 }}
         >
           {isExpanded ? (
-            isLoading ? (
+            isLoadingDirContents ? (
               <LoadingSpinnerIcon />
             ) : (
               <DirectoryOpenIcon />
@@ -95,6 +97,13 @@ export const FileItem = ({
       state.hoveredFile?.path === path &&
       state.hoveredFile.repository === tako.repository,
   )
+  const previewFile = { path, sha, repository: tako.repository }
+  useRawFile(
+    { file: previewFile },
+    {
+      enabled: isHovering,
+    },
+  )
   return (
     <Row
       level={level}
@@ -104,7 +113,7 @@ export const FileItem = ({
         if (isPreviewedFile) {
           onPreviewFile(null)
         } else {
-          onPreviewFile({ path, sha, repository: tako.repository })
+          onPreviewFile(previewFile)
         }
       }}
     >

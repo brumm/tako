@@ -1,9 +1,10 @@
 import { Octokit } from '@octokit/rest'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import clsx from 'clsx'
 import { createContext, useContext, useMemo } from 'react'
 
+import { queryClient } from '../queryClient'
 import { useStore } from '../store'
 import { RepositoryInfo } from '../types'
 import { Contents } from './Contents'
@@ -13,14 +14,6 @@ type TakoContextProps = {
   repository: RepositoryInfo
   client: Octokit
 }
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1_000 * 60 * 2, // two minutes
-    },
-  },
-})
 
 const TakoContext = createContext<TakoContextProps>({} as TakoContextProps)
 
@@ -52,7 +45,7 @@ export const useTako = () => {
 export const Tako = () => {
   const hasPreviewedFile = useStore((state) => !!state.previewedFile)
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden tako">
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools />
         <div className="d-flex">
@@ -65,7 +58,7 @@ export const Tako = () => {
           >
             <Contents />
           </div>
-          <Preview />
+          {hasPreviewedFile && <Preview />}
         </div>
       </QueryClientProvider>
     </div>

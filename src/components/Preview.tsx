@@ -37,7 +37,7 @@ const useHighlightedFile = (
   })
 }
 
-const useRawFile = ({ file }: { file: PreviewFile }) => {
+export const useRawFile = ({ file }: { file: PreviewFile }, options = {}) => {
   const tako = useTako()
   return useQuery({
     queryKey: ['file', file],
@@ -50,18 +50,12 @@ const useRawFile = ({ file }: { file: PreviewFile }) => {
       const raw = betterAtob(blob.data.content)
       return raw
     },
-    enabled: !!file,
+    ...options,
   })
 }
 
 export const Preview = () => {
-  const previewedFile = useStore((state) => state.previewedFile)
-  const hasPreviewedFile = previewedFile !== null
-
-  if (!hasPreviewedFile) {
-    return null
-  }
-
+  const previewedFile = useStore((state) => state.previewedFile)!
   const isBinary = isBinaryPath(previewedFile.path)
 
   if (isBinary) {
@@ -98,7 +92,12 @@ const TextPreview = ({ file }: { file: PreviewFile }) => {
   let extension = file.path.split('.').pop()
   extension = file.path === extension ? '' : extension || ''
 
-  const rawFileQuery = useRawFile({ file })
+  const rawFileQuery = useRawFile(
+    { file },
+    {
+      enabled: !!file,
+    },
+  )
   const rawFileIsPresent =
     rawFileQuery.data !== undefined && rawFileQuery.data?.trim() !== ''
 
