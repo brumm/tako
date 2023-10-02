@@ -39,13 +39,14 @@ const start = async () => {
 const renderTako = async (octokit: Octokit) => {
   const repository = await getRepository(octokit)
 
+  const [sourceTreeElement] = await Promise.all([
+    waitForElement('[data-hpc]'),
+    queryClient.fetchQuery({
+      queryKey: ['contents', repository, ''],
+      queryFn: () => octokit.repos.getContent({ ...repository, path: '' }),
+    }),
+  ])
 
-  queryClient.setQueryData(
-    ['contents', repository, path],
-    await octokit.repos.getContent({ ...repository, path: '' }),
-  )
-
-  const sourceTreeElement = await waitForElement('[data-hpc]')
   const layoutElement = document.querySelector('[data-view-component].Layout')
   const sidebarElement = document.querySelector('.Layout-sidebar')
 
