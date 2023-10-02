@@ -1,4 +1,4 @@
-import { isRepoRoot, isRepoTree, utils } from 'github-url-detection'
+import { isRepoTree, utils } from 'github-url-detection'
 import { createRoot } from 'react-dom/client'
 
 import { Octokit } from '@octokit/rest'
@@ -11,7 +11,7 @@ import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const start = async () => {
-  if (!isRepoRoot() || !isRepoTree() || document.querySelector('.tako')) {
+  if (!isRepoTree() || document.querySelector('.tako')) {
     return
   }
 
