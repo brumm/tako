@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import isBinaryPath from 'is-binary-path'
 
-import clsx from 'clsx'
+import { ReactNode } from 'react'
 import { useStore } from '../store'
 import { PreviewFile } from '../types'
 import { useTako } from './Tako'
@@ -139,20 +139,56 @@ const TextPreview = ({ file }: { file: PreviewFile }) => {
   }
 
   if (highlightedFileQuery.data) {
+    if (isMarkdown) {
+      return (
+        <div
+          ref={rewriteSrcUrls}
+          dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
+          className="overflow-x-auto markdown-body border-left p-3"
+        />
+      )
+    }
+
     return (
-      <div
-        ref={rewriteSrcUrls}
-        dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
-        className={clsx('p-3 border-left overflow-x-auto', {
-          'markdown-body': isMarkdown,
-        })}
-      />
+      <LineNumbers text={rawFileQuery.data}>
+        <div
+          ref={rewriteSrcUrls}
+          dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
+        />
+      </LineNumbers>
     )
   }
 
+  if (!isMarkdown) {
+    return (
+      <LineNumbers text={rawFileQuery.data}>
+        <pre>{rawFileQuery.data}</pre>
+      </LineNumbers>
+    )
+  }
+
+  return null
+}
+
+const LineNumbers = ({
+  text = '',
+  children,
+}: {
+  text?: string
+  children: ReactNode
+}) => {
+  const lines = Array.from(
+    { length: text.trim().split('\n').length || 0 },
+    (_, i) => i + 1,
+  )
   return (
-    <div className="p-3 border-left overflow-x-auto">
-      <pre>{rawFileQuery.data}</pre>
+    <div className="d-flex border-left p-3 gap-3 overflow-x-auto">
+      <pre className="color-fg-subtle text-right">
+        {lines.map((line) => (
+          <div key={line}>{line}</div>
+        ))}
+      </pre>
+      {children}
     </div>
   )
 }
