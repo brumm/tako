@@ -149,7 +149,7 @@ const TextPreview = ({ file }: { file: PreviewFile }) => {
         <div
           ref={rewriteSrcUrls}
           dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
-          className="overflow-x-auto markdown-body border-left p-3"
+          className="overflow-auto markdown-body border-left p-3 width-full"
         />
       )
     }
@@ -187,7 +187,7 @@ const LineNumbers = ({
     (_, i) => i + 1,
   )
   return (
-    <div className="d-flex border-left p-3 gap-3 overflow-x-auto">
+    <div className="d-flex border-left p-3 gap-3 overflow-auto width-full">
       <pre className="color-fg-subtle text-right">
         {lines.map((line) => (
           <div key={line}>{line}</div>
