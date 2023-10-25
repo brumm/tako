@@ -89,8 +89,13 @@ const ImagePreview = ({ file }: { file: PreviewFile }) => {
 
 const TextPreview = ({ file }: { file: PreviewFile }) => {
   const tako = useTako()
-  let extension = file.path.split('.').pop()
-  extension = file.path === extension ? '' : extension || ''
+  const pathSegments = file.path.split('.')
+  let extension = ''
+  if (pathSegments.length === 1) {
+    extension = file.path.split('/').pop()!
+  } else {
+    extension = pathSegments.pop()!
+  }
 
   const rawFileQuery = useRawFile(
     { file },
