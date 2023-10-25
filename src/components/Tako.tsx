@@ -48,10 +48,10 @@ export const Tako = () => {
     <div className="overflow-hidden tako">
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools />
-        <div className="d-flex">
+        <div className="d-flex" style={{ maxHeight: '80vh' }}>
           <div
-            role="grid d-md-block"
-            className={clsx('min-width-0', {
+            role="grid"
+            className={clsx('min-width-0 d-md-block overflow-y-auto', {
               'flex-auto': !hasPreviewedFile,
               'flex-shrink-0': hasPreviewedFile,
             })}
