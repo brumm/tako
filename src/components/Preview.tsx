@@ -56,22 +56,22 @@ export const useRawFile = ({ file }: { file: PreviewFile }, options = {}) => {
 
 export const Preview = () => {
   const previewedFile = useStore((state) => state.previewedFile)!
-  const isBinary = isBinaryPath(previewedFile.path)
 
-  if (isBinary) {
-    const couldBeAnImage = previewedFile.path.match(/\.(png|jpg|jpeg|gif)$/)
-    if (couldBeAnImage) {
+  switch (getFilePreviewType(previewedFile.path)) {
+    case 'image': {
       return <ImagePreview file={previewedFile} />
     }
-
-    return (
-      <div className="border-left d-flex flex-items-center flex-justify-center width-full">
-        Can&apos;t preview this file
-      </div>
-    )
+    case 'text': {
+      return <TextPreview file={previewedFile} />
+    }
+    case 'unknown': {
+      return (
+        <div className="border-left d-flex flex-items-center flex-justify-center width-full">
+          Can&apos;t preview this file
+        </div>
+      )
+    }
   }
-
-  return <TextPreview file={previewedFile} />
 }
 
 const ImagePreview = ({ file }: { file: PreviewFile }) => {
@@ -221,4 +221,14 @@ const betterAtob = (string: string) => {
   } catch {
     return ''
   }
+}
+
+const getFilePreviewType = (path: string) => {
+  if (isBinaryPath(path)) {
+    if (/\.(png|jpg|jpeg|gif)$/.test(path)) {
+      return 'image' as const
+    }
+    return 'unknown' as const
+  }
+  return 'text' as const
 }
