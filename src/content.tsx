@@ -40,7 +40,7 @@ const renderTako = async (octokit: Octokit) => {
   const repository = await getRepository(octokit)
 
   const [sourceTreeElement] = await Promise.all([
-    waitForElement('[data-hpc]'),
+    waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
     queryClient.fetchQuery({
       queryKey: ['contents', repository, ''],
       queryFn: () => octokit.repos.getContent({ ...repository, path: '' }),

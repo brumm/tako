@@ -44,8 +44,9 @@ export const useTako = () => {
 
 export const Tako = () => {
   const hasPreviewedFile = useStore((state) => !!state.previewedFile)
+
   return (
-    <div className="overflow-hidden tako">
+    <div className="overflow-hidden tako border rounded">
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools />
         <div className="d-flex" style={{ maxHeight: '80vh' }}>
