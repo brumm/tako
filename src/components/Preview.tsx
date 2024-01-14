@@ -115,11 +115,11 @@ const TextPreview = ({ file }: { file: PreviewFile }) => {
 
   const isMarkdown = extension === 'md'
 
-  const rewriteSrcUrls = (ref: HTMLDivElement | null) => {
-    if (!ref) {
+  const rewriteSrcUrls = (element: HTMLElement | null) => {
+    if (!element) {
       return
     }
-    const elements = ref.querySelectorAll('[src]')
+    const elements = element.querySelectorAll('[src]')
     for (const element of elements) {
       const src = element.getAttribute('src')
       if (src?.startsWith('http')) {
