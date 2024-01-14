@@ -50,14 +50,15 @@ const renderTako = async (octokit: Octokit) => {
     ),
   ])
 
-  const layoutElement = document.querySelector('[data-view-component].Layout')
-  const sidebarElement = document.querySelector('.Layout-sidebar')
+  // const layoutElement = document.querySelector(
+  //   '[data-selector=repos-split-pane-content]',
+  // )
+  // const sidebarElement = document.querySelector('.Layout-sidebar')
 
-  useStore.subscribe((state) => {
-    const hasPreviewedFile = state.previewedFile !== null
-    layoutElement?.classList.toggle('Layout', !hasPreviewedFile)
-    sidebarElement?.classList.toggle('d-none', hasPreviewedFile)
-  })
+  // useStore.subscribe((state) => {
+  //   const hasPreviewedFile = state.previewedFile !== null
+  //   sidebarElement?.classList.toggle('d-none', hasPreviewedFile)
+  // })
 
   createRoot(sourceTreeElement).render(
     <TakoProvider client={octokit} repository={repository}>
