@@ -1,42 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { format } from 'timeago.js'
 
+import { useLatestCommitInfo } from '../hooks/useLatestCommitInfo'
 import { useStore } from '../store'
-import { useTako } from './Tako'
-
-const useLatestCommitInfo = (path: string, options = {}) => {
-  const tako = useTako()
-  return useQuery({
-    queryKey: [
-      'lastCommit',
-      path,
-      tako.repository.owner,
-      tako.repository.repo,
-      tako.repository.ref,
-    ],
-    queryFn: async () => {
-      const response = await tako.client.repos.listCommits({
-        owner: tako.repository.owner,
-        repo: tako.repository.repo,
-        sha: tako.repository.ref,
-        path,
-        page: 1,
-        per_page: 1,
-      })
-      const item = response.data[0]
-      if (item) {
-        return {
-          message: item.commit.message,
-          date: item.commit.committer?.date,
-          htmlUrl: item.html_url,
-        }
-      }
-
-      return null
-    },
-    ...options,
-  })
-}
 
 export const LatestCommitInfo = ({ path }) => {
   const hasPreviewedFile = useStore((state) => state.previewedFile !== null)

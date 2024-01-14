@@ -1,8 +1,9 @@
 import clsx from 'clsx'
 import { ReactNode, createElement, useEffect, useState } from 'react'
 
+import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useStore } from '../store'
-import { Contents, useRepoContents } from './Contents'
+import { Contents } from './Contents'
 import { LatestCommitInfo } from './LatestCommitInfo'
 import { useRawFile } from './Preview'
 import { useTako } from './Tako'
@@ -22,7 +23,7 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
-  const dirContentsQuery = useRepoContents(path, {
+  const dirContentsQuery = useRepoContentsQuery(path, {
     enabled: isHovering,
   })
   const isLoadingDirContents = useDeferredLoading(dirContentsQuery.isLoading)
@@ -160,7 +161,7 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
-  const query = useRepoContents(path, {
+  const query = useRepoContentsQuery(path, {
     enabled: isHovering,
   })
   const isLoading = useDeferredLoading(query.isLoading)

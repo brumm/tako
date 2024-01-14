@@ -1,66 +1,38 @@
-import { useQuery } from '@tanstack/react-query'
 import { format } from 'timeago.js'
+import { useMostRecentRepoCommitQuery } from '../hooks/useMostRecentRepoCommitQuery'
 import { useTako } from './Tako'
-
-const useMostRecentCommit = () => {
-  const tako = useTako()
-  return useQuery({
-    queryKey: ['mostRecentCommit', tako.repository],
-    queryFn: async () => {
-      const response = await tako.client.repos.listCommits({
-        ...tako.repository,
-        page: 1,
-        per_page: 1,
-      })
-
-      const totalCommitCount = response.headers.link?.match(
-        /page=(?<count>\d+)&per_page=1>;\srel="last"/,
-      )?.groups?.count
-
-      const item = response.data[0]
-      if (item) {
-        return {
-          ...item,
-          totalCommitCount,
-        }
-      }
-
-      return null
-    },
-  })
-}
 
 export const MostRecentRepoCommit = () => {
   const { repository } = useTako()
-  const mostRecentCommitQuery = useMostRecentCommit()
-  const mostRecentCommit = mostRecentCommitQuery.data
+  const mostRecentCommitQuery = useMostRecentRepoCommitQuery()
+  const mostRecentRepoCommit = mostRecentCommitQuery.data
 
-  if (mostRecentCommitQuery.isLoading || !mostRecentCommit) {
+  if (mostRecentCommitQuery.isLoading || !mostRecentRepoCommit) {
     return null
   }
 
   return (
     <div className="border-bottom d-flex gap-3 color-bg-subtle flex-items-center px-3 py-2">
       <div className="d-flex gap-2">
-        {mostRecentCommit.author && (
+        {mostRecentRepoCommit.author && (
           <a
-            href={`/${mostRecentCommit.author.login}`}
+            href={`/${mostRecentRepoCommit.author.login}`}
             className="d-flex flex-items-center gap-2"
           >
             <img
-              alt={mostRecentCommit.author.login}
-              src={mostRecentCommit.author.avatar_url}
+              alt={mostRecentRepoCommit.author.login}
+              src={mostRecentRepoCommit.author.avatar_url}
               height="20"
               width="20"
               className="avatar circle"
             />
             <span className="Link--primary text-bold">
-              {mostRecentCommit.author.login}
+              {mostRecentRepoCommit.author.login}
             </span>
           </a>
         )}
         <a href="" className="Link--secondary">
-          {mostRecentCommit.commit.message}
+          {mostRecentRepoCommit.commit.message}
         </a>
       </div>
 
@@ -68,16 +40,16 @@ export const MostRecentRepoCommit = () => {
 
       <div className="text-small color-fg-muted">
         <a
-          href={`/${repository.owner}/${repository.repo}/commit/${mostRecentCommit.sha}`}
+          href={`/${repository.owner}/${repository.repo}/commit/${mostRecentRepoCommit.sha}`}
           className="Link--secondary"
         >
-          {mostRecentCommit.sha.slice(0, 7)}
+          {mostRecentRepoCommit.sha.slice(0, 7)}
         </a>
 
-        {mostRecentCommit.commit.author?.date && (
+        {mostRecentRepoCommit.commit.author?.date && (
           <>
             &nbsp;·&nbsp;
-            <span>{format(mostRecentCommit.commit.author.date)}</span>
+            <span>{format(mostRecentRepoCommit.commit.author.date)}</span>
           </>
         )}
       </div>
@@ -88,7 +60,7 @@ export const MostRecentRepoCommit = () => {
           href={`/${repository.owner}/${repository.repo}/commits`}
           className="Link--primary text-semibold"
         >
-          {mostRecentCommit.totalCommitCount} Commits
+          {mostRecentRepoCommit.totalCommitCount} Commits
         </a>
       </div>
     </div>

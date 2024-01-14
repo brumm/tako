@@ -6,8 +6,9 @@ import invariant from 'tiny-invariant'
 import { storage } from 'webextension-polyfill'
 import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
+import { mostRecentRepoCommitQueryConfig } from './hooks/useMostRecentRepoCommitQuery'
+import { repoContentsQueryConfig } from './hooks/useRepoContentsQuery'
 import { queryClient } from './queryClient'
-import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const start = async () => {
@@ -41,10 +42,12 @@ const renderTako = async (octokit: Octokit) => {
 
   const [sourceTreeElement] = await Promise.all([
     waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
-    queryClient.fetchQuery({
-      queryKey: ['contents', repository, ''],
-      queryFn: () => octokit.repos.getContent({ ...repository, path: '' }),
-    }),
+    queryClient.fetchQuery(
+      repoContentsQueryConfig({ client: octokit, repository }, ''),
+    ),
+    queryClient.fetchQuery(
+      mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
+    ),
   ])
 
   const layoutElement = document.querySelector('[data-view-component].Layout')

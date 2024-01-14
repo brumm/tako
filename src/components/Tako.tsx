@@ -11,7 +11,7 @@ import { Contents } from './Contents'
 import { MostRecentRepoCommit } from './MostRecentRepoCommit'
 import { Preview } from './Preview'
 
-type TakoContextProps = {
+export type TakoContextProps = {
   repository: RepositoryInfo
   client: Octokit
 }
@@ -25,7 +25,8 @@ export const TakoProvider = ({
 }: {
   repository: RepositoryInfo
   client?: Octokit
-} & { children: React.ReactNode }) => {
+  children: React.ReactNode
+}) => {
   const tako = useTako()
   const client = optionalClient || tako.client
 
