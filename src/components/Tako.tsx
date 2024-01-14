@@ -8,6 +8,7 @@ import { queryClient } from '../queryClient'
 import { useStore } from '../store'
 import { RepositoryInfo } from '../types'
 import { Contents } from './Contents'
+import { MostRecentRepoCommit } from './MostRecentRepoCommit'
 import { Preview } from './Preview'
 
 type TakoContextProps = {
@@ -48,7 +49,8 @@ export const Tako = () => {
   return (
     <div className="overflow-hidden tako border rounded">
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools />
+        <MostRecentRepoCommit />
+
         <div className="d-flex" style={{ maxHeight: '80vh' }}>
           <div
             role="grid"
@@ -61,6 +63,8 @@ export const Tako = () => {
           </div>
           {hasPreviewedFile && <Preview />}
         </div>
+
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </div>
   )
