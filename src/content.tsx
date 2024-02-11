@@ -9,6 +9,7 @@ import { TokenPrompt } from './components/TokenPrompt'
 import { mostRecentRepoCommitQueryConfig } from './hooks/useMostRecentRepoCommitQuery'
 import { repoContentsQueryConfig } from './hooks/useRepoContentsQuery'
 import { queryClient } from './queryClient'
+import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const start = async () => {
@@ -50,15 +51,23 @@ const renderTako = async (octokit: Octokit) => {
     ),
   ])
 
-  // const layoutElement = document.querySelector(
-  //   '[data-selector=repos-split-pane-content]',
-  // )
-  // const sidebarElement = document.querySelector('.Layout-sidebar')
-
-  // useStore.subscribe((state) => {
-  //   const hasPreviewedFile = state.previewedFile !== null
-  //   sidebarElement?.classList.toggle('d-none', hasPreviewedFile)
-  // })
+  const layoutElement = document.querySelector<HTMLDivElement>('.Layout')
+  const repoMainElement = document.querySelector<HTMLDivElement>(
+    '[data-selector=repos-split-pane-content]',
+  )
+  const sidebarElement = document.querySelector('.Layout-sidebar')
+  useStore.subscribe((state) => {
+    const hasPreviewedFile = state.previewedFile !== null
+    if (hasPreviewedFile) {
+      layoutElement?.classList.remove('Layout')
+      repoMainElement?.style.setProperty('max-width', 'unset', 'important')
+      sidebarElement?.classList.add('d-none')
+    } else {
+      layoutElement?.classList.add('Layout')
+      repoMainElement?.style.removeProperty('max-width')
+      sidebarElement?.classList.remove('d-none')
+    }
+  })
 
   createRoot(sourceTreeElement).render(
     <TakoProvider client={octokit} repository={repository}>
