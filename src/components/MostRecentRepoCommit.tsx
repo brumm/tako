@@ -31,7 +31,10 @@ export const MostRecentRepoCommit = () => {
             </span>
           </a>
         )}
-        <a href="" className="Link--secondary">
+        <a
+          href=""
+          className="Link--secondary truncated-autocomplete-suggestion-title"
+        >
           {mostRecentRepoCommit.commit.message}
         </a>
       </div>
