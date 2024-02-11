@@ -5,10 +5,19 @@ export const latestCommitInfoQueryConfig = (
   tako: TakoContextProps,
   path: string,
 ) => ({
-  queryKey: ['lastCommit', path, tako.repository],
+  queryKey: [
+    'lastCommit',
+    path,
+    tako.repository,
+    tako.repository.owner,
+    tako.repository.repo,
+    tako.repository.ref,
+  ],
   queryFn: async () => {
     const response = await tako.client.repos.listCommits({
-      ...tako.repository,
+      owner: tako.repository.owner,
+      repo: tako.repository.repo,
+      sha: tako.repository.ref,
       path,
       page: 1,
       per_page: 1,
