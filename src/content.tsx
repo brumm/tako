@@ -98,6 +98,7 @@ const getRepository = async (octokit: Octokit) => {
     const repoResponse = await octokit.repos.get({ owner, repo })
     branch = repoResponse.data.default_branch
   }
+  branch = decodeURIComponent(branch)
   const repository = { owner, repo, ref: branch }
   return repository
 }
