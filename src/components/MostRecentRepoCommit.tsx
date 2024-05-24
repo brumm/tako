@@ -32,7 +32,7 @@ export const MostRecentRepoCommit = () => {
           </a>
         )}
         <a
-          href=""
+          href={`/${repository.owner}/${repository.repo}/commit/${mostRecentRepoCommit.sha}`}
           className="Link--secondary truncated-autocomplete-suggestion-title"
         >
           {mostRecentRepoCommit.commit.message}
