@@ -56,8 +56,11 @@ export const useRawFile = ({ file }: { file: PreviewFile }, options = {}) => {
 
 export const Preview = () => {
   const previewedFile = useStore((state) => state.previewedFile)!
+  const fileType = getFileType(previewedFile.path)
 
-  switch (getFilePreviewType(previewedFile.path)) {
+  console.log(previewedFile)
+
+  switch (fileType) {
     case 'image': {
       return <ImagePreview file={previewedFile} />
     }
@@ -223,7 +226,7 @@ const betterAtob = (string: string) => {
   }
 }
 
-const getFilePreviewType = (path: string) => {
+const getFileType = (path: string) => {
   if (isBinaryPath(path)) {
     if (/\.(png|jpg|jpeg|gif)$/.test(path)) {
       return 'image' as const
