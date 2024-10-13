@@ -77,7 +77,7 @@ const renderTako = async (octokit: Octokit) => {
 }
 
 const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
-  const containerElement = await waitForElement('[data-hpc]')
+  const containerElement = await waitForElement('body')
   const rootElement = document.createElement('div')
   rootElement.classList.add('tako')
   containerElement.prepend(rootElement)
