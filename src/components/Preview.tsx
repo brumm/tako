@@ -58,7 +58,6 @@ export const Preview = () => {
   const previewedFile = useStore((state) => state.previewedFile)!
   const fileType = getFileType(previewedFile.path)
 
-
   switch (fileType) {
     case 'image': {
       return <ImagePreview file={previewedFile} />

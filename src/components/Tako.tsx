@@ -45,6 +45,7 @@ export const useTako = () => {
 }
 
 export const Tako = () => {
+  const previewedFile = useStore((state) => state.previewedFile)
   const hasPreviewedFile = useStore((state) => !!state.previewedFile)
   const onClosePreviewFile = useStore(
     (state) => () => state.onPreviewFile(null),
@@ -68,7 +69,7 @@ export const Tako = () => {
 
           {hasPreviewedFile && (
             <>
-              <Preview />
+              <Preview key={previewedFile?.path} />
               <div
                 className="position-absolute top-0 right-0 p-2 cursor-pointer"
                 onClick={() => onClosePreviewFile()}
