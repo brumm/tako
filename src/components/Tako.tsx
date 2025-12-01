@@ -46,10 +46,8 @@ export const useTako = () => {
 
 export const Tako = () => {
   const previewedFile = useStore((state) => state.previewedFile)
-  const hasPreviewedFile = useStore((state) => !!state.previewedFile)
-  const onClosePreviewFile = useStore(
-    (state) => () => state.onPreviewFile(null),
-  )
+  const hasPreviewedFile = !!previewedFile
+  const onPreviewFile = useStore((state) => state.onPreviewFile)
 
   return (
     <div className="overflow-hidden tako border rounded">
@@ -72,7 +70,7 @@ export const Tako = () => {
               <Preview key={previewedFile?.path} />
               <div
                 className="position-absolute top-0 right-0 p-2 cursor-pointer"
-                onClick={() => onClosePreviewFile()}
+                onClick={() => onPreviewFile(null)}
               >
                 <XCircleIcon />
               </div>
