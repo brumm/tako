@@ -7,7 +7,7 @@
     {
       "matches": ["*://github.com/*/*"],
       "run_at": "document_start",
-      "js": ["content.tsx"]
+      "js": ["src/content.tsx"]
     }
   ]
 }

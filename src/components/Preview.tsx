@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import isBinaryPath from 'is-binary-path'
+import binaryExtensions from 'binary-extensions'
 
 import { ReactNode } from 'react'
 import { useStore } from '../store'
@@ -225,8 +225,12 @@ const betterAtob = (string: string) => {
 }
 
 const getFileType = (path: string) => {
-  if (isBinaryPath(path)) {
-    if (/\.(png|jpg|jpeg|gif)$/.test(path)) {
+  // Extract extension using regex (matches last .extension)
+  const match = path.match(/\.([^.]+)$/)
+  const ext = match?.[1]?.toLowerCase()
+
+  if (ext && binaryExtensions.includes(ext)) {
+    if (/\.(png|jpg|jpeg|gif)$/i.test(path)) {
       return 'image' as const
     }
     return 'unknown' as const
