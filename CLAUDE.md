@@ -22,6 +22,7 @@ yarn clean
 ## Architecture
 
 ### Entry Point & Lifecycle
+
 - `src/content.tsx` is the content script entry point
 - Runs on `document_start` for all github.com repo pages
 - Two main render paths:
@@ -32,6 +33,7 @@ yarn clean
 - `onElementRemoval()` re-initializes if Tako element gets removed
 
 ### State Management
+
 - Zustand store in `src/store.ts` with two key states:
   - `previewedFile` - currently previewed file (opens side panel)
   - `hoveredFile` - file user is hovering over
@@ -41,6 +43,7 @@ yarn clean
   - Hides sidebar when file previewed
 
 ### Data Fetching
+
 - TanStack Query for all GitHub API calls
 - Two main query configs:
   - `repoContentsQueryConfig` - fetches directory contents, handles submodules detection
@@ -49,6 +52,7 @@ yarn clean
 - Uses Octokit REST client with user's personal access token
 
 ### Component Structure
+
 - `Tako.tsx` - root component, provides `TakoContext` with repository info and Octokit client
 - `Contents.tsx` - recursively renders directory contents (dirs, files, submodules, symlinks)
 - `Preview.tsx` - renders file preview (text/images), uses GitHub's markdown API for syntax highlighting
@@ -56,6 +60,7 @@ yarn clean
 - Submodules get their own nested `TakoProvider` with separate repository context
 
 ### Preview System
+
 - `Preview.tsx` determines file type: text/image/unknown
 - Text files: fetches blob via `git.getBlob`, renders with GitHub markdown API for syntax highlighting
 - Images: uses GitHub's raw URL (`/owner/repo/blob/ref/path?raw=true`)
@@ -63,13 +68,14 @@ yarn clean
 - Line numbers generated client-side for non-markdown text files
 
 ### Repository Detection
+
 - `getRepository()` in `content.tsx` extracts owner/repo/branch from URL
 - Branch comes from URL path (`tree/{branch}`) or falls back to default branch
 - Branch name is URI decoded to handle special characters
 
 ## Technical Details
 
-- Built with Parcel using `@parcel/config-webextension`
+- Built with Vite
 - TypeScript with React 19
 - Uses GitHub Primer CSS classes (extension runs in GitHub DOM context)
 - WebExtension Polyfill for cross-browser compatibility

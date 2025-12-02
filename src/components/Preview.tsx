@@ -225,7 +225,6 @@ const betterAtob = (string: string) => {
 }
 
 const getFileType = (path: string) => {
-  // Extract extension using regex (matches last .extension)
   const match = path.match(/\.([^.]+)$/)
   const ext = match?.[1]?.toLowerCase()
 

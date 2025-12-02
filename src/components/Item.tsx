@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ReactNode, createElement, useEffect, useState } from 'react'
+import { JSX, ReactNode, createElement, useEffect, useState } from 'react'
 
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useStore } from '../store'
