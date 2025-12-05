@@ -87,6 +87,8 @@ const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
 document.addEventListener('DOMContentLoaded', start)
 document.addEventListener('turbo:render', start)
 
+start()
+
 const getRepository = async (octokit: Octokit) => {
   const info = utils.getRepositoryInfo()
   invariant(info)
