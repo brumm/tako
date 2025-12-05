@@ -1,32 +1,34 @@
-import { isRepoTree, utils } from 'github-url-detection'
+import { isRepoTree } from 'github-url-detection'
 import { createRoot } from 'react-dom/client'
 
 import { Octokit } from '@octokit/rest'
-import invariant from 'tiny-invariant'
-import { storage } from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
 import { mostRecentRepoCommitQueryConfig } from './hooks/useMostRecentRepoCommitQuery'
 import { repoContentsQueryConfig } from './hooks/useRepoContentsQuery'
+import {
+  disableTakoLayout,
+  enableTakoLayout,
+  showGithubFileTree,
+} from './lib/github-layout'
+import { getRepository } from './lib/repository'
 import { queryClient } from './queryClient'
 import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
-const start = async () => {
+const startTako = async () => {
   if (!isRepoTree() || document.querySelector('.tako')) {
     return
   }
-
-  // Check if Tako is enabled
-  const { takoEnabled } = await storage.sync.get('takoEnabled')
+  const { takoEnabled } = await browser.storage.sync.get('takoEnabled')
   if (takoEnabled === false) {
     return
   }
 
-  onElementRemoval('.tako', start)
+  onElementRemoval('.tako', startTako)
 
-  const { token } = await storage.sync.get('token')
-
+  const { token } = await browser.storage.sync.get('token')
   if (!token) {
     return renderTokenPrompt()
   }
@@ -47,35 +49,36 @@ const start = async () => {
 const renderTako = async (octokit: Octokit) => {
   const repository = await getRepository(octokit)
 
-  const [sourceTreeElement] = await Promise.all([
-    waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
-    queryClient.fetchQuery(
-      repoContentsQueryConfig({ client: octokit, repository }, ''),
-    ),
-    queryClient.fetchQuery(
-      mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
-    ),
-  ])
-
-  const layoutElement = document.querySelector<HTMLDivElement>('.Layout')
-  const repoMainElement = document.querySelector<HTMLDivElement>(
-    '[data-selector=repos-split-pane-content]',
+  const sourceTreeElement = await waitForElement(
+    '[data-hpc]:has([aria-labelledby=folders-and-files])',
   )
-  const sidebarElement = document.querySelector('.Layout-sidebar')
+
+  queryClient.fetchQuery(
+    repoContentsQueryConfig({ client: octokit, repository }, ''),
+  )
+  queryClient.fetchQuery(
+    mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
+  )
+
+  sourceTreeElement.style.display = 'none'
+
+  const takoContainer = document.createElement('div')
+  takoContainer.classList.add('tako')
+  sourceTreeElement.parentElement?.insertBefore(
+    takoContainer,
+    sourceTreeElement.nextSibling,
+  )
+
   useStore.subscribe((state) => {
     const hasPreviewedFile = state.previewedFile !== null
     if (hasPreviewedFile) {
-      layoutElement?.classList.remove('Layout')
-      repoMainElement?.style.setProperty('max-width', 'unset', 'important')
-      sidebarElement?.classList.add('d-none')
+      enableTakoLayout()
     } else {
-      layoutElement?.classList.add('Layout')
-      repoMainElement?.style.removeProperty('max-width')
-      sidebarElement?.classList.remove('d-none')
+      disableTakoLayout()
     }
   })
 
-  createRoot(sourceTreeElement).render(
+  createRoot(takoContainer).render(
     <TakoProvider client={octokit} repository={repository}>
       <Tako />
     </TakoProvider>,
@@ -90,23 +93,39 @@ const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
   createRoot(rootElement).render(<TokenPrompt invalidToken={invalidToken} />)
 }
 
-document.addEventListener('DOMContentLoaded', start)
-document.addEventListener('turbo:render', start)
-
-start()
-
-const getRepository = async (octokit: Octokit) => {
-  const info = utils.getRepositoryInfo()
-  invariant(info)
-  const { owner, name: repo, path } = info
-  let branch: string
-  if (path?.startsWith('tree/')) {
-    branch = path.replace('tree/', '')
-  } else {
-    const repoResponse = await octokit.repos.get({ owner, repo })
-    branch = repoResponse.data.default_branch
+const stopTako = () => {
+  const takoElement = document.querySelector('.tako')
+  if (takoElement) {
+    takoElement.remove()
   }
-  branch = decodeURIComponent(branch)
-  const repository = { owner, repo, ref: branch }
-  return repository
+  showGithubFileTree()
+  disableTakoLayout()
 }
+
+document.addEventListener('DOMContentLoaded', startTako)
+document.addEventListener('turbo:render', startTako)
+
+startTako()
+
+browser.runtime.onMessage.addListener(
+  (message: { action: string }, _sender, sendResponse) => {
+    switch (message.action) {
+      case 'checkRunning': {
+        const isRunning = !!document.querySelector('.tako')
+        sendResponse(isRunning)
+        break
+      }
+      case 'start': {
+        startTako()
+        sendResponse(true)
+        break
+      }
+      case 'stop': {
+        stopTako()
+        sendResponse(true)
+        break
+      }
+    }
+    return true
+  },
+)
