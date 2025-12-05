@@ -17,6 +17,12 @@ const start = async () => {
     return
   }
 
+  // Check if Tako is enabled
+  const { takoEnabled } = await storage.sync.get('takoEnabled')
+  if (takoEnabled === false) {
+    return
+  }
+
   onElementRemoval('.tako', start)
 
   const { token } = await storage.sync.get('token')

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tako",
   "version": "0.0.1",
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs"],
   "icons": {
     "16": "src/assets/icon-16.png",
     "24": "src/assets/icon-24.png",
@@ -11,6 +11,7 @@
     "128": "src/assets/icon-128.png"
   },
   "action": {
+    "default_popup": "src/popup.html",
     "default_icon": {
       "16": "src/assets/icon-16.png",
       "24": "src/assets/icon-24.png",
