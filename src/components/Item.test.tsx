@@ -36,7 +36,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-file" path="link-to-file" />
+        <SymlinkItem level={1} name="link-to-file" path="link-to-file" virtualPath="link-to-file" />
       </TestWrapper>,
     )
 
@@ -74,7 +74,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-file" path="link-to-file" />
+        <SymlinkItem level={1} name="link-to-file" path="link-to-file" virtualPath="link-to-file" />
       </TestWrapper>,
     )
 
@@ -114,7 +114,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-dir" path="link-to-dir" />
+        <SymlinkItem level={1} name="link-to-dir" path="link-to-dir" virtualPath="link-to-dir" />
       </TestWrapper>,
     )
 
@@ -157,7 +157,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="broken-link" path="broken-link" />
+        <SymlinkItem level={1} name="broken-link" path="broken-link" virtualPath="broken-link" />
       </TestWrapper>,
     )
 
@@ -196,7 +196,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="src/link" />
+        <SymlinkItem level={1} name="link" path="src/link" virtualPath="src/link" />
       </TestWrapper>,
     )
 
@@ -238,7 +238,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="foo/bar/link" />
+        <SymlinkItem level={1} name="link" path="foo/bar/link" virtualPath="foo/bar/link" />
       </TestWrapper>,
     )
 
@@ -268,7 +268,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="invalid-link" path="invalid-link" />
+        <SymlinkItem level={1} name="invalid-link" path="invalid-link" virtualPath="invalid-link" />
       </TestWrapper>,
     )
 
@@ -307,7 +307,7 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="src/link" />
+        <SymlinkItem level={1} name="link" path="src/link" virtualPath="src/link" />
       </TestWrapper>,
     )
 

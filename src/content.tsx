@@ -18,7 +18,15 @@ import { useStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const startTako = async () => {
-  if (!isRepoTree() || document.querySelector('.tako')) {
+  const shouldShowAction = isRepoTree()
+
+  // Update action state based on whether we're on a repo tree page
+  browser.runtime.sendMessage({
+    action: 'updateActionState',
+    enabled: shouldShowAction,
+  })
+
+  if (!shouldShowAction || document.querySelector('.tako')) {
     return
   }
   const { takoEnabled } = await browser.storage.sync.get('takoEnabled')
@@ -49,16 +57,15 @@ const startTako = async () => {
 const renderTako = async (octokit: Octokit) => {
   const repository = await getRepository(octokit)
 
-  const sourceTreeElement = await waitForElement(
-    '[data-hpc]:has([aria-labelledby=folders-and-files])',
-  )
-
-  queryClient.fetchQuery(
-    repoContentsQueryConfig({ client: octokit, repository }, ''),
-  )
-  queryClient.fetchQuery(
-    mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
-  )
+  const [sourceTreeElement] = await Promise.all([
+    waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
+    queryClient.fetchQuery(
+      repoContentsQueryConfig({ client: octokit, repository }, ''),
+    ),
+    queryClient.fetchQuery(
+      mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
+    ),
+  ])
 
   sourceTreeElement.style.display = 'none'
 

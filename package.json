@@ -10,7 +10,8 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:browser": "vitest --config vitest.browser.config.ts",
-    "test:browser:run": "vitest run --config vitest.browser.config.ts"
+    "test:browser:run": "vitest run --config vitest.browser.config.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.2.1",

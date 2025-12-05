@@ -50,37 +50,42 @@ export const Tako = () => {
   const onPreviewFile = useStore((state) => state.onPreviewFile)
 
   return (
-    <div className="overflow-hidden tako border rounded">
+    <>
       <QueryClientProvider client={queryClient}>
-        <MostRecentRepoCommit />
+        <div className="overflow-hidden tako border rounded">
+          <MostRecentRepoCommit />
 
-        <div className="d-flex position-relative" style={{ maxHeight: '80vh' }}>
           <div
-            role="grid"
-            className={clsx('min-width-0 d-md-block overflow-y-auto', {
-              'flex-auto': !hasPreviewedFile,
-              'flex-shrink-0': hasPreviewedFile,
-            })}
+            className="d-flex position-relative"
+            style={{ maxHeight: '80vh' }}
           >
-            <Contents />
+            <div
+              role="grid"
+              className={clsx('min-width-0 d-md-block overflow-y-auto', {
+                'flex-auto': !hasPreviewedFile,
+                'flex-shrink-0': hasPreviewedFile,
+              })}
+            >
+              <Contents />
+            </div>
+
+            {hasPreviewedFile && (
+              <>
+                <Preview key={previewedFile?.path} />
+                <div
+                  className="position-absolute top-0 right-0 p-2 cursor-pointer"
+                  onClick={() => onPreviewFile(null)}
+                >
+                  <XCircleIcon />
+                </div>
+              </>
+            )}
           </div>
 
-          {hasPreviewedFile && (
-            <>
-              <Preview key={previewedFile?.path} />
-              <div
-                className="position-absolute top-0 right-0 p-2 cursor-pointer"
-                onClick={() => onPreviewFile(null)}
-              >
-                <XCircleIcon />
-              </div>
-            </>
-          )}
+          <ReactQueryDevtools />
         </div>
-
-        <ReactQueryDevtools />
       </QueryClientProvider>
-    </div>
+    </>
   )
 }
 
