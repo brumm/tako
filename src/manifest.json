@@ -3,6 +3,20 @@
   "name": "Tako",
   "version": "0.0.1",
   "permissions": ["storage"],
+  "icons": {
+    "16": "src/assets/icon-16.png",
+    "24": "src/assets/icon-24.png",
+    "32": "src/assets/icon-32.png",
+    "48": "src/assets/icon-48.png",
+    "128": "src/assets/icon-128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "src/assets/icon-16.png",
+      "24": "src/assets/icon-24.png",
+      "32": "src/assets/icon-32.png"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["*://github.com/*/*"],
