@@ -8,9 +8,10 @@ import { TakoProvider } from './Tako'
 type Props = {
   path?: string
   level?: number
+  virtualPath?: string
 }
 
-export const Contents = ({ path = '', level = 1 }: Props) => {
+export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
   const query = useRepoContentsQuery(path)
 
   if (!query.data) {
@@ -20,14 +21,19 @@ export const Contents = ({ path = '', level = 1 }: Props) => {
   return (
     <>
       {query.data.map((node) => {
+        const itemVirtualPath = virtualPath
+          ? `${virtualPath}/${node.name}`
+          : node.name
+
         switch (node.type) {
           case 'dir': {
             return (
               <DirItem
-                key={node.path}
+                key={itemVirtualPath}
                 level={level}
                 name={node.name}
                 path={node.path}
+                virtualPath={itemVirtualPath}
               />
             )
           }
@@ -35,11 +41,12 @@ export const Contents = ({ path = '', level = 1 }: Props) => {
           case 'file': {
             return (
               <FileItem
-                key={node.path}
+                key={itemVirtualPath}
                 level={level}
                 name={node.name}
                 path={node.path}
                 sha={node.sha}
+                virtualPath={itemVirtualPath}
               />
             )
           }
@@ -58,10 +65,11 @@ export const Contents = ({ path = '', level = 1 }: Props) => {
             return (
               <TakoProvider repository={repository}>
                 <SubmoduleItem
-                  key={node.path}
+                  key={itemVirtualPath}
                   level={level}
                   name={`${node.name} @ ${ref.slice(0, 7)}`}
                   path=""
+                  virtualPath={itemVirtualPath}
                 />
               </TakoProvider>
             )
@@ -70,10 +78,11 @@ export const Contents = ({ path = '', level = 1 }: Props) => {
           case 'symlink': {
             return (
               <SymlinkItem
-                key={node.path}
+                key={itemVirtualPath}
                 level={level}
                 name={node.name}
                 path={node.path}
+                virtualPath={itemVirtualPath}
               />
             )
           }

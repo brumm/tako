@@ -13,14 +13,15 @@ type ItemProps = {
   level: number
   name: string
   path: string
+  virtualPath: string
 }
 
-export const DirItem = ({ level, name, path }: ItemProps) => {
+export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const tako = useTako()
   const onHoverFile = useStore((state) => state.onHoverFile)
   const isHovering = useStore(
     (state) =>
-      state.hoveredFile?.path === path &&
+      state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
@@ -35,7 +36,7 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
         level={level}
         active={isHovering}
         onPointerEnter={() =>
-          onHoverFile({ path, repository: tako.repository })
+          onHoverFile({ path, repository: tako.repository, virtualPath })
         }
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -77,7 +78,9 @@ export const DirItem = ({ level, name, path }: ItemProps) => {
         <LatestCommitInfo path={path} />
       </Row>
 
-      {isExpanded && <Contents path={path} level={level + 1} />}
+      {isExpanded && (
+        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
+      )}
     </>
   )
 }
@@ -87,19 +90,20 @@ export const FileItem = ({
   name,
   path,
   sha,
+  virtualPath,
 }: ItemProps & { sha: string }) => {
   const tako = useTako()
   const onHover = useStore((state) => state.onHoverFile)
   const onPreviewFile = useStore((state) => state.onPreviewFile)
   const isPreviewedFile = useStore(
-    (state) => state.previewedFile?.path === path,
+    (state) => state.previewedFile?.virtualPath === virtualPath,
   )
   const isHovering = useStore(
     (state) =>
-      state.hoveredFile?.path === path &&
+      state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
-  const previewFile = { path, sha, repository: tako.repository }
+  const previewFile = { path, sha, repository: tako.repository, virtualPath }
   useRawFile(
     { file: previewFile },
     {
@@ -110,7 +114,9 @@ export const FileItem = ({
     <Row
       level={level}
       active={isHovering || isPreviewedFile}
-      onPointerEnter={() => onHover({ path, repository: tako.repository })}
+      onPointerEnter={() =>
+        onHover({ path, repository: tako.repository, virtualPath })
+      }
       onClick={() => {
         if (isPreviewedFile) {
           onPreviewFile(null)
@@ -153,12 +159,17 @@ export const FileItem = ({
   )
 }
 
-export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
+export const SubmoduleItem = ({
+  level,
+  name,
+  path,
+  virtualPath,
+}: ItemProps) => {
   const tako = useTako()
   const onHoverFile = useStore((state) => state.onHoverFile)
   const isHovering = useStore(
     (state) =>
-      state.hoveredFile?.path === path &&
+      state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
@@ -172,7 +183,7 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
         level={level}
         active={isHovering}
         onPointerEnter={() =>
-          onHoverFile({ path, repository: tako.repository })
+          onHoverFile({ path, repository: tako.repository, virtualPath })
         }
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -214,12 +225,19 @@ export const SubmoduleItem = ({ level, name, path }: ItemProps) => {
         <LatestCommitInfo path={path} />
       </Row>
 
-      {isExpanded && <Contents path={path} level={level + 1} />}
+      {isExpanded && (
+        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
+      )}
     </>
   )
 }
 
-export const SymlinkItem = ({ level, name, path }: ItemProps) => {
+export const SymlinkItem = ({
+  level,
+  name,
+  path,
+  virtualPath,
+}: ItemProps) => {
   const symlinkQuery = useSymlinkQuery(path)
 
   if (symlinkQuery.isError) {
@@ -279,7 +297,7 @@ export const SymlinkItem = ({ level, name, path }: ItemProps) => {
         level={level}
         name={name}
         path={resolvedTarget.path}
-        originalPath={path}
+        virtualPath={virtualPath}
       />
     )
   }
@@ -290,7 +308,7 @@ export const SymlinkItem = ({ level, name, path }: ItemProps) => {
       name={name}
       path={resolvedTarget.path}
       sha={resolvedTarget.sha!}
-      originalPath={path}
+      virtualPath={virtualPath}
     />
   )
 }
@@ -299,13 +317,13 @@ const SymlinkDirItem = ({
   level,
   name,
   path,
-  originalPath,
-}: ItemProps & { originalPath: string }) => {
+  virtualPath,
+}: ItemProps) => {
   const tako = useTako()
   const onHoverFile = useStore((state) => state.onHoverFile)
   const isHovering = useStore(
     (state) =>
-      state.hoveredFile?.path === originalPath &&
+      state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
@@ -320,7 +338,7 @@ const SymlinkDirItem = ({
         level={level}
         active={isHovering}
         onPointerEnter={() =>
-          onHoverFile({ path: originalPath, repository: tako.repository })
+          onHoverFile({ path, repository: tako.repository, virtualPath })
         }
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -359,10 +377,12 @@ const SymlinkDirItem = ({
           </span>
         </div>
 
-        <LatestCommitInfo path={originalPath} />
+        <LatestCommitInfo path={virtualPath} />
       </Row>
 
-      {isExpanded && <Contents path={path} level={level + 1} />}
+      {isExpanded && (
+        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
+      )}
     </>
   )
 }
@@ -372,20 +392,20 @@ const SymlinkFileItem = ({
   name,
   path,
   sha,
-  originalPath,
-}: ItemProps & { sha: string; originalPath: string }) => {
+  virtualPath,
+}: ItemProps & { sha: string }) => {
   const tako = useTako()
   const onHover = useStore((state) => state.onHoverFile)
   const onPreviewFile = useStore((state) => state.onPreviewFile)
   const isPreviewedFile = useStore(
-    (state) => state.previewedFile?.path === originalPath,
+    (state) => state.previewedFile?.virtualPath === virtualPath,
   )
   const isHovering = useStore(
     (state) =>
-      state.hoveredFile?.path === originalPath &&
+      state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
-  const previewFile = { path, sha, repository: tako.repository }
+  const previewFile = { path, sha, repository: tako.repository, virtualPath }
   useRawFile(
     { file: previewFile },
     {
@@ -397,7 +417,7 @@ const SymlinkFileItem = ({
       level={level}
       active={isHovering || isPreviewedFile}
       onPointerEnter={() =>
-        onHover({ path: originalPath, repository: tako.repository })
+        onHover({ path, repository: tako.repository, virtualPath })
       }
       onClick={() => {
         if (isPreviewedFile) {
@@ -436,7 +456,7 @@ const SymlinkFileItem = ({
         </span>
       </div>
 
-      <LatestCommitInfo path={originalPath} />
+      <LatestCommitInfo path={virtualPath} />
     </Row>
   )
 }

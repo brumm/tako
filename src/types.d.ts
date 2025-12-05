@@ -3,6 +3,7 @@ import { RestEndpointMethodTypes } from '@octokit/rest'
 export type HoverFile = {
   path: string
   repository: RepositoryInfo
+  virtualPath: string // Tree position path (parentVirtualPath + '/' + name)
 }
 
 export type PreviewFile = HoverFile & {
