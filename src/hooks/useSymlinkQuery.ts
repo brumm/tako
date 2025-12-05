@@ -36,7 +36,7 @@ export const symlinkQueryConfig = (tako: TakoContextProps, path: string) => ({
     }>(`
       query {
         repository(owner: "${tako.repository.owner}", name: "${tako.repository.repo}") {
-          object(expression: "HEAD:${path}") {
+          object(expression: "${tako.repository.ref}:${path}") {
             ... on Blob {
               text
             }
@@ -61,7 +61,7 @@ export const symlinkQueryConfig = (tako: TakoContextProps, path: string) => ({
     }>(`
       query {
         repository(owner: "${tako.repository.owner}", name: "${tako.repository.repo}") {
-          object(expression: "HEAD:${resolvedPath}") {
+          object(expression: "${tako.repository.ref}:${resolvedPath}") {
             __typename
             oid
           }

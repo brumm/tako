@@ -54,7 +54,7 @@ export const repoContentsQueryConfig = (tako: TakoContextProps, path: string) =>
       const response = await tako.client.graphql<RepoContentsResponse>(`
       query {
         repository(owner: "${tako.repository.owner}", name: "${tako.repository.repo}") {
-          object(expression: "HEAD:${path}") {
+          object(expression: "${tako.repository.ref}:${path}") {
             ... on Tree {
               entries {
                 name
