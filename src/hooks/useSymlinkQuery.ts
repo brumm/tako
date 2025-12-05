@@ -2,12 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import invariant from 'tiny-invariant'
 import { TakoContextProps, useTako } from '../components/Tako'
 
-type ResolvedSymlink = {
-  path: string
-  type: 'file' | 'dir'
-  sha?: string
-}
-
 const resolveSymlinkPath = (symlinkPath: string, target: string): string => {
   const pathParts = symlinkPath.split('/').slice(0, -1)
   const targetParts = target.split('/')
