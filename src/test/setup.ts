@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node'
 import { githubHandlers } from './mocks/github'
 import { queryClient } from '../queryClient'
 
-const server = setupServer(...githubHandlers)
+export const server = setupServer(...githubHandlers)
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' })
