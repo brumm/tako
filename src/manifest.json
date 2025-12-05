@@ -3,6 +3,7 @@
   "name": "Tako",
   "version": "0.0.1",
   "permissions": ["storage", "tabs"],
+  "host_permissions": ["http://localhost:5173/*"],
   "icons": {
     "16": "src/assets/icon-16.png",
     "24": "src/assets/icon-24.png",
