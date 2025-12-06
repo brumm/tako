@@ -11,8 +11,5 @@ export default defineConfig({
       port: 5173,
     },
   },
-  plugins: [
-    react(),
-    crx({ manifest }),
-  ],
+  plugins: [react(), crx({ manifest })],
 })

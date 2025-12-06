@@ -3,7 +3,9 @@ import { utils } from 'github-url-detection'
 import invariant from 'tiny-invariant'
 import type { RepositoryInfo } from '../types'
 
-export const getRepository = async (octokit: Octokit): Promise<RepositoryInfo> => {
+export const getRepository = async (
+  octokit: Octokit,
+): Promise<RepositoryInfo> => {
   const info = utils.getRepositoryInfo()
   invariant(info)
   const { owner, name: repo, path } = info

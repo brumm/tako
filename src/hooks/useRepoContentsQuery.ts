@@ -14,7 +14,9 @@ const FILE_MODES = {
   SUBMODULE: 57344,
 } as const
 
-const getTypeFromMode = (mode: number): 'file' | 'dir' | 'symlink' | 'submodule' => {
+const getTypeFromMode = (
+  mode: number,
+): 'file' | 'dir' | 'symlink' | 'submodule' => {
   switch (mode) {
     case FILE_MODES.DIRECTORY:
       return 'dir'

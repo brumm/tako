@@ -11,7 +11,9 @@
     "test:run": "vitest run",
     "test:browser": "vitest --config vitest.browser.config.ts",
     "test:browser:run": "vitest run --config vitest.browser.config.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.2.1",
@@ -35,6 +37,7 @@
     "msw": "^2.12.3",
     "path-browserify": "^1.0.0",
     "playwright": "^1.57.0",
+    "prettier": "^3.7.4",
     "process": "^0.11.10",
     "typescript": "^5.9.3",
     "vite": "^7.2.6",
