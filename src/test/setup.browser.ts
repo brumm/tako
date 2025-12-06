@@ -1,3 +1,4 @@
+import './polyfills.browser'
 import '@testing-library/jest-dom'
 import { setupWorker } from 'msw/browser'
 import { afterAll, afterEach, beforeAll } from 'vitest'
