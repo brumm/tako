@@ -1,3 +1,4 @@
+import { isRepoTree } from 'github-url-detection'
 import browser from 'webextension-polyfill'
 
 // Disable action by default
@@ -30,9 +31,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
 })
 
 async function updateActionState(tabId: number, url: string) {
-  const isGithubRepo = /^https?:\/\/github\.com\/[^/]+\/[^/]+/.test(url)
-
-  if (isGithubRepo) {
+  if (isRepoTree(new URL(url))) {
     await browser.action.enable(tabId)
   } else {
     await browser.action.disable(tabId)
