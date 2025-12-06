@@ -1,32 +1,142 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, graphql } from 'msw'
+
+const github = graphql.link('https://api.github.com/graphql')
 
 export const githubHandlers = [
-  // GET /repos/{owner}/{repo}/contents/{path}
-  http.get('https://api.github.com/repos/:owner/:repo/contents/:path*', () => {
-    return HttpResponse.json([
-      {
-        name: 'README.md',
-        path: 'README.md',
-        sha: 'abc123',
-        size: 100,
-        url: 'https://api.github.com/repos/brumm/tako/contents/README.md',
-        html_url: 'https://github.com/brumm/tako/blob/main/README.md',
-        git_url: 'https://api.github.com/repos/brumm/tako/git/blobs/abc123',
-        download_url: 'https://raw.githubusercontent.com/brumm/tako/main/README.md',
-        type: 'file',
-      },
-      {
-        name: 'src',
-        path: 'src',
-        sha: 'def456',
-        size: 0,
-        url: 'https://api.github.com/repos/brumm/tako/contents/src',
-        html_url: 'https://github.com/brumm/tako/tree/main/src',
-        git_url: 'https://api.github.com/repos/brumm/tako/git/trees/def456',
-        download_url: null,
-        type: 'dir',
-      },
-    ])
+  // GraphQL API - Repository contents query
+  github.operation(({ query }) => {
+    const queryStr = query as string
+
+    // Handle repository tree query for directory contents
+    if (queryStr.includes('... on Tree')) {
+      return HttpResponse.json({
+        data: {
+          repository: {
+            object: {
+              entries: [
+                {
+                  name: 'README.md',
+                  path: 'README.md',
+                  type: 'blob',
+                  mode: '100644',
+                  oid: 'abc123',
+                  object: null,
+                },
+                {
+                  name: 'src',
+                  path: 'src',
+                  type: 'tree',
+                  mode: '040000',
+                  oid: 'def456',
+                  object: null,
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    // Handle symlink resolution query (Blob text)
+    if (queryStr.includes('... on Blob') && queryStr.includes('text')) {
+      // Extract path from query to determine what to return
+      if (queryStr.includes('link-to-file')) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                text: 'README.md',
+              },
+            },
+          },
+        })
+      }
+      if (queryStr.includes('link-to-dir')) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                text: 'src',
+              },
+            },
+          },
+        })
+      }
+      if (queryStr.includes('link-with-dotdot')) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                text: '../README.md',
+              },
+            },
+          },
+        })
+      }
+      if (queryStr.includes('nested/link')) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                text: '../../README.md',
+              },
+            },
+          },
+        })
+      }
+      if (queryStr.includes('link-with-dot')) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                text: './README.md',
+              },
+            },
+          },
+        })
+      }
+    }
+
+    // Handle symlink target metadata query (check if target exists)
+    if (queryStr.includes('__typename') && queryStr.includes('oid')) {
+      // Check if querying for a directory (src)
+      if (
+        queryStr.includes(':src"') ||
+        queryStr.includes(':../src"') ||
+        queryStr.includes(':src/utils"')
+      ) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                __typename: 'Tree',
+                oid: 'def456',
+              },
+            },
+          },
+        })
+      }
+      // Check for valid file paths (README.md, helper.ts, etc.)
+      if (
+        queryStr.includes(':README.md"') ||
+        queryStr.includes(':src/utils/helper.ts"')
+      ) {
+        return HttpResponse.json({
+          data: {
+            repository: {
+              object: {
+                __typename: 'Blob',
+                oid: 'abc123',
+              },
+            },
+          },
+        })
+      }
+      // Return null for non-existent paths
+      return HttpResponse.json({ data: { repository: { object: null } } })
+    }
+
+    return HttpResponse.json({ data: null })
   }),
 
   // GET /repos/{owner}/{repo}/commits

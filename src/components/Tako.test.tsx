@@ -36,9 +36,12 @@ describe('Tako', () => {
       </TakoProvider>,
     )
 
-    expect(screen.getByText('README.md')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('README.md')).toBeInTheDocument()
+    })
+
     expect(screen.getByText('src')).toBeInTheDocument()
-    expect(screen.getByText('test commit')).toBeInTheDocument()
+    expect(screen.getAllByText('test commit')[0]).toBeInTheDocument()
     expect(screen.getByText('brumm')).toBeInTheDocument()
   })
 })

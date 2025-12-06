@@ -232,12 +232,7 @@ export const SubmoduleItem = ({
   )
 }
 
-export const SymlinkItem = ({
-  level,
-  name,
-  path,
-  virtualPath,
-}: ItemProps) => {
+export const SymlinkItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const symlinkQuery = useSymlinkQuery(path)
 
   if (symlinkQuery.isError) {
@@ -313,12 +308,7 @@ export const SymlinkItem = ({
   )
 }
 
-const SymlinkDirItem = ({
-  level,
-  name,
-  path,
-  virtualPath,
-}: ItemProps) => {
+const SymlinkDirItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const tako = useTako()
   const onHoverFile = useStore((state) => state.onHoverFile)
   const isHovering = useStore(

@@ -5,8 +5,8 @@ import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { queryClient } from '../queryClient'
 import { server } from '../test/setup'
-import { TakoProvider } from './Tako'
 import { SymlinkItem } from './Item'
+import { TakoProvider } from './Tako'
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const octokit = new Octokit()
@@ -36,7 +36,12 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-file" path="link-to-file" virtualPath="link-to-file" />
+        <SymlinkItem
+          level={1}
+          name="link-to-file"
+          path="link-to-file"
+          virtualPath="link-to-file"
+        />
       </TestWrapper>,
     )
 
@@ -74,7 +79,12 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-file" path="link-to-file" virtualPath="link-to-file" />
+        <SymlinkItem
+          level={1}
+          name="link-to-file"
+          path="link-to-file"
+          virtualPath="link-to-file"
+        />
       </TestWrapper>,
     )
 
@@ -114,7 +124,12 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link-to-dir" path="link-to-dir" virtualPath="link-to-dir" />
+        <SymlinkItem
+          level={1}
+          name="link-to-dir"
+          path="link-to-dir"
+          virtualPath="link-to-dir"
+        />
       </TestWrapper>,
     )
 
@@ -147,17 +162,19 @@ describe('SymlinkItem', () => {
       http.get(
         'https://api.github.com/repos/brumm/tako/contents/non-existent-file',
         () => {
-          return HttpResponse.json(
-            { message: 'Not Found' },
-            { status: 404 },
-          )
+          return HttpResponse.json({ message: 'Not Found' }, { status: 404 })
         },
       ),
     )
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="broken-link" path="broken-link" virtualPath="broken-link" />
+        <SymlinkItem
+          level={1}
+          name="broken-link"
+          path="broken-link"
+          virtualPath="broken-link"
+        />
       </TestWrapper>,
     )
 
@@ -169,83 +186,40 @@ describe('SymlinkItem', () => {
   })
 
   it('resolves relative paths with ../', async () => {
-    // Mock symlink in subdirectory pointing to parent directory file
-    server.use(
-      http.get('https://api.github.com/repos/brumm/tako/contents/src/link*', () => {
-        return HttpResponse.json({
-          name: 'link',
-          path: 'src/link',
-          type: 'symlink',
-          target: '../README.md',
-          sha: 'symlink101',
-        })
-      }),
-      http.get(
-        'https://api.github.com/repos/brumm/tako/contents/README.md*',
-        () => {
-          return HttpResponse.json({
-            name: 'README.md',
-            path: 'README.md',
-            sha: 'abc123',
-            size: 100,
-            type: 'file',
-          })
-        },
-      ),
-    )
-
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="src/link" virtualPath="src/link" />
+        <SymlinkItem
+          level={1}
+          name="link-with-dotdot"
+          path="src/link-with-dotdot"
+          virtualPath="src/link-with-dotdot"
+        />
       </TestWrapper>,
     )
 
     await waitFor(() => {
-      const link = screen.getByText('link')
+      const link = screen.getByText('link-with-dotdot')
       expect(link).toBeInTheDocument()
-      expect(link.getAttribute('title')).toBe('link → README.md')
+      expect(link.getAttribute('title')).toBe('link-with-dotdot → README.md')
     })
   })
 
   it('resolves nested relative paths', async () => {
-    // Mock symlink with complex relative path
-    server.use(
-      http.get(
-        'https://api.github.com/repos/brumm/tako/contents/foo/bar/link*',
-        () => {
-          return HttpResponse.json({
-            name: 'link',
-            path: 'foo/bar/link',
-            type: 'symlink',
-            target: '../../src/utils/helper.ts',
-            sha: 'symlink202',
-          })
-        },
-      ),
-      http.get(
-        'https://api.github.com/repos/brumm/tako/contents/src/utils/helper.ts*',
-        () => {
-          return HttpResponse.json({
-            name: 'helper.ts',
-            path: 'src/utils/helper.ts',
-            sha: 'file456',
-            size: 200,
-            type: 'file',
-          })
-        },
-      ),
-    )
-
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="foo/bar/link" virtualPath="foo/bar/link" />
+        <SymlinkItem
+          level={1}
+          name="nested/link"
+          path="nested/link"
+          virtualPath="nested/link"
+        />
       </TestWrapper>,
     )
 
     await waitFor(() => {
-      const link = screen.getByText('link')
+      const link = screen.getByText('nested/link')
       expect(link).toBeInTheDocument()
-      expect(link.getAttribute('title')).toBe('link → src/utils/helper.ts')
+      expect(link.getAttribute('title')).toBe('nested/link → README.md')
     })
   })
 
@@ -268,7 +242,12 @@ describe('SymlinkItem', () => {
 
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="invalid-link" path="invalid-link" virtualPath="invalid-link" />
+        <SymlinkItem
+          level={1}
+          name="invalid-link"
+          path="invalid-link"
+          virtualPath="invalid-link"
+        />
       </TestWrapper>,
     )
 
@@ -280,41 +259,21 @@ describe('SymlinkItem', () => {
   })
 
   it('ignores . in relative paths', async () => {
-    // Mock symlink with ./ in path
-    server.use(
-      http.get('https://api.github.com/repos/brumm/tako/contents/src/link*', () => {
-        return HttpResponse.json({
-          name: 'link',
-          path: 'src/link',
-          type: 'symlink',
-          target: './file.ts',
-          sha: 'symlink404',
-        })
-      }),
-      http.get(
-        'https://api.github.com/repos/brumm/tako/contents/src/file.ts*',
-        () => {
-          return HttpResponse.json({
-            name: 'file.ts',
-            path: 'src/file.ts',
-            sha: 'file789',
-            size: 50,
-            type: 'file',
-          })
-        },
-      ),
-    )
-
     render(
       <TestWrapper>
-        <SymlinkItem level={1} name="link" path="src/link" virtualPath="src/link" />
+        <SymlinkItem
+          level={1}
+          name="link-with-dot"
+          path="link-with-dot"
+          virtualPath="link-with-dot"
+        />
       </TestWrapper>,
     )
 
     await waitFor(() => {
-      const link = screen.getByText('link')
+      const link = screen.getByText('link-with-dot')
       expect(link).toBeInTheDocument()
-      expect(link.getAttribute('title')).toBe('link → src/file.ts')
+      expect(link.getAttribute('title')).toBe('link-with-dot → README.md')
     })
   })
 })

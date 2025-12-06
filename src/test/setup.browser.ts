@@ -9,13 +9,16 @@ const worker = setupWorker(...githubHandlers)
 // Filter act warnings - parallel React Query requests trigger these even though
 // we're properly using findBy/waitFor. The warnings are false positives.
 const originalError = console.error
-beforeAll(() => {
+beforeAll(async () => {
   console.error = (...args: unknown[]) => {
     if (String(args[0]).includes('not wrapped in act')) return
     originalError(...args)
   }
 
-  worker.start({ quiet: true })
+  await worker.start({
+    quiet: true,
+    onUnhandledRequest: 'warn',
+  })
 
   // Configure queryClient for testing
   queryClient.setDefaultOptions({
