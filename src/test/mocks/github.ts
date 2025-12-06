@@ -1,4 +1,4 @@
-import { http, HttpResponse, graphql } from 'msw'
+import { graphql, http, HttpResponse } from 'msw'
 
 const github = graphql.link('https://api.github.com/graphql')
 
@@ -33,7 +33,7 @@ export const githubHandlers = [
               ],
             },
           },
-        },
+        } as any,
       })
     }
 
@@ -48,8 +48,8 @@ export const githubHandlers = [
                 text: 'README.md',
               },
             },
-          },
-        })
+          } as any,
+        } as any)
       }
       if (queryStr.includes('link-to-dir')) {
         return HttpResponse.json({
@@ -59,7 +59,7 @@ export const githubHandlers = [
                 text: 'src',
               },
             },
-          },
+          } as any,
         })
       }
       if (queryStr.includes('link-with-dotdot')) {
@@ -70,7 +70,7 @@ export const githubHandlers = [
                 text: '../README.md',
               },
             },
-          },
+          } as any,
         })
       }
       if (queryStr.includes('nested/link')) {
@@ -81,7 +81,7 @@ export const githubHandlers = [
                 text: '../../README.md',
               },
             },
-          },
+          } as any,
         })
       }
       if (queryStr.includes('link-with-dot')) {
@@ -92,7 +92,7 @@ export const githubHandlers = [
                 text: './README.md',
               },
             },
-          },
+          } as any,
         })
       }
     }
@@ -113,7 +113,7 @@ export const githubHandlers = [
                 oid: 'def456',
               },
             },
-          },
+          } as any,
         })
       }
       // Check for valid file paths (README.md, helper.ts, etc.)
@@ -129,11 +129,13 @@ export const githubHandlers = [
                 oid: 'abc123',
               },
             },
-          },
+          } as any,
         })
       }
       // Return null for non-existent paths
-      return HttpResponse.json({ data: { repository: { object: null } } })
+      return HttpResponse.json({
+        data: { repository: { object: null } },
+      } as any)
     }
 
     return HttpResponse.json({ data: null })
