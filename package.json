@@ -28,7 +28,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/browser": "^4.0.15",
     "@vitest/browser-playwright": "^4.0.15",
-    "@vitest/ui": "^4.0.14",
+    "@vitest/ui": "^4.0.15",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
     "happy-dom": "^20.0.11",
@@ -38,7 +38,7 @@
     "process": "^0.11.10",
     "typescript": "^5.9.3",
     "vite": "^7.2.6",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1",
