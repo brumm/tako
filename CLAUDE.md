@@ -80,3 +80,4 @@ yarn clean
 - Uses GitHub Primer CSS classes (extension runs in GitHub DOM context)
 - WebExtension Polyfill for cross-browser compatibility
 - Stores GitHub token in `chrome.storage.sync`
+- remember to run `yarn format` after changing code

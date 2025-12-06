@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { JSX, ReactNode, createElement, useEffect, useState } from 'react'
 
+import { useCollapseDirs } from '../hooks/useCollapseDirs'
+import { useDirChainQuery } from '../hooks/useDirChainQuery'
 import { useRawFile } from '../hooks/useRawFile'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
@@ -25,10 +27,29 @@ export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
       state.hoveredFile.repository === tako.repository,
   )
   const [isExpanded, setIsExpanded] = useState(false)
-  const dirContentsQuery = useRepoContentsQuery(path, {
+  const collapseEnabled = useCollapseDirs()
+
+  const hoverQuery = useRepoContentsQuery(path, {
     enabled: isHovering,
   })
-  const isLoadingDirContents = useDeferredLoading(dirContentsQuery.isLoading)
+
+  const chainQuery = useDirChainQuery(path, {
+    enabled: isExpanded && collapseEnabled,
+  })
+
+  const isLoadingDirContents = useDeferredLoading(
+    isExpanded && collapseEnabled ? chainQuery.isLoading : hoverQuery.isLoading,
+  )
+
+  const displayName =
+    collapseEnabled && chainQuery.data?.chain.length
+      ? [name, ...chainQuery.data.chain].join('/')
+      : name
+
+  const contentsPath =
+    collapseEnabled && chainQuery.data?.leafPath
+      ? chainQuery.data.leafPath
+      : path
 
   return (
     <>
@@ -65,12 +86,12 @@ export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
         <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
           <span className="css-truncate css-truncate-target d-block width-fit">
             <Link
-              path={path}
+              path={contentsPath}
               type="tree"
               className="Link--primary cursor-pointer"
-              title={name}
+              title={displayName}
             >
-              {name}
+              {displayName}
             </Link>
           </span>
         </div>
@@ -79,7 +100,11 @@ export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
       </Row>
 
       {isExpanded && (
-        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
+        <Contents
+          path={contentsPath}
+          level={level + 1}
+          virtualPath={virtualPath}
+        />
       )}
     </>
   )

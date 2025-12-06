@@ -166,6 +166,7 @@ const TokenSection = () => {
 
 const Popup = () => {
   const [enabled, setEnabled] = useState<boolean | null>(null)
+  const [collapseEnabled, setCollapseEnabled] = useState<boolean>(false)
 
   const checkRunningMutation = useMutation({
     mutationFn: async () => {
@@ -196,6 +197,11 @@ const Popup = () => {
 
   useEffect(() => {
     checkRunningMutation.mutate()
+
+    // Load collapse setting
+    browser.storage.sync.get('collapseDirs').then((result) => {
+      setCollapseEnabled((result.collapseDirs as boolean) || false)
+    })
   }, [])
 
   const handleToggle = async () => {
@@ -214,6 +220,21 @@ const Popup = () => {
     } else {
       await browser.storage.sync.set({ takoEnabled: false })
       await browser.tabs.sendMessage(tab.id, { action: 'stop' })
+    }
+  }
+
+  const handleCollapseToggle = async () => {
+    const newCollapseEnabled = !collapseEnabled
+    setCollapseEnabled(newCollapseEnabled)
+    await browser.storage.sync.set({ collapseDirs: newCollapseEnabled })
+
+    // Reload tab to apply changes
+    const [tab] = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    })
+    if (tab.id) {
+      await browser.tabs.reload(tab.id)
     }
   }
 
@@ -236,6 +257,18 @@ const Popup = () => {
             checked={enabled || false}
             onChange={handleToggle}
             disabled={isChecking}
+          />
+          <span className="slider"></span>
+        </div>
+      </label>
+      <label className="toggle-container">
+        <span className="toggle-label">Collapse nested directories</span>
+        <div className="toggle">
+          <input
+            id="collapse-toggle"
+            type="checkbox"
+            checked={collapseEnabled}
+            onChange={handleCollapseToggle}
           />
           <span className="slider"></span>
         </div>
