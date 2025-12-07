@@ -1,7 +1,7 @@
 // This file must be imported before MSW to polyfill localStorage and browser APIs
 const storage = new Map<string, string>()
 
-Object.defineProperty(global, 'localStorage', {
+Object.defineProperty(globalThis, 'localStorage', {
   value: {
     getItem: (key: string) => storage.get(key) ?? null,
     setItem: (key: string, value: string) => storage.set(key, value),
@@ -60,13 +60,13 @@ Object.defineProperty(global, 'localStorage', {
 }
 
   // Mock both chrome and browser globals for webextension-polyfill
-  Object.defineProperty(global, 'chrome', {
+  Object.defineProperty(globalThis, 'chrome', {
     value: browserAPI,
     writable: true,
     configurable: true,
   })
 
-  Object.defineProperty(global, 'browser', {
+  Object.defineProperty(globalThis, 'browser', {
     value: browserAPI,
     writable: true,
     configurable: true,
