@@ -1,10 +1,10 @@
 import { format } from 'timeago.js'
 
 import { useLatestCommitInfo } from '../hooks/useLatestCommitInfo'
-import { useStore } from '../store'
+import { useTakoStore } from '../store'
 
 export const LatestCommitInfo = ({ path }) => {
-  const hasPreviewedFile = useStore((state) => state.previewedFile !== null)
+  const hasPreviewedFile = useTakoStore((state) => state.previewedFile !== null)
   const lastCommitQuery = useLatestCommitInfo(path, {
     enabled: !hasPreviewedFile,
   })

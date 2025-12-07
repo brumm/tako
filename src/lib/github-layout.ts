@@ -1,41 +1,17 @@
-export const hideGithubFileTree = () => {
+import invariant from 'tiny-invariant'
+
+export function showGithubFileTree(isFileTreeVisible: boolean) {
   const sourceTreeElement = document.querySelector<HTMLElement>(
     '[data-hpc]:has([aria-labelledby=folders-and-files])',
   )
-  if (sourceTreeElement) {
-    sourceTreeElement.style.display = 'none'
-  }
+  invariant(sourceTreeElement)
+  sourceTreeElement.classList.toggle('d-none', !isFileTreeVisible)
 }
 
-export const showGithubFileTree = () => {
-  const sourceTreeElement = document.querySelector<HTMLElement>(
-    '[data-hpc]:has([aria-labelledby=folders-and-files])',
+export function showWideLayout(isWideLayoutEnabled: boolean) {
+  const layoutElement = document.querySelector<HTMLDivElement>(
+    'turbo-frame .react-repos-overview-margin',
   )
-  if (sourceTreeElement) {
-    sourceTreeElement.style.display = ''
-  }
-}
-
-export const enableTakoLayout = () => {
-  const layoutElement = document.querySelector<HTMLDivElement>('.Layout')
-  const repoMainElement = document.querySelector<HTMLDivElement>(
-    '[data-selector=repos-split-pane-content]',
-  )
-  const sidebarElement = document.querySelector('.Layout-sidebar')
-
-  layoutElement?.classList.remove('Layout')
-  repoMainElement?.style.setProperty('max-width', 'unset', 'important')
-  sidebarElement?.classList.add('d-none')
-}
-
-export const disableTakoLayout = () => {
-  const layoutElement = document.querySelector<HTMLDivElement>('.Layout')
-  const repoMainElement = document.querySelector<HTMLDivElement>(
-    '[data-selector=repos-split-pane-content]',
-  )
-  const sidebarElement = document.querySelector('.Layout-sidebar')
-
-  layoutElement?.classList.add('Layout')
-  repoMainElement?.style.removeProperty('max-width')
-  sidebarElement?.classList.remove('d-none')
+  invariant(layoutElement)
+  layoutElement.classList.toggle('Layout', isWideLayoutEnabled)
 }

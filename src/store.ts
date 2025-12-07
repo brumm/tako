@@ -8,7 +8,7 @@ type Store = {
   onPreviewFile: (file: PreviewFile | null) => void
 }
 
-export const useStore = create<Store>()((set) => ({
+export const useTakoStore = create<Store>()((set) => ({
   previewedFile: null,
   hoveredFile: null,
   onHoverFile: (file) => set({ hoveredFile: file }),

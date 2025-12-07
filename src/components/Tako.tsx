@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { createContext, useContext, useMemo } from 'react'
 
 import { queryClient } from '../queryClient'
-import { useStore } from '../store'
+import { useTakoStore } from '../store'
 import { RepositoryInfo } from '../types'
 import { Contents } from './Contents'
 import { MostRecentRepoCommit } from './MostRecentRepoCommit'
@@ -45,9 +45,9 @@ export const useTako = () => {
 }
 
 export const Tako = () => {
-  const previewedFile = useStore((state) => state.previewedFile)
+  const previewedFile = useTakoStore((state) => state.previewedFile)
   const hasPreviewedFile = !!previewedFile
-  const onPreviewFile = useStore((state) => state.onPreviewFile)
+  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
 
   return (
     <>

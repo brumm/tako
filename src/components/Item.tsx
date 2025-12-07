@@ -6,7 +6,7 @@ import { useDirChainQuery } from '../hooks/useDirChainQuery'
 import { useRawFile } from '../hooks/useRawFile'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
-import { useStore } from '../store'
+import { useTakoStore } from '../store'
 import { Contents } from './Contents'
 import { LatestCommitInfo } from './LatestCommitInfo'
 import { useTako } from './Tako'
@@ -20,8 +20,8 @@ type ItemProps = {
 
 export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const tako = useTako()
-  const onHoverFile = useStore((state) => state.onHoverFile)
-  const isHovering = useStore(
+  const onHoverFile = useTakoStore((state) => state.onHoverFile)
+  const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
@@ -118,12 +118,12 @@ export const FileItem = ({
   virtualPath,
 }: ItemProps & { sha: string }) => {
   const tako = useTako()
-  const onHover = useStore((state) => state.onHoverFile)
-  const onPreviewFile = useStore((state) => state.onPreviewFile)
-  const isPreviewedFile = useStore(
+  const onHover = useTakoStore((state) => state.onHoverFile)
+  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
+  const isPreviewedFile = useTakoStore(
     (state) => state.previewedFile?.virtualPath === virtualPath,
   )
-  const isHovering = useStore(
+  const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
@@ -191,8 +191,8 @@ export const SubmoduleItem = ({
   virtualPath,
 }: ItemProps) => {
   const tako = useTako()
-  const onHoverFile = useStore((state) => state.onHoverFile)
-  const isHovering = useStore(
+  const onHoverFile = useTakoStore((state) => state.onHoverFile)
+  const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
@@ -335,8 +335,8 @@ export const SymlinkItem = ({ level, name, path, virtualPath }: ItemProps) => {
 
 const SymlinkDirItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const tako = useTako()
-  const onHoverFile = useStore((state) => state.onHoverFile)
-  const isHovering = useStore(
+  const onHoverFile = useTakoStore((state) => state.onHoverFile)
+  const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
@@ -410,12 +410,12 @@ const SymlinkFileItem = ({
   virtualPath,
 }: ItemProps & { sha: string }) => {
   const tako = useTako()
-  const onHover = useStore((state) => state.onHoverFile)
-  const onPreviewFile = useStore((state) => state.onPreviewFile)
-  const isPreviewedFile = useStore(
+  const onHover = useTakoStore((state) => state.onHoverFile)
+  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
+  const isPreviewedFile = useTakoStore(
     (state) => state.previewedFile?.virtualPath === virtualPath,
   )
-  const isHovering = useStore(
+  const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,

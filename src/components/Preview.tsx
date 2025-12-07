@@ -3,12 +3,12 @@ import binaryExtensions from 'binary-extensions'
 import { ReactNode } from 'react'
 import { useHighlightedFile } from '../hooks/useHighlightedFile'
 import { useRawFile } from '../hooks/useRawFile'
-import { useStore } from '../store'
+import { useTakoStore } from '../store'
 import { PreviewFile } from '../types'
 import { useTako } from './Tako'
 
 export const Preview = () => {
-  const previewedFile = useStore((state) => state.previewedFile)!
+  const previewedFile = useTakoStore((state) => state.previewedFile)!
   const fileType = getFileType(previewedFile.path)
 
   switch (fileType) {

@@ -7,14 +7,10 @@ import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
 import { mostRecentRepoCommitQueryConfig } from './hooks/useMostRecentRepoCommitQuery'
 import { repoContentsQueryConfig } from './hooks/useRepoContentsQuery'
-import {
-  disableTakoLayout,
-  enableTakoLayout,
-  showGithubFileTree,
-} from './lib/github-layout'
+import { showGithubFileTree, showWideLayout } from './lib/github-layout'
 import { getRepository } from './lib/repository'
 import { queryClient } from './queryClient'
-import { useStore } from './store'
+import { useTakoStore } from './store'
 import { onElementRemoval, waitForElement } from './waitForElement'
 
 const startTako = async () => {
@@ -67,22 +63,18 @@ const renderTako = async (octokit: Octokit) => {
     ),
   ])
 
-  sourceTreeElement.style.display = 'none'
+  showGithubFileTree(false)
 
   const takoContainer = document.createElement('div')
-  takoContainer.classList.add('tako')
+  takoContainer.classList.add('tako-container')
   sourceTreeElement.parentElement?.insertBefore(
     takoContainer,
     sourceTreeElement.nextSibling,
   )
 
-  useStore.subscribe((state) => {
+  useTakoStore.subscribe((state) => {
     const hasPreviewedFile = state.previewedFile !== null
-    if (hasPreviewedFile) {
-      enableTakoLayout()
-    } else {
-      disableTakoLayout()
-    }
+    showWideLayout(!hasPreviewedFile)
   })
 
   createRoot(takoContainer).render(
@@ -101,12 +93,13 @@ const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
 }
 
 const stopTako = () => {
-  const takoElement = document.querySelector('.tako')
-  if (takoElement) {
-    takoElement.remove()
+  const takoContainer = document.querySelector('.tako-container')
+  if (takoContainer) {
+    takoContainer.remove()
   }
-  showGithubFileTree()
-  disableTakoLayout()
+  showGithubFileTree(true)
+  showWideLayout(true)
+  useTakoStore.setState(useTakoStore.getInitialState())
 }
 
 document.addEventListener('DOMContentLoaded', startTako)
