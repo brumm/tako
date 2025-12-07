@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: pnpm typecheck
+
+      - run: pnpm format:check
+
+      - run: pnpm test:run
+
+      - run: pnpm build
+
+      - name: Get version from manifest
+        id: version
+        run: echo "version=$(node -p "require('./src/manifest.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: tako-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
+
+      - name: Upload to Chrome Web Store
+        uses: PlasmoHQ/bpp@v3
+        with:
+          keys: ${{ secrets.BPP_KEYS }}
+          artifact: tako-${{ steps.version.outputs.version }}.zip
