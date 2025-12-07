@@ -10,13 +10,13 @@ Tako is a browser extension for GitHub that provides a fast inline, expandable f
 
 ```bash
 # Development with hot reload
-yarn dev
+pnpm dev
 
 # Production build
-yarn build
+pnpm build
 
 # Clean build artifacts
-yarn clean
+pnpm clean
 ```
 
 ## Architecture
@@ -80,4 +80,4 @@ yarn clean
 - Uses GitHub Primer CSS classes (extension runs in GitHub DOM context)
 - WebExtension Polyfill for cross-browser compatibility
 - Stores GitHub token in `chrome.storage.sync`
-- remember to run `yarn format` after changing code
+- remember to run `pnpm format` after changing code
