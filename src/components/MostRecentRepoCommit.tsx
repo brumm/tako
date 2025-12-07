@@ -17,6 +17,8 @@ export const MostRecentRepoCommit = () => {
     ? `/${mostRecentRepoCommit.author.login}`
     : null
 
+  const [commitMessageTitle] = mostRecentRepoCommit.commit.message.split('\n')
+
   return (
     <div className="LatestCommit-module__Box--Fimpo py-1 bgColor-muted border-bottom">
       <h2
@@ -73,7 +75,7 @@ export const MostRecentRepoCommit = () => {
               data-testid="latest-commit-html"
             >
               <a href={commitUrl} className="Link--secondary" data-pjax="true">
-                {mostRecentRepoCommit.commit.message}
+                {commitMessageTitle}
               </a>
             </span>
           </div>

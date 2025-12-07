@@ -14,6 +14,8 @@ export const LatestCommitInfo = ({ path }) => {
     return null
   }
 
+  const [commitMessageTitle] = lastCommit.message.split('\n')
+
   return (
     <>
       <div
@@ -29,7 +31,7 @@ export const LatestCommitInfo = ({ path }) => {
               event.stopPropagation()
             }}
           >
-            {lastCommit.message}
+            {commitMessageTitle}
           </a>
         </span>
       </div>
