@@ -129,12 +129,8 @@ export const FileItem = ({
       state.hoveredFile.repository === tako.repository,
   )
   const previewFile = { path, sha, repository: tako.repository, virtualPath }
-  useRawFile(
-    { file: previewFile },
-    {
-      enabled: isHovering,
-    },
-  )
+  useRawFile({ file: previewFile }, { enabled: isHovering })
+
   return (
     <Row
       level={level}
@@ -421,12 +417,8 @@ const SymlinkFileItem = ({
       state.hoveredFile.repository === tako.repository,
   )
   const previewFile = { path, sha, repository: tako.repository, virtualPath }
-  useRawFile(
-    { file: previewFile },
-    {
-      enabled: isHovering,
-    },
-  )
+  useRawFile({ file: previewFile }, { enabled: isHovering })
+
   return (
     <Row
       level={level}
