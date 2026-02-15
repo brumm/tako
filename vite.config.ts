@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { crx } from '@crxjs/vite-plugin'
 import zipPack from 'vite-plugin-zip-pack'
 import manifest from './src/manifest.json'
+import { version } from './package.json'
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -14,12 +15,12 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    crx({ manifest }),
+    crx({ manifest: { ...manifest, version } }),
     mode === 'production' &&
       zipPack({
         inDir: 'dist',
         outDir: '.',
-        outFileName: `tako-${manifest.version}.zip`,
+        outFileName: `tako-${version}.zip`,
       }),
   ].filter(Boolean),
 }))

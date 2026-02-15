@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tako",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["http://localhost:5173/*"],
   "icons": {
