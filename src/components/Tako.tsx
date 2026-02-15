@@ -8,7 +8,7 @@ import { queryClient } from '../queryClient'
 import { useTakoStore } from '../store'
 import { RepositoryInfo } from '../types'
 import { Contents } from './Contents'
-import { MostRecentRepoCommit } from './MostRecentRepoCommit'
+import { LatestRepoCommit } from './LatestRepoCommit'
 import { Preview } from './Preview'
 
 export type TakoContextProps = {
@@ -53,7 +53,7 @@ export const Tako = () => {
     <>
       <QueryClientProvider client={queryClient}>
         <div className="overflow-hidden tako border rounded">
-          <MostRecentRepoCommit />
+          <LatestRepoCommit />
 
           <div
             className="d-flex position-relative"

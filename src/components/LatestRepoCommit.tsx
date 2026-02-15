@@ -1,8 +1,7 @@
-import { format } from 'timeago.js'
 import { useMostRecentRepoCommitQuery } from '../hooks/useMostRecentRepoCommitQuery'
 import { useTako } from './Tako'
 
-export const MostRecentRepoCommit = () => {
+export const LatestRepoCommit = () => {
   const { repository } = useTako()
   const mostRecentCommitQuery = useMostRecentRepoCommitQuery()
   const mostRecentRepoCommit = mostRecentCommitQuery.data
@@ -20,47 +19,50 @@ export const MostRecentRepoCommit = () => {
   const [commitMessageTitle] = mostRecentRepoCommit.commit.message.split('\n')
 
   return (
-    <div className="LatestCommit-module__Box--Fimpo py-1 bgColor-muted border-bottom">
-      <h2
-        className="sr-only ScreenReaderHeading-module__userSelectNone--vlUbc prc-Heading-Heading-6CmGO"
-        data-testid="screen-reader-heading"
-      >
-        Latest commit
-      </h2>
+    <div
+      className="d-flex p-2 pl-3 bgColor-muted"
+      style={{
+        borderBottom: 'var(--borderWidth-thin)solid var(--borderColor-muted)',
+      }}
+    >
       <div
         data-testid="latest-commit"
-        className="LatestCommit-module__Box_1--aQ5OG"
+        className="LatestCommit-module__Box_1__YkEgg"
       >
-        <div className="CommitAttribution-module__CommitAttributionContainer--Si80C">
+        <div className="CommitAttribution-module__CommitAttributionContainer__I_rfs">
           {mostRecentRepoCommit.author && authorUrl && (
             <div
               data-testid="author-avatar"
-              className="Box-sc-62in7e-0 AuthorAvatar-module__AuthorAvatarContainer--Z1TF8"
+              className="Box-sc-62in7e-0 AuthorAvatar-module__AuthorAvatarContainer__n0MVc"
             >
               <a
-                className="Link__StyledLink-sc-1syctfj-0 prc-Link-Link-85e08"
+                className="Link__StyledLink-sc-1syctfj-0 prc-Link-Link-9ZwDx"
                 href={authorUrl}
                 data-testid="avatar-icon-link"
+                octo-dimensions="link_type:self"
+                aria-keyshortcuts="Alt+ArrowUp"
               >
                 <img
                   data-component="Avatar"
-                  className="Box-sc-62in7e-0 kglDHV AuthorAvatar-module__authorAvatarImage--bQzij prc-Avatar-Avatar-ZRS-m"
+                  className="Box-sc-62in7e-0 kglDHV AuthorAvatar-module__authorAvatarImage__a3R8x prc-Avatar-Avatar-0xaUi"
                   alt={mostRecentRepoCommit.author.login}
                   width="20"
                   height="20"
-                  src={mostRecentRepoCommit.author.avatar_url}
                   data-testid="github-avatar"
                   aria-label={mostRecentRepoCommit.author.login}
+                  src={mostRecentRepoCommit.author.avatar_url}
                   style={
                     { '--avatarSize-regular': '20px' } as React.CSSProperties
                   }
                 />
               </a>
               <a
-                className="Link__StyledLink-sc-1syctfj-0 dBLZyi AuthorAvatar-module__authorHoverableLink--vw9qe prc-Link-Link-85e08"
+                className="Link__StyledLink-sc-1syctfj-0 dtKDuy AuthorAvatar-module__authorHoverableLink__MHTT8 prc-Link-Link-9ZwDx"
                 data-muted="true"
                 href={`${authorUrl}/${repository.repo}/commits?author=${mostRecentRepoCommit.author.login}`}
                 aria-label={`commits by ${mostRecentRepoCommit.author.login}`}
+                octo-dimensions="link_type:self"
+                aria-keyshortcuts="Alt+ArrowUp"
               >
                 {mostRecentRepoCommit.author.login}
               </a>
@@ -68,10 +70,10 @@ export const MostRecentRepoCommit = () => {
           )}
           <span className=""></span>
         </div>
-        <div className="d-none d-sm-flex LatestCommit-module__Box_2--JDY37">
+        <div className="d-none d-sm-flex LatestCommit-module__Box_2__pSPKJ">
           <div className="Truncate flex-items-center f5">
             <span
-              className="Text__StyledText-sc-1klmep6-0 Truncate-text prc-Text-Text-0ima0"
+              className="Text__StyledText-sc-1klmep6-0 Truncate-text prc-Text-Text-9mHv3"
               data-testid="latest-commit-html"
             >
               <a href={commitUrl} className="Link--secondary" data-pjax="true">
@@ -80,42 +82,12 @@ export const MostRecentRepoCommit = () => {
             </span>
           </div>
         </div>
-        <span className="d-flex d-sm-none fgColor-muted f6">
-          {mostRecentRepoCommit.commit.author?.date && (
-            <span>{format(mostRecentRepoCommit.commit.author.date)}</span>
-          )}
-        </span>
       </div>
       <div className="d-flex flex-shrink-0 gap-2">
-        <div
-          data-testid="latest-commit-details"
-          className="d-none d-sm-flex flex-items-center"
-        >
-          <span className="d-flex flex-nowrap fgColor-muted f6">
-            <a
-              className="Link--secondary prc-Link-Link-85e08"
-              aria-label={`Commit ${mostRecentRepoCommit.sha.slice(0, 7)}`}
-              href={commitUrl}
-              data-discover="true"
-            >
-              {mostRecentRepoCommit.sha.slice(0, 7)}
-            </a>
-            &nbsp;·&nbsp;
-            {mostRecentRepoCommit.commit.author?.date && (
-              <span>{format(mostRecentRepoCommit.commit.author.date)}</span>
-            )}
-          </span>
-        </div>
         <div className="d-flex gap-2">
-          <h2
-            className="sr-only ScreenReaderHeading-module__userSelectNone--vlUbc prc-Heading-Heading-6CmGO"
-            data-testid="screen-reader-heading"
-          >
-            History
-          </h2>
           <a
             href={commitsUrl}
-            className="prc-Button-ButtonBase-c50BI d-none d-lg-flex LinkButton-module__code-view-link-button--thtqc flex-items-center fgColor-default"
+            className="prc-Button-ButtonBase-9n-Xk d-none d-lg-flex LinkButton-module__linkButton__nFnov flex-items-center fgColor-default"
             data-loading="false"
             data-size="small"
             data-variant="invisible"
@@ -123,44 +95,21 @@ export const MostRecentRepoCommit = () => {
             <span
               data-component="buttonContent"
               data-align="center"
-              className="prc-Button-ButtonContent-HKbr-"
+              className="prc-Button-ButtonContent-Iohp5"
             >
               <span
                 data-component="leadingVisual"
-                className="prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB"
+                className="prc-Button-Visual-YNt2F prc-Button-VisualWrap-E4cnq"
               >
                 <HistoryIcon />
               </span>
-              <span data-component="text" className="prc-Button-Label-pTQ3x">
+              <span data-component="text" className="prc-Button-Label-FWkx3">
                 <span className="fgColor-default">
                   {mostRecentRepoCommit.totalCommitCount} Commits
                 </span>
               </span>
             </span>
           </a>
-          <div className="d-lg-none">
-            <a
-              aria-label="View commit history for this file."
-              href={commitsUrl}
-              className="prc-Button-ButtonBase-c50BI LinkButton-module__code-view-link-button--thtqc flex-items-center fgColor-default"
-              data-loading="false"
-              data-size="small"
-              data-variant="invisible"
-            >
-              <span
-                data-component="buttonContent"
-                data-align="center"
-                className="prc-Button-ButtonContent-HKbr-"
-              >
-                <span
-                  data-component="leadingVisual"
-                  className="prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB"
-                >
-                  <HistoryIcon />
-                </span>
-              </span>
-            </a>
-          </div>
         </div>
       </div>
     </div>

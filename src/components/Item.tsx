@@ -8,7 +8,7 @@ import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
 import { useTakoStore } from '../store'
 import { Contents } from './Contents'
-import { LatestCommitInfo } from './LatestCommitInfo'
+import { LatestItemCommitTableCell } from './LatestItemCommitTableCell'
 import { useTako } from './Tako'
 
 type ItemProps = {
@@ -96,7 +96,7 @@ export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
           </span>
         </div>
 
-        <LatestCommitInfo path={path} />
+        <LatestItemCommitTableCell path={path} />
       </Row>
 
       {isExpanded && (
@@ -175,7 +175,7 @@ export const FileItem = ({
         </span>
       </div>
 
-      <LatestCommitInfo path={path} />
+      <LatestItemCommitTableCell path={path} />
     </Row>
   )
 }
@@ -243,7 +243,7 @@ export const SubmoduleItem = ({
           </span>
         </div>
 
-        <LatestCommitInfo path={path} />
+        <LatestItemCommitTableCell path={path} />
       </Row>
 
       {isExpanded && (
@@ -388,7 +388,7 @@ const SymlinkDirItem = ({ level, name, path, virtualPath }: ItemProps) => {
           </span>
         </div>
 
-        <LatestCommitInfo path={virtualPath} />
+        <LatestItemCommitTableCell path={virtualPath} />
       </Row>
 
       {isExpanded && (
@@ -463,7 +463,7 @@ const SymlinkFileItem = ({
         </span>
       </div>
 
-      <LatestCommitInfo path={virtualPath} />
+      <LatestItemCommitTableCell path={virtualPath} />
     </Row>
   )
 }
