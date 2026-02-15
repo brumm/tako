@@ -1,4 +1,4 @@
-import { isRepoTree } from 'github-url-detection'
+import { isRepoTree as detectRepoTree } from 'github-url-detection'
 import { createRoot } from 'react-dom/client'
 
 import { Octokit } from '@octokit/rest'
@@ -11,26 +11,35 @@ import { showGithubFileTree, showWideLayout } from './lib/github-layout'
 import { getRepository } from './lib/repository'
 import { queryClient } from './queryClient'
 import { useTakoStore } from './store'
-import { onElementRemoval, waitForElement } from './waitForElement'
+import { waitForElement } from './waitForElement'
 
 const startTako = async () => {
-  const shouldShowAction = isRepoTree()
+  document.removeEventListener('visibilitychange', startTako)
 
-  // Update action state based on whether we're on a repo tree page
-  browser.runtime.sendMessage({
-    action: 'updateActionState',
-    enabled: shouldShowAction,
-  })
-
-  if (!shouldShowAction || document.querySelector('.tako')) {
+  if (document.hidden) {
+    document.addEventListener('visibilitychange', startTako, { once: true })
     return
   }
+
+  const isRepoTree = detectRepoTree()
+
+  browser.runtime.sendMessage({
+    action: 'updateActionState',
+    enabled: isRepoTree,
+  })
+
+  if (isRepoTree === false) {
+    return
+  }
+
+  if (document.querySelector('.tako')) {
+    return
+  }
+
   const { takoEnabled } = await browser.storage.sync.get('takoEnabled')
   if (takoEnabled === false) {
     return
   }
-
-  onElementRemoval('.tako', startTako)
 
   const { token } = await browser.storage.sync.get('token')
   if (!token) {
@@ -77,6 +86,11 @@ const renderTako = async (octokit: Octokit) => {
     showWideLayout(!hasPreviewedFile)
   })
 
+  browser.runtime.sendMessage({
+    action: 'updateActionState',
+    enabled: true,
+  })
+
   createRoot(takoContainer).render(
     <TakoProvider client={octokit} repository={repository}>
       <Tako />
@@ -85,10 +99,16 @@ const renderTako = async (octokit: Octokit) => {
 }
 
 const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
-  const containerElement = await waitForElement('body')
+  const takoContainer = await waitForElement('body')
+  takoContainer.classList.add('tako-container')
   const rootElement = document.createElement('div')
-  rootElement.classList.add('tako')
-  containerElement.prepend(rootElement)
+  takoContainer.prepend(rootElement)
+
+  browser.runtime.sendMessage({
+    action: 'updateActionState',
+    enabled: true,
+  })
+
   createRoot(rootElement).render(<TokenPrompt invalidToken={invalidToken} />)
 }
 
@@ -111,7 +131,7 @@ browser.runtime.onMessage.addListener(
   (message: { action: string }, _sender, sendResponse) => {
     switch (message.action) {
       case 'checkRunning': {
-        const isRunning = !!document.querySelector('.tako')
+        const isRunning = document.querySelector('.tako') !== null
         sendResponse(isRunning)
         break
       }

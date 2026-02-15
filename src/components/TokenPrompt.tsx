@@ -3,7 +3,7 @@ import { storage } from 'webextension-polyfill'
 export const TokenPrompt = ({ invalidToken }) => {
   return (
     <form
-      className="d-flex flex-items-center gap-3 p-3"
+      className="d-flex flex-items-center gap-3 p-3 tako"
       onSubmit={async (event) => {
         event.preventDefault()
         const token = new FormData(event.target as HTMLFormElement).get('token')
