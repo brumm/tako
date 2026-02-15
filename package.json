@@ -13,7 +13,9 @@
     "test:browser:run": "vitest run --config vitest.browser.config.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "release": "npm version --tag-version-prefix=v",
+    "postrelease": "git push --follow-tags"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.2.1",
