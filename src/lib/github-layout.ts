@@ -9,9 +9,25 @@ export function showGithubFileTree(isFileTreeVisible: boolean) {
 }
 
 export function showWideLayout(isWideLayoutEnabled: boolean) {
+  const sideBarElement = document.querySelector<HTMLDivElement>(
+    '[class^=prc-PageLayout-Pane-]',
+  )
+  invariant(sideBarElement)
+  sideBarElement.classList.toggle('d-none', isWideLayoutEnabled)
+
+  const wrapperElement = document.querySelector<HTMLDivElement>(
+    '[class^=OverviewContent-module__Box__]',
+  )
+  invariant(wrapperElement)
+  wrapperElement.classList.toggle('tmp-pr-lg-3', isWideLayoutEnabled)
+
   const layoutElement = document.querySelector<HTMLDivElement>(
-    'turbo-frame .react-repos-overview-margin',
+    '[class^=prc-PageLayout-Content-]:has(>[class^=OverviewContent-module__Box__])',
   )
   invariant(layoutElement)
-  layoutElement.classList.toggle('Layout', isWideLayoutEnabled)
+  if (isWideLayoutEnabled) {
+    layoutElement.dataset.width = 'full'
+  } else {
+    layoutElement.dataset.width = 'large'
+  }
 }

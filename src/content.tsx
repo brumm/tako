@@ -83,7 +83,7 @@ const renderTako = async (octokit: Octokit) => {
 
   useTakoStore.subscribe((state) => {
     const hasPreviewedFile = state.previewedFile !== null
-    showWideLayout(!hasPreviewedFile)
+    showWideLayout(hasPreviewedFile)
   })
 
   browser.runtime.sendMessage({
@@ -118,7 +118,7 @@ const stopTako = () => {
     takoContainer.remove()
   }
   showGithubFileTree(true)
-  showWideLayout(true)
+  showWideLayout(false)
   useTakoStore.setState(useTakoStore.getInitialState())
 }
 
