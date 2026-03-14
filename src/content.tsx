@@ -13,6 +13,7 @@ import { queryClient } from './queryClient'
 import { useTakoStore } from './store'
 import { waitForElement } from './waitForElement'
 
+let startingTako = false
 const startTako = async () => {
   document.removeEventListener('visibilitychange', startTako)
 
@@ -21,42 +22,51 @@ const startTako = async () => {
     return
   }
 
-  const isRepoTree = detectRepoTree()
-
-  browser.runtime.sendMessage({
-    action: 'updateActionState',
-    enabled: isRepoTree,
-  })
-
-  if (isRepoTree === false) {
+  if (startingTako) {
     return
   }
-
-  if (document.querySelector('.tako')) {
-    return
-  }
-
-  const { takoEnabled } = await browser.storage.sync.get('takoEnabled')
-  if (takoEnabled === false) {
-    return
-  }
-
-  const { token } = await browser.storage.sync.get('token')
-  if (!token) {
-    return renderTokenPrompt()
-  }
-
-  const octokit = new Octokit({ auth: token })
+  startingTako = true
 
   try {
-    await octokit.users.getAuthenticated()
-  } catch (error) {
-    if (error.status === 401) {
-      return renderTokenPrompt({ invalidToken: true })
-    }
-  }
+    const isRepoTree = detectRepoTree()
 
-  return renderTako(octokit)
+    browser.runtime.sendMessage({
+      action: 'updateActionState',
+      enabled: isRepoTree,
+    })
+
+    if (isRepoTree === false) {
+      return
+    }
+
+    if (document.querySelector('.tako')) {
+      return
+    }
+
+    const { takoEnabled } = await browser.storage.sync.get('takoEnabled')
+    if (takoEnabled === false) {
+      return
+    }
+
+    const { token } = await browser.storage.sync.get('token')
+    if (!token) {
+      return renderTokenPrompt()
+    }
+
+    const octokit = new Octokit({ auth: token })
+
+    try {
+      await octokit.users.getAuthenticated()
+    } catch (error) {
+      if (error.status === 401) {
+        return renderTokenPrompt({ invalidToken: true })
+      }
+    }
+
+    return renderTako(octokit)
+  } finally {
+    startingTako = false
+  }
 }
 
 const renderTako = async (octokit: Octokit) => {
