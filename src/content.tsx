@@ -70,12 +70,12 @@ const startTako = async () => {
 }
 
 const renderTako = async (octokit: Octokit) => {
-  const repository = await getRepository(octokit)
+  const { repository, path } = await getRepository(octokit)
 
   const [sourceTreeElement] = await Promise.all([
     waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
     queryClient.fetchQuery(
-      repoContentsQueryConfig({ client: octokit, repository }, ''),
+      repoContentsQueryConfig({ client: octokit, repository }, path),
     ),
     queryClient.fetchQuery(
       mostRecentRepoCommitQueryConfig({ client: octokit, repository }),
@@ -103,7 +103,7 @@ const renderTako = async (octokit: Octokit) => {
 
   createRoot(takoContainer).render(
     <TakoProvider client={octokit} repository={repository}>
-      <Tako />
+      <Tako path={path} />
     </TakoProvider>,
   )
 }

@@ -16,14 +16,12 @@ export function showWideLayout(isWideLayoutEnabled: boolean) {
   sideBarElement.classList.toggle('d-none', isWideLayoutEnabled)
 
   const wrapperElement = document.querySelector<HTMLDivElement>(
-    '[class^=OverviewContent-module__Box__]',
+    '[class^=prc-PageLayout-Content-] > :has([aria-labelledby=folders-and-files]):not(:has([class^=prc-PageLayout-Content-]))',
   )
   invariant(wrapperElement)
   wrapperElement.classList.toggle('tmp-pr-lg-3', isWideLayoutEnabled)
 
-  const layoutElement = document.querySelector<HTMLDivElement>(
-    '[class^=prc-PageLayout-Content-]:has(>[class^=OverviewContent-module__Box__])',
-  )
+  const layoutElement = wrapperElement.parentElement
   invariant(layoutElement)
   if (isWideLayoutEnabled) {
     layoutElement.dataset.width = 'full'

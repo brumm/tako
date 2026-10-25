@@ -44,7 +44,7 @@ export const useTako = () => {
   return context
 }
 
-export const Tako = () => {
+export const Tako = ({ path = '' }: { path?: string }) => {
   const previewedFile = useTakoStore((state) => state.previewedFile)
   const hasPreviewedFile = !!previewedFile
   const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
@@ -66,7 +66,7 @@ export const Tako = () => {
                 'flex-shrink-0': hasPreviewedFile,
               })}
             >
-              <Contents />
+              <Contents path={path} virtualPath={path} />
             </div>
 
             {hasPreviewedFile && (
