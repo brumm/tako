@@ -1,6 +1,3 @@
-import invariant from 'tiny-invariant'
-
-import { utils } from 'github-url-detection'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { DirItem, FileItem, SubmoduleItem, SymlinkItem } from './Item'
 import { TakoProvider } from './Tako'
@@ -25,7 +22,7 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
           ? `${virtualPath}/${node.name}`
           : node.name
 
-        switch (node.type) {
+        switch (node.kind) {
           case 'dir': {
             return (
               <DirItem
@@ -52,22 +49,11 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
           }
 
           case 'submodule': {
-            invariant(node.html_url)
-            const info = utils.getRepositoryInfo(node.html_url)
-            invariant(info)
-            const { owner, name: repo, path } = info
-            const ref = path.replace('tree/', '')
-            const repository = {
-              owner,
-              repo,
-              ref,
-            }
             return (
-              <TakoProvider repository={repository}>
+              <TakoProvider key={itemVirtualPath} repository={node.repository}>
                 <SubmoduleItem
-                  key={itemVirtualPath}
                   level={level}
-                  name={`${node.name} @ ${ref.slice(0, 7)}`}
+                  name={`${node.name} @ ${node.repository.ref.slice(0, 7)}`}
                   path=""
                   virtualPath={itemVirtualPath}
                 />

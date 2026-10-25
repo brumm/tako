@@ -1,9 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTako } from '../components/Tako'
-import {
-  getTypeFromMode,
-  repoContentsQueryConfig,
-} from './useRepoContentsQuery'
+import { repoContentsQueryConfig } from './useRepoContentsQuery'
 
 export const useDirChainQuery = (path: string, config = {}) => {
   const tako = useTako()
@@ -22,11 +19,7 @@ export const useDirChainQuery = (path: string, config = {}) => {
         )
 
         // Stop if: empty, multiple children, or single non-dir child
-        // Note: fetchQuery bypasses select, so we check mode with helper
-        if (
-          contents.length !== 1 ||
-          getTypeFromMode(contents[0].mode) !== 'dir'
-        ) {
+        if (contents.length !== 1 || contents[0].kind !== 'dir') {
           break
         }
 

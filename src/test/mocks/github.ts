@@ -2,143 +2,60 @@ import { graphql, http, HttpResponse } from 'msw'
 
 const github = graphql.link('https://api.github.com/graphql')
 
+type MockObject =
+  | { __typename: 'Tree'; oid: string; entries: unknown[] }
+  | { __typename: 'Blob'; oid: string; text: string }
+
+const treeEntry = (
+  name: string,
+  path: string,
+  type: 'blob' | 'tree' | 'commit',
+  mode: number,
+  submodule: { gitUrl: string } | null = null,
+) => ({ name, path, type, mode, oid: `${path}-oid`, submodule })
+
+export const mockRepoObjects: Record<string, MockObject> = {
+  '': {
+    __typename: 'Tree',
+    oid: 'root-oid',
+    entries: [
+      treeEntry('README.md', 'README.md', 'blob', 33188),
+      treeEntry('src', 'src', 'tree', 16384),
+    ],
+  },
+  src: {
+    __typename: 'Tree',
+    oid: 'src-oid',
+    entries: [treeEntry('index.ts', 'src/index.ts', 'blob', 33188)],
+  },
+  'README.md': { __typename: 'Blob', oid: 'abc123', text: '# Tako' },
+  'src/index.ts': { __typename: 'Blob', oid: 'file123', text: '' },
+  'link-to-file': { __typename: 'Blob', oid: 'l1', text: 'README.md' },
+  'link-to-dir': { __typename: 'Blob', oid: 'l2', text: 'src' },
+  'src/link-with-dotdot': {
+    __typename: 'Blob',
+    oid: 'l3',
+    text: '../README.md',
+  },
+  'nested/deeper/link': {
+    __typename: 'Blob',
+    oid: 'l4',
+    text: '../../README.md',
+  },
+  'link-with-dot': { __typename: 'Blob', oid: 'l5', text: './README.md' },
+  'broken-link': { __typename: 'Blob', oid: 'l6', text: 'non-existent-file' },
+}
+
 export const githubHandlers = [
-  // GraphQL API - Repository contents query
-  github.operation(({ query }) => {
-    const queryStr = query as string
-
-    // Handle repository tree query for directory contents
-    if (queryStr.includes('... on Tree')) {
-      return HttpResponse.json({
-        data: {
-          repository: {
-            object: {
-              entries: [
-                {
-                  name: 'README.md',
-                  path: 'README.md',
-                  type: 'blob',
-                  mode: '100644',
-                  oid: 'abc123',
-                  object: null,
-                },
-                {
-                  name: 'src',
-                  path: 'src',
-                  type: 'tree',
-                  mode: '040000',
-                  oid: 'def456',
-                  object: null,
-                },
-              ],
-            },
-          },
-        } as any,
-      })
-    }
-
-    // Handle symlink resolution query (Blob text)
-    if (queryStr.includes('... on Blob') && queryStr.includes('text')) {
-      // Extract path from query to determine what to return
-      if (queryStr.includes('link-to-file')) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                text: 'README.md',
-              },
-            },
-          } as any,
-        } as any)
-      }
-      if (queryStr.includes('link-to-dir')) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                text: 'src',
-              },
-            },
-          } as any,
-        })
-      }
-      if (queryStr.includes('link-with-dotdot')) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                text: '../README.md',
-              },
-            },
-          } as any,
-        })
-      }
-      if (queryStr.includes('nested/link')) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                text: '../../README.md',
-              },
-            },
-          } as any,
-        })
-      }
-      if (queryStr.includes('link-with-dot')) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                text: './README.md',
-              },
-            },
-          } as any,
-        })
-      }
-    }
-
-    // Handle symlink target metadata query (check if target exists)
-    if (queryStr.includes('__typename') && queryStr.includes('oid')) {
-      // Check if querying for a directory (src)
-      if (
-        queryStr.includes(':src"') ||
-        queryStr.includes(':../src"') ||
-        queryStr.includes(':src/utils"')
-      ) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                __typename: 'Tree',
-                oid: 'def456',
-              },
-            },
-          } as any,
-        })
-      }
-      // Check for valid file paths (README.md, helper.ts, etc.)
-      if (
-        queryStr.includes(':README.md"') ||
-        queryStr.includes(':src/utils/helper.ts"')
-      ) {
-        return HttpResponse.json({
-          data: {
-            repository: {
-              object: {
-                __typename: 'Blob',
-                oid: 'abc123',
-              },
-            },
-          } as any,
-        })
-      }
-      // Return null for non-existent paths
-      return HttpResponse.json({
-        data: { repository: { object: null } },
-      } as any)
-    }
-
-    return HttpResponse.json({ data: null })
+  // GraphQL objects are looked up by the path in `expression` ("ref:path")
+  github.operation<
+    { repository: { object: MockObject | null } },
+    { expression: string }
+  >(({ variables: { expression } }) => {
+    const path = expression.slice(expression.indexOf(':') + 1)
+    return HttpResponse.json({
+      data: { repository: { object: mockRepoObjects[path] ?? null } },
+    })
   }),
 
   // GET /repos/{owner}/{repo}/commits

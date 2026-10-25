@@ -307,7 +307,7 @@ export const SymlinkItem = ({ level, name, path, virtualPath }: ItemProps) => {
   const resolvedTarget = symlinkQuery.data
 
   // Render as target type but keep symlink name and visual indicator
-  if (resolvedTarget.type === 'dir') {
+  if (resolvedTarget.kind === 'dir') {
     return (
       <SymlinkDirItem
         level={level}
@@ -323,7 +323,7 @@ export const SymlinkItem = ({ level, name, path, virtualPath }: ItemProps) => {
       level={level}
       name={name}
       path={resolvedTarget.path}
-      sha={resolvedTarget.sha!}
+      sha={resolvedTarget.sha}
       virtualPath={virtualPath}
     />
   )
