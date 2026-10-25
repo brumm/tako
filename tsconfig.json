@@ -6,6 +6,7 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
+    "strictFunctionTypes": true,
     "skipLibCheck": true
   },
   "include": ["src/**/*", "global.d.ts"]

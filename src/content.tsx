@@ -109,24 +109,23 @@ document.addEventListener('turbo:render', startTako)
 
 startTako()
 
-browser.runtime.onMessage.addListener(
-  (message: { action: string }, _sender, sendResponse) => {
-    switch (message.action) {
-      case 'checkRunning': {
-        sendResponse(isTakoMounted())
-        break
-      }
-      case 'start': {
-        startTako()
-        sendResponse(true)
-        break
-      }
-      case 'stop': {
-        unmountTako()
-        sendResponse(true)
-        break
-      }
+browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  const { action } = message as { action: string }
+  switch (action) {
+    case 'checkRunning': {
+      sendResponse(isTakoMounted())
+      break
     }
-    return true
-  },
-)
+    case 'start': {
+      startTako()
+      sendResponse(true)
+      break
+    }
+    case 'stop': {
+      unmountTako()
+      sendResponse(true)
+      break
+    }
+  }
+  return true
+})
