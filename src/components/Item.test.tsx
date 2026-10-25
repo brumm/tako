@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import browser from 'webextension-polyfill'
 import { queryClient } from '../queryClient'
@@ -56,6 +56,24 @@ describe('tree items', () => {
 
     await clickRow('src')
     expect(screen.queryByText('index.ts')).not.toBeInTheDocument()
+  })
+
+  it('prefetches directory contents and commit info on hover', async () => {
+    renderTree('')
+    const repository = { owner: 'brumm', repo: 'tako', ref: 'main' }
+
+    fireEvent.pointerEnter(
+      (await screen.findByText('src')).closest('[role=row]')!,
+    )
+
+    await waitFor(() => {
+      expect(
+        queryClient.getQueryData(['contents', repository, 'src']),
+      ).toBeDefined()
+      expect(
+        queryClient.getQueryData(['treeCommitInfo', repository, 'src']),
+      ).toBeDefined()
+    })
   })
 
   it('toggles file preview', async () => {

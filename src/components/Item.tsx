@@ -6,6 +6,7 @@ import { useDirChainQuery } from '../hooks/useDirChainQuery'
 import { useRawFile } from '../hooks/useRawFile'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
+import { useTreeCommitInfo } from '../hooks/useTreeCommitInfo'
 import type { SymlinkTarget } from '../lib/repo-tree'
 import type { CommitInfo } from '../lib/tree-commit-info'
 import { useTakoStore } from '../store'
@@ -50,6 +51,7 @@ export const TreeItem = ({
   const contentsQuery = useRepoContentsQuery(target.path, {
     enabled: isDir && isHovering,
   })
+  useTreeCommitInfo(target.path, { enabled: isDir && isHovering })
   const chainQuery = useDirChainQuery(target.path, {
     enabled: collapseEnabled && isExpanded,
   })
