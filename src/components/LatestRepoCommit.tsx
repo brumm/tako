@@ -20,98 +20,44 @@ export const LatestRepoCommit = () => {
 
   return (
     <div
-      className="d-flex p-2 pl-3 bgColor-muted"
+      className="d-flex flex-items-center gap-2 p-2 pl-3 bgColor-muted f5"
       style={{
-        borderBottom: 'var(--borderWidth-thin)solid var(--borderColor-muted)',
+        borderBottom: 'var(--borderWidth-thin) solid var(--borderColor-muted)',
       }}
     >
-      <div
-        data-testid="latest-commit"
-        className="LatestCommit-module__Box_1__YkEgg"
-      >
-        <div className="CommitAttribution-module__CommitAttributionContainer__I_rfs">
-          {mostRecentRepoCommit.author && authorUrl && (
-            <div
-              data-testid="author-avatar"
-              className="Box-sc-62in7e-0 AuthorAvatar-module__AuthorAvatarContainer__n0MVc"
+      <div className="d-flex flex-items-center gap-2 flex-auto min-width-0">
+        {mostRecentRepoCommit.author && authorUrl && (
+          <>
+            <a href={authorUrl} className="d-flex flex-shrink-0">
+              <img
+                className="avatar circle"
+                alt={mostRecentRepoCommit.author.login}
+                width="20"
+                height="20"
+                src={mostRecentRepoCommit.author.avatar_url}
+              />
+            </a>
+            <a
+              href={`/${repository.owner}/${repository.repo}/commits?author=${mostRecentRepoCommit.author.login}`}
+              className="Link--primary text-bold no-wrap"
             >
-              <a
-                className="Link__StyledLink-sc-1syctfj-0 prc-Link-Link-9ZwDx"
-                href={authorUrl}
-                data-testid="avatar-icon-link"
-                octo-dimensions="link_type:self"
-                aria-keyshortcuts="Alt+ArrowUp"
-              >
-                <img
-                  data-component="Avatar"
-                  className="Box-sc-62in7e-0 kglDHV AuthorAvatar-module__authorAvatarImage__a3R8x prc-Avatar-Avatar-0xaUi"
-                  alt={mostRecentRepoCommit.author.login}
-                  width="20"
-                  height="20"
-                  data-testid="github-avatar"
-                  aria-label={mostRecentRepoCommit.author.login}
-                  src={mostRecentRepoCommit.author.avatar_url}
-                  style={
-                    { '--avatarSize-regular': '20px' } as React.CSSProperties
-                  }
-                />
-              </a>
-              <a
-                className="Link__StyledLink-sc-1syctfj-0 dtKDuy AuthorAvatar-module__authorHoverableLink__MHTT8 prc-Link-Link-9ZwDx"
-                data-muted="true"
-                href={`${authorUrl}/${repository.repo}/commits?author=${mostRecentRepoCommit.author.login}`}
-                aria-label={`commits by ${mostRecentRepoCommit.author.login}`}
-                octo-dimensions="link_type:self"
-                aria-keyshortcuts="Alt+ArrowUp"
-              >
-                {mostRecentRepoCommit.author.login}
-              </a>
-            </div>
-          )}
-          <span className=""></span>
-        </div>
-        <div className="d-none d-sm-flex LatestCommit-module__Box_2__pSPKJ">
-          <div className="Truncate flex-items-center f5">
-            <span
-              className="Text__StyledText-sc-1klmep6-0 Truncate-text prc-Text-Text-9mHv3"
-              data-testid="latest-commit-html"
-            >
-              <a href={commitUrl} className="Link--secondary" data-pjax="true">
-                {commitMessageTitle}
-              </a>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="d-flex flex-shrink-0 gap-2">
-        <div className="d-flex gap-2">
-          <a
-            href={commitsUrl}
-            className="prc-Button-ButtonBase-9n-Xk d-none d-lg-flex LinkButton-module__linkButton__nFnov flex-items-center fgColor-default"
-            data-loading="false"
-            data-size="small"
-            data-variant="invisible"
-          >
-            <span
-              data-component="buttonContent"
-              data-align="center"
-              className="prc-Button-ButtonContent-Iohp5"
-            >
-              <span
-                data-component="leadingVisual"
-                className="prc-Button-Visual-YNt2F prc-Button-VisualWrap-E4cnq"
-              >
-                <HistoryIcon />
-              </span>
-              <span data-component="text" className="prc-Button-Label-FWkx3">
-                <span className="fgColor-default">
-                  {mostRecentRepoCommit.totalCommitCount} Commits
-                </span>
-              </span>
-            </span>
+              {mostRecentRepoCommit.author.login}
+            </a>
+          </>
+        )}
+        <span className="Truncate d-none d-sm-flex">
+          <a href={commitUrl} className="Truncate-text Link--secondary">
+            {commitMessageTitle}
           </a>
-        </div>
+        </span>
       </div>
+      <a
+        href={commitsUrl}
+        className="d-none d-lg-flex flex-items-center gap-1 flex-shrink-0 Link--primary text-bold no-wrap"
+      >
+        <HistoryIcon />
+        {mostRecentRepoCommit.totalCommitCount} Commits
+      </a>
     </div>
   )
 }
