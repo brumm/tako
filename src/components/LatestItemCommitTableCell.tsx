@@ -1,20 +1,18 @@
 import { format } from 'timeago.js'
 
-import { useLatestCommitInfo } from '../hooks/useLatestCommitInfo'
+import type { CommitInfo } from '../lib/tree-commit-info'
 import { useTakoStore } from '../store'
 
-export const LatestItemCommitTableCell = ({ path }) => {
+export const LatestItemCommitTableCell = ({
+  commit,
+}: {
+  commit?: CommitInfo
+}) => {
   const hasPreviewedFile = useTakoStore((state) => state.previewedFile !== null)
-  const lastCommitQuery = useLatestCommitInfo(path, {
-    enabled: !hasPreviewedFile,
-  })
-  const lastCommit = lastCommitQuery.data
 
-  if (hasPreviewedFile || lastCommitQuery.isLoading || !lastCommit) {
+  if (hasPreviewedFile || !commit) {
     return null
   }
-
-  const [commitMessageTitle] = lastCommit.message.split('\n')
 
   return (
     <>
@@ -24,14 +22,14 @@ export const LatestItemCommitTableCell = ({ path }) => {
       >
         <span className="css-truncate css-truncate-target d-block width-fit markdown-title">
           <a
-            title={lastCommit.message}
+            title={commit.message}
             className="Link--secondary"
-            href={lastCommit.htmlUrl}
+            href={commit.url}
             onClick={(event) => {
               event.stopPropagation()
             }}
           >
-            {commitMessageTitle}
+            {commit.title}
           </a>
         </span>
       </div>
@@ -40,9 +38,7 @@ export const LatestItemCommitTableCell = ({ path }) => {
         className="color-fg-muted text-right"
         style={{ width: 100 }}
       >
-        {lastCommit.date && (
-          <div className="no-wrap">{format(lastCommit.date)}</div>
-        )}
+        <div className="no-wrap">{format(commit.date)}</div>
       </div>
     </>
   )

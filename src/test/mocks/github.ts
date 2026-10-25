@@ -103,6 +103,32 @@ export const githubHandlers = [
     },
   ),
 
+  // GET github.com/{owner}/{repo}/tree-commit-info/{ref}/{path}
+  http.get(
+    'https://github.com/:owner/:repo/tree-commit-info/:ref/*?',
+    ({ params }) => {
+      const tree = mockRepoObjects[(params[0] as string | undefined) ?? '']
+      if (tree?.__typename !== 'Tree') {
+        return HttpResponse.json({ error: 'Not Found' }, { status: 404 })
+      }
+      const entries = (tree.entries as Array<{ name: string }>).map(
+        ({ name }) => [
+          name,
+          {
+            oid: 'abc123def456',
+            url: '/brumm/tako/commit/abc123def456',
+            date: '2025-01-01T00:00:00.000Z',
+            shortMessageHtmlLink: {
+              value:
+                '<a title="test commit\n\nbody" href="/brumm/tako/commit/abc123def456">test commit</a>',
+            },
+          },
+        ],
+      )
+      return HttpResponse.json({ entries: Object.fromEntries(entries) })
+    },
+  ),
+
   // POST /markdown
   http.post('https://api.github.com/markdown', () => {
     return HttpResponse.text('<h1>Tako</h1>\n<p>Test README content</p>')

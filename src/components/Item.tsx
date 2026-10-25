@@ -7,6 +7,7 @@ import { useRawFile } from '../hooks/useRawFile'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
 import type { SymlinkTarget } from '../lib/repo-tree'
+import type { CommitInfo } from '../lib/tree-commit-info'
 import { useTakoStore } from '../store'
 import { Contents } from './Contents'
 import { LatestItemCommitTableCell } from './LatestItemCommitTableCell'
@@ -18,8 +19,7 @@ type TreeItemProps = {
   virtualPath: string
   target: SymlinkTarget
   variant?: 'symlink' | 'submodule'
-  // path whose latest commit is shown, the symlink itself rather than its target
-  commitPath: string
+  commit?: CommitInfo
 }
 
 export const TreeItem = ({
@@ -28,7 +28,7 @@ export const TreeItem = ({
   virtualPath,
   target,
   variant,
-  commitPath,
+  commit,
 }: TreeItemProps) => {
   const tako = useTako()
   const onHoverFile = useTakoStore((state) => state.onHoverFile)
@@ -133,7 +133,7 @@ export const TreeItem = ({
           </span>
         </div>
 
-        <LatestItemCommitTableCell path={commitPath} />
+        <LatestItemCommitTableCell commit={commit} />
       </Row>
 
       {isExpanded && (
@@ -152,11 +152,13 @@ export const SymlinkItem = ({
   name,
   path,
   virtualPath,
+  commit,
 }: {
   level: number
   name: string
   path: string
   virtualPath: string
+  commit?: CommitInfo
 }) => {
   const symlinkQuery = useSymlinkQuery(path)
 
@@ -168,7 +170,7 @@ export const SymlinkItem = ({
         virtualPath={virtualPath}
         target={symlinkQuery.data}
         variant="symlink"
-        commitPath={path}
+        commit={commit}
       />
     )
   }

@@ -1,4 +1,6 @@
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
+import { useTreeCommitInfo } from '../hooks/useTreeCommitInfo'
+import { useTakoStore } from '../store'
 import { SymlinkItem, TreeItem } from './Item'
 import { TakoProvider } from './Tako'
 
@@ -10,6 +12,10 @@ type Props = {
 
 export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
   const query = useRepoContentsQuery(path)
+  const hasPreviewedFile = useTakoStore((state) => state.previewedFile !== null)
+  const commitInfoQuery = useTreeCommitInfo(path, {
+    enabled: !hasPreviewedFile,
+  })
 
   if (!query.data) {
     return null
@@ -21,6 +27,7 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
         const itemVirtualPath = virtualPath
           ? `${virtualPath}/${entry.name}`
           : entry.name
+        const commit = commitInfoQuery.data?.[entry.name]
 
         switch (entry.kind) {
           case 'dir':
@@ -32,7 +39,7 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
                 name={entry.name}
                 virtualPath={itemVirtualPath}
                 target={entry}
-                commitPath={entry.path}
+                commit={commit}
               />
             )
           }
@@ -46,7 +53,7 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
                   virtualPath={itemVirtualPath}
                   target={{ kind: 'dir', path: '' }}
                   variant="submodule"
-                  commitPath=""
+                  commit={commit}
                 />
               </TakoProvider>
             )
@@ -60,6 +67,7 @@ export const Contents = ({ path = '', level = 1, virtualPath = '' }: Props) => {
                 name={entry.name}
                 path={entry.path}
                 virtualPath={itemVirtualPath}
+                commit={commit}
               />
             )
           }
