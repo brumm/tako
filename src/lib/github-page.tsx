@@ -98,5 +98,16 @@ const setWideLayout = (isWideLayoutEnabled: boolean) => {
 
   sideBarElement.classList.toggle('d-none', isWideLayoutEnabled)
   wrapperElement.classList.toggle('tmp-pr-lg-3', isWideLayoutEnabled)
-  layoutElement.dataset.width = isWideLayoutEnabled ? 'full' : 'large'
+  const { dataset } = layoutElement
+  if (isWideLayoutEnabled) {
+    dataset.takoOriginalWidth ??= dataset.width ?? ''
+    dataset.width = 'full'
+  } else if (dataset.takoOriginalWidth !== undefined) {
+    if (dataset.takoOriginalWidth) {
+      dataset.width = dataset.takoOriginalWidth
+    } else {
+      delete dataset.width
+    }
+    delete dataset.takoOriginalWidth
+  }
 }

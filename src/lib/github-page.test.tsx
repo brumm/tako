@@ -71,6 +71,18 @@ describe('github page', () => {
     expect(getLayout().dataset.width).toBe('large')
   })
 
+  it("restores github's original layout width", async () => {
+    getLayout().dataset.width = 'full'
+    await act(() => mountTako(<div className="tako" />))
+
+    act(() => previewFile())
+    act(() => useTakoStore.getState().onPreviewFile(null))
+    expect(getLayout().dataset.width).toBe('full')
+
+    act(() => unmountTako())
+    expect(getLayout().dataset.width).toBe('full')
+  })
+
   it('restores the github page on unmount', async () => {
     await act(() => mountTako(<div className="tako" />))
     act(() => previewFile())
