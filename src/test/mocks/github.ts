@@ -87,14 +87,21 @@ export const githubHandlers = [
     )
   }),
 
-  // GET /repos/{owner}/{repo}/git/blobs/{sha}
-  http.get('https://api.github.com/repos/:owner/:repo/git/blobs/:sha', () => {
-    return HttpResponse.json({
-      sha: 'abc123',
-      content: btoa('# Tako\n\nTest README content'),
-      encoding: 'base64',
-    })
-  }),
+  // GET /repos/{owner}/{repo}/contents/{path}
+  http.get(
+    'https://api.github.com/repos/:owner/:repo/contents/*',
+    ({ params }) => {
+      const object = mockRepoObjects[params[0] as string]
+      if (object?.__typename !== 'Blob') {
+        return HttpResponse.json({ message: 'Not Found' }, { status: 404 })
+      }
+      return HttpResponse.json({
+        type: 'file',
+        encoding: 'base64',
+        content: btoa(object.text),
+      })
+    },
+  ),
 
   // POST /markdown
   http.post('https://api.github.com/markdown', () => {

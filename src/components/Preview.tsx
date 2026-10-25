@@ -1,22 +1,14 @@
-import binaryExtensions from 'binary-extensions'
-
 import { ReactNode } from 'react'
-import { useHighlightedFile } from '../hooks/useHighlightedFile'
-import { useRawFile } from '../hooks/useRawFile'
+import { usePreview } from '../hooks/usePreview'
 import { useTakoStore } from '../store'
-import { PreviewFile } from '../types'
-import { useTako } from './Tako'
 
 export const Preview = () => {
   const previewedFile = useTakoStore((state) => state.previewedFile)!
-  const fileType = getFileType(previewedFile.path)
+  const preview = usePreview(previewedFile)
 
-  switch (fileType) {
-    case 'image': {
-      return <ImagePreview file={previewedFile} />
-    }
-    case 'text': {
-      return <TextPreview file={previewedFile} />
+  switch (preview.kind) {
+    case 'loading': {
+      return null
     }
     case 'unknown': {
       return (
@@ -25,108 +17,47 @@ export const Preview = () => {
         </div>
       )
     }
-  }
-}
-
-const ImagePreview = ({ file }: { file: PreviewFile }) => {
-  const tako = useTako()
-  return (
-    <div className="p-3 border-left width-full">
-      <img
-        src={`/${tako.repository.owner}/${tako.repository.repo}/blob/${tako.repository.ref}/${file.path}?raw=true`}
-        alt={file.path}
-        style={{ maxWidth: '100%' }}
-      />
-    </div>
-  )
-}
-
-const TextPreview = ({ file }: { file: PreviewFile }) => {
-  const tako = useTako()
-  const pathSegments = file.path.split('.')
-  let extension = ''
-  if (pathSegments.length === 1) {
-    extension = file.path.split('/').pop()!
-  } else {
-    extension = pathSegments.pop()!
-  }
-
-  const rawFileQuery = useRawFile(
-    { file },
-    {
-      enabled: !!file,
-    },
-  )
-  const rawFileIsPresent =
-    rawFileQuery.data !== undefined && rawFileQuery.data?.trim() !== ''
-
-  const highlightedFileQuery = useHighlightedFile(
-    { raw: rawFileQuery.data, extension },
-    {
-      enabled: rawFileIsPresent,
-    },
-  )
-
-  const isMarkdown = extension === 'md'
-
-  const rewriteSrcUrls = (element: HTMLElement | null) => {
-    if (!element) {
-      return
-    }
-    const elements = element.querySelectorAll('[src]')
-    for (const element of elements) {
-      const src = element.getAttribute('src')
-      if (src?.startsWith('http')) {
-        continue
-      }
-      element.setAttribute(
-        'src',
-        `https://github.com/${tako.repository.owner}/${tako.repository.repo}/raw/${tako.repository.ref}/${src}`,
+    case 'empty': {
+      return (
+        <div className="border-left d-flex flex-items-center flex-justify-center width-full">
+          <div className="d-flex flex-column gap-1 flex-items-center color-fg-muted">
+            <FileIcon />
+            <div>Empty file</div>
+          </div>
+        </div>
       )
     }
-  }
-
-  if (rawFileQuery.isSuccess && !rawFileIsPresent) {
-    return (
-      <div className="border-left d-flex flex-items-center flex-justify-center width-full">
-        <div className="d-flex flex-column gap-1 flex-items-center color-fg-muted">
-          <FileIcon />
-          <div>Empty file</div>
+    case 'image': {
+      return (
+        <div className="p-3 border-left width-full">
+          <img
+            src={preview.src}
+            alt={previewedFile.path}
+            style={{ maxWidth: '100%' }}
+          />
         </div>
-      </div>
-    )
-  }
-
-  if (highlightedFileQuery.data) {
-    if (isMarkdown) {
+      )
+    }
+    case 'markdown': {
       return (
         <div
-          ref={rewriteSrcUrls}
-          dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
+          dangerouslySetInnerHTML={{ __html: preview.html }}
           className="overflow-auto markdown-body border-left p-3 width-full"
         />
       )
     }
-
-    return (
-      <LineNumbers text={rawFileQuery.data}>
-        <div
-          ref={rewriteSrcUrls}
-          dangerouslySetInnerHTML={{ __html: highlightedFileQuery.data ?? '' }}
-        />
-      </LineNumbers>
-    )
+    case 'code': {
+      return (
+        <LineNumbers text={preview.text}>
+          {preview.html ? (
+            <div dangerouslySetInnerHTML={{ __html: preview.html }} />
+          ) : (
+            <pre>{preview.text}</pre>
+          )}
+        </LineNumbers>
+      )
+    }
   }
-
-  if (!isMarkdown) {
-    return (
-      <LineNumbers text={rawFileQuery.data}>
-        <pre>{rawFileQuery.data}</pre>
-      </LineNumbers>
-    )
-  }
-
-  return null
 }
 
 const LineNumbers = ({
@@ -163,16 +94,3 @@ const FileIcon = () => (
     <path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm2-.5a.5.5 0 0 0-.5.5v18a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4Zm10 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path>
   </svg>
 )
-
-const getFileType = (path: string) => {
-  const match = path.match(/\.([^.]+)$/)
-  const ext = match?.[1]?.toLowerCase()
-
-  if (ext && binaryExtensions.includes(ext)) {
-    if (/\.(png|jpg|jpeg|gif)$/i.test(path)) {
-      return 'image' as const
-    }
-    return 'unknown' as const
-  }
-  return 'text' as const
-}
