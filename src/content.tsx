@@ -1,5 +1,4 @@
 import { isRepoTree as detectRepoTree } from 'github-url-detection'
-import { createRoot } from 'react-dom/client'
 
 import { Octokit } from '@octokit/rest'
 import browser from 'webextension-polyfill'
@@ -7,11 +6,14 @@ import { Tako, TakoProvider } from './components/Tako'
 import { TokenPrompt } from './components/TokenPrompt'
 import { mostRecentRepoCommitQueryConfig } from './hooks/useMostRecentRepoCommitQuery'
 import { repoContentsQueryConfig } from './hooks/useRepoContentsQuery'
-import { showGithubFileTree, showWideLayout } from './lib/github-layout'
+import {
+  isTakoMounted,
+  mountTako,
+  mountTokenPrompt,
+  unmountTako,
+} from './lib/github-page'
 import { getRepository } from './lib/repository'
 import { queryClient } from './queryClient'
-import { useTakoStore } from './store'
-import { waitForElement } from './waitForElement'
 
 let startingTako = false
 const startTako = async () => {
@@ -39,7 +41,7 @@ const startTako = async () => {
       return
     }
 
-    if (document.querySelector('.tako')) {
+    if (isTakoMounted()) {
       return
     }
 
@@ -50,7 +52,7 @@ const startTako = async () => {
 
     const { token } = await browser.storage.sync.get('token')
     if (!token) {
-      return renderTokenPrompt()
+      return await renderTokenPrompt()
     }
 
     const octokit = new Octokit({ auth: token })
@@ -59,11 +61,11 @@ const startTako = async () => {
       await octokit.users.getAuthenticated()
     } catch (error) {
       if (error.status === 401) {
-        return renderTokenPrompt({ invalidToken: true })
+        return await renderTokenPrompt({ invalidToken: true })
       }
     }
 
-    return renderTako(octokit)
+    return await renderTako(octokit)
   } finally {
     startingTako = false
   }
@@ -72,8 +74,7 @@ const startTako = async () => {
 const renderTako = async (octokit: Octokit) => {
   const { repository, path } = await getRepository(octokit)
 
-  const [sourceTreeElement] = await Promise.all([
-    waitForElement('[data-hpc]:has([aria-labelledby=folders-and-files])'),
+  await Promise.all([
     queryClient.fetchQuery(
       repoContentsQueryConfig({ client: octokit, repository }, path),
     ),
@@ -82,54 +83,25 @@ const renderTako = async (octokit: Octokit) => {
     ),
   ])
 
-  showGithubFileTree(false)
-
-  const takoContainer = document.createElement('div')
-  takoContainer.classList.add('tako-container')
-  sourceTreeElement.parentElement?.insertBefore(
-    takoContainer,
-    sourceTreeElement.nextSibling,
-  )
-
-  useTakoStore.subscribe((state) => {
-    const hasPreviewedFile = state.previewedFile !== null
-    showWideLayout(hasPreviewedFile)
-  })
-
-  browser.runtime.sendMessage({
-    action: 'updateActionState',
-    enabled: true,
-  })
-
-  createRoot(takoContainer).render(
+  await mountTako(
     <TakoProvider client={octokit} repository={repository}>
       <Tako path={path} />
     </TakoProvider>,
   )
-}
-
-const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
-  const takoContainer = await waitForElement('body')
-  takoContainer.classList.add('tako-container')
-  const rootElement = document.createElement('div')
-  takoContainer.prepend(rootElement)
 
   browser.runtime.sendMessage({
     action: 'updateActionState',
     enabled: true,
   })
-
-  createRoot(rootElement).render(<TokenPrompt invalidToken={invalidToken} />)
 }
 
-const stopTako = () => {
-  const takoContainer = document.querySelector('.tako-container')
-  if (takoContainer) {
-    takoContainer.remove()
-  }
-  showGithubFileTree(true)
-  showWideLayout(false)
-  useTakoStore.setState(useTakoStore.getInitialState())
+const renderTokenPrompt = async ({ invalidToken = false } = {}) => {
+  await mountTokenPrompt(<TokenPrompt invalidToken={invalidToken} />)
+
+  browser.runtime.sendMessage({
+    action: 'updateActionState',
+    enabled: true,
+  })
 }
 
 document.addEventListener('DOMContentLoaded', startTako)
@@ -141,8 +113,7 @@ browser.runtime.onMessage.addListener(
   (message: { action: string }, _sender, sendResponse) => {
     switch (message.action) {
       case 'checkRunning': {
-        const isRunning = document.querySelector('.tako') !== null
-        sendResponse(isRunning)
+        sendResponse(isTakoMounted())
         break
       }
       case 'start': {
@@ -151,7 +122,7 @@ browser.runtime.onMessage.addListener(
         break
       }
       case 'stop': {
-        stopTako()
+        unmountTako()
         sendResponse(true)
         break
       }
