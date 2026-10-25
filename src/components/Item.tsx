@@ -6,97 +6,134 @@ import { useDirChainQuery } from '../hooks/useDirChainQuery'
 import { useRawFile } from '../hooks/useRawFile'
 import { useRepoContentsQuery } from '../hooks/useRepoContentsQuery'
 import { useSymlinkQuery } from '../hooks/useSymlinkQuery'
+import type { SymlinkTarget } from '../lib/repo-tree'
 import { useTakoStore } from '../store'
 import { Contents } from './Contents'
 import { LatestItemCommitTableCell } from './LatestItemCommitTableCell'
 import { useTako } from './Tako'
 
-type ItemProps = {
+type TreeItemProps = {
   level: number
   name: string
-  path: string
   virtualPath: string
+  target: SymlinkTarget
+  variant?: 'symlink' | 'submodule'
+  // path whose latest commit is shown, the symlink itself rather than its target
+  commitPath: string
 }
 
-export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
+export const TreeItem = ({
+  level,
+  name,
+  virtualPath,
+  target,
+  variant,
+  commitPath,
+}: TreeItemProps) => {
   const tako = useTako()
   const onHoverFile = useTakoStore((state) => state.onHoverFile)
+  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
   const isHovering = useTakoStore(
     (state) =>
       state.hoveredFile?.virtualPath === virtualPath &&
       state.hoveredFile.repository === tako.repository,
   )
-  const [isExpanded, setIsExpanded] = useState(false)
-  const collapseEnabled = useCollapseDirs()
-
-  const hoverQuery = useRepoContentsQuery(path, {
-    enabled: isHovering,
-  })
-
-  const chainQuery = useDirChainQuery(path, {
-    enabled: isExpanded && collapseEnabled,
-  })
-
-  const isLoadingDirContents = useDeferredLoading(
-    isExpanded && collapseEnabled ? chainQuery.isLoading : hoverQuery.isLoading,
+  const isPreviewedFile = useTakoStore(
+    (state) =>
+      target.kind === 'file' &&
+      state.previewedFile?.virtualPath === virtualPath,
   )
+  const [isExpanded, setIsExpanded] = useState(false)
+  const isDir = target.kind === 'dir'
 
-  const displayName =
-    collapseEnabled && chainQuery.data?.chain.length
-      ? [name, ...chainQuery.data.chain].join('/')
-      : name
+  const collapseEnabled = useCollapseDirs() && isDir && !variant
+  const contentsQuery = useRepoContentsQuery(target.path, {
+    enabled: isDir && isHovering,
+  })
+  const chainQuery = useDirChainQuery(target.path, {
+    enabled: collapseEnabled && isExpanded,
+  })
+  const isLoading = useDeferredLoading(
+    isExpanded &&
+      (collapseEnabled ? chainQuery.isLoading : contentsQuery.isLoading),
+  )
+  const chain = collapseEnabled ? chainQuery.data : undefined
+  const contentsPath = chain?.leafPath ?? target.path
+  const displayName = chain?.chain.length
+    ? [name, ...chain.chain].join('/')
+    : name
 
-  const contentsPath =
-    collapseEnabled && chainQuery.data?.leafPath
-      ? chainQuery.data.leafPath
-      : path
+  const previewFile =
+    target.kind === 'file'
+      ? {
+          path: target.path,
+          sha: target.sha,
+          repository: tako.repository,
+          virtualPath,
+        }
+      : null
+  useRawFile({ file: previewFile }, { enabled: !!previewFile && isHovering })
 
   return (
     <>
       <Row
         level={level}
-        active={isHovering}
+        active={isHovering || isPreviewedFile}
         onPointerEnter={() =>
-          onHoverFile({ path, repository: tako.repository, virtualPath })
+          onHoverFile({
+            path: target.path,
+            repository: tako.repository,
+            virtualPath,
+          })
         }
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          if (isDir) {
+            setIsExpanded(!isExpanded)
+          } else {
+            onPreviewFile(isPreviewedFile ? null : previewFile)
+          }
+        }}
       >
         <div
           role="gridcell"
           className="mr-1 flex-shrink-0 d-flex flex-items-center"
           style={{ width: 16 }}
         >
-          {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          {isDir && (isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />)}
         </div>
         <div
           role="gridcell"
           className="mr-3 flex-shrink-0 d-flex flex-items-center"
           style={{ width: 16 }}
         >
-          {isExpanded ? (
-            isLoadingDirContents ? (
-              <LoadingSpinnerIcon />
-            ) : (
-              <DirectoryOpenIcon />
-            )
+          {isLoading ? (
+            <LoadingSpinnerIcon />
           ) : (
-            <DirectoryClosedIcon />
+            <ItemIcon
+              kind={target.kind}
+              variant={variant}
+              isExpanded={isExpanded}
+            />
           )}
         </div>
         <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
           <span className="css-truncate css-truncate-target d-block width-fit">
             <Link
               path={contentsPath}
-              type="tree"
-              className="Link--primary cursor-pointer"
-              title={displayName}
+              type={isDir ? 'tree' : 'blob'}
+              className={clsx('cursor-pointer', {
+                'Link--primary': !isPreviewedFile && variant !== 'submodule',
+              })}
+              title={
+                variant === 'symlink' ? `${name} → ${target.path}` : displayName
+              }
             >
               {displayName}
             </Link>
           </span>
         </div>
 
-        <LatestItemCommitTableCell path={path} />
+        <LatestItemCommitTableCell path={commitPath} />
       </Row>
 
       {isExpanded && (
@@ -110,362 +147,80 @@ export const DirItem = ({ level, name, path, virtualPath }: ItemProps) => {
   )
 }
 
-export const FileItem = ({
-  level,
-  name,
-  path,
-  sha,
-  virtualPath,
-}: ItemProps & { sha: string }) => {
-  const tako = useTako()
-  const onHover = useTakoStore((state) => state.onHoverFile)
-  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
-  const isPreviewedFile = useTakoStore(
-    (state) => state.previewedFile?.virtualPath === virtualPath,
-  )
-  const isHovering = useTakoStore(
-    (state) =>
-      state.hoveredFile?.virtualPath === virtualPath &&
-      state.hoveredFile.repository === tako.repository,
-  )
-  const previewFile = { path, sha, repository: tako.repository, virtualPath }
-  useRawFile({ file: previewFile }, { enabled: isHovering })
-
-  return (
-    <Row
-      level={level}
-      active={isHovering || isPreviewedFile}
-      onPointerEnter={() =>
-        onHover({ path, repository: tako.repository, virtualPath })
-      }
-      onClick={() => {
-        if (isPreviewedFile) {
-          onPreviewFile(null)
-        } else {
-          onPreviewFile(previewFile)
-        }
-      }}
-    >
-      <div
-        role="gridcell"
-        className="mr-1 flex-shrink-0 d-flex flex-items-center"
-        style={{ width: 16 }}
-      />
-
-      <div
-        role="gridcell"
-        className="mr-3 flex-shrink-0 d-flex flex-items-center"
-        style={{ width: 16 }}
-      >
-        <FileIcon />
-      </div>
-
-      <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-        <span className="css-truncate css-truncate-target d-block width-fit">
-          <Link
-            path={path}
-            type="blob"
-            className={clsx('cursor-pointer', {
-              'Link--primary': !isPreviewedFile,
-            })}
-            title={name}
-          >
-            {name}
-          </Link>
-        </span>
-      </div>
-
-      <LatestItemCommitTableCell path={path} />
-    </Row>
-  )
-}
-
-export const SubmoduleItem = ({
+export const SymlinkItem = ({
   level,
   name,
   path,
   virtualPath,
-}: ItemProps) => {
-  const tako = useTako()
-  const onHoverFile = useTakoStore((state) => state.onHoverFile)
-  const isHovering = useTakoStore(
-    (state) =>
-      state.hoveredFile?.virtualPath === virtualPath &&
-      state.hoveredFile.repository === tako.repository,
-  )
-  const [isExpanded, setIsExpanded] = useState(false)
-  const query = useRepoContentsQuery(path, {
-    enabled: isHovering,
-  })
-  const isLoading = useDeferredLoading(query.isLoading)
-  return (
-    <>
-      <Row
-        level={level}
-        active={isHovering}
-        onPointerEnter={() =>
-          onHoverFile({ path, repository: tako.repository, virtualPath })
-        }
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div
-          role="gridcell"
-          className="mr-1 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
-        </div>
-        <div
-          role="gridcell"
-          className="mr-3 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          {isExpanded ? (
-            isLoading ? (
-              <LoadingSpinnerIcon />
-            ) : (
-              <SubmoduleIcon />
-            )
-          ) : (
-            <SubmoduleIcon />
-          )}
-        </div>
-        <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-          <span className="css-truncate css-truncate-target d-block width-fit">
-            <Link
-              path={path}
-              type="tree"
-              className="cursor-pointer"
-              title={name}
-            >
-              {name}
-            </Link>
-          </span>
-        </div>
-
-        <LatestItemCommitTableCell path={path} />
-      </Row>
-
-      {isExpanded && (
-        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
-      )}
-    </>
-  )
-}
-
-export const SymlinkItem = ({ level, name, path, virtualPath }: ItemProps) => {
+}: {
+  level: number
+  name: string
+  path: string
+  virtualPath: string
+}) => {
   const symlinkQuery = useSymlinkQuery(path)
 
-  if (symlinkQuery.isError) {
+  if (symlinkQuery.data) {
     return (
-      <Row level={level} active={false}>
-        <div
-          role="gridcell"
-          className="mr-1 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        />
-        <div
-          role="gridcell"
-          className="mr-3 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          {WarningIcon}
-        </div>
-        <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-          <span className="css-truncate css-truncate-target d-block width-fit color-fg-danger">
-            {name} (broken symlink)
-          </span>
-        </div>
-      </Row>
-    )
-  }
-
-  if (symlinkQuery.isLoading || !symlinkQuery.data) {
-    return (
-      <Row level={level} active={false}>
-        <div
-          role="gridcell"
-          className="mr-1 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        />
-        <div
-          role="gridcell"
-          className="mr-3 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          <LoadingSpinnerIcon />
-        </div>
-        <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-          <span className="css-truncate css-truncate-target d-block width-fit">
-            {name}
-          </span>
-        </div>
-      </Row>
-    )
-  }
-
-  const resolvedTarget = symlinkQuery.data
-
-  // Render as target type but keep symlink name and visual indicator
-  if (resolvedTarget.kind === 'dir') {
-    return (
-      <SymlinkDirItem
+      <TreeItem
         level={level}
         name={name}
-        path={resolvedTarget.path}
         virtualPath={virtualPath}
+        target={symlinkQuery.data}
+        variant="symlink"
+        commitPath={path}
       />
     )
   }
 
+  const isBroken = symlinkQuery.isError
   return (
-    <SymlinkFileItem
-      level={level}
-      name={name}
-      path={resolvedTarget.path}
-      sha={resolvedTarget.sha}
-      virtualPath={virtualPath}
-    />
-  )
-}
-
-const SymlinkDirItem = ({ level, name, path, virtualPath }: ItemProps) => {
-  const tako = useTako()
-  const onHoverFile = useTakoStore((state) => state.onHoverFile)
-  const isHovering = useTakoStore(
-    (state) =>
-      state.hoveredFile?.virtualPath === virtualPath &&
-      state.hoveredFile.repository === tako.repository,
-  )
-  const [isExpanded, setIsExpanded] = useState(false)
-  const dirContentsQuery = useRepoContentsQuery(path, {
-    enabled: isHovering,
-  })
-  const isLoadingDirContents = useDeferredLoading(dirContentsQuery.isLoading)
-
-  return (
-    <>
-      <Row
-        level={level}
-        active={isHovering}
-        onPointerEnter={() =>
-          onHoverFile({ path, repository: tako.repository, virtualPath })
-        }
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div
-          role="gridcell"
-          className="mr-1 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
-        </div>
-        <div
-          role="gridcell"
-          className="mr-3 flex-shrink-0 d-flex flex-items-center"
-          style={{ width: 16 }}
-        >
-          {isExpanded ? (
-            isLoadingDirContents ? (
-              <LoadingSpinnerIcon />
-            ) : (
-              <SymlinkDirIcon />
-            )
-          ) : (
-            <SymlinkDirIcon />
-          )}
-        </div>
-        <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-          <span className="css-truncate css-truncate-target d-block width-fit">
-            <Link
-              path={path}
-              type="tree"
-              className="Link--primary cursor-pointer"
-              title={`${name} → ${path}`}
-            >
-              {name}
-            </Link>
-          </span>
-        </div>
-
-        <LatestItemCommitTableCell path={virtualPath} />
-      </Row>
-
-      {isExpanded && (
-        <Contents path={path} level={level + 1} virtualPath={virtualPath} />
-      )}
-    </>
-  )
-}
-
-const SymlinkFileItem = ({
-  level,
-  name,
-  path,
-  sha,
-  virtualPath,
-}: ItemProps & { sha: string }) => {
-  const tako = useTako()
-  const onHover = useTakoStore((state) => state.onHoverFile)
-  const onPreviewFile = useTakoStore((state) => state.onPreviewFile)
-  const isPreviewedFile = useTakoStore(
-    (state) => state.previewedFile?.virtualPath === virtualPath,
-  )
-  const isHovering = useTakoStore(
-    (state) =>
-      state.hoveredFile?.virtualPath === virtualPath &&
-      state.hoveredFile.repository === tako.repository,
-  )
-  const previewFile = { path, sha, repository: tako.repository, virtualPath }
-  useRawFile({ file: previewFile }, { enabled: isHovering })
-
-  return (
-    <Row
-      level={level}
-      active={isHovering || isPreviewedFile}
-      onPointerEnter={() =>
-        onHover({ path, repository: tako.repository, virtualPath })
-      }
-      onClick={() => {
-        if (isPreviewedFile) {
-          onPreviewFile(null)
-        } else {
-          onPreviewFile(previewFile)
-        }
-      }}
-    >
+    <Row level={level} active={false}>
       <div
         role="gridcell"
         className="mr-1 flex-shrink-0 d-flex flex-items-center"
         style={{ width: 16 }}
       />
-
       <div
         role="gridcell"
         className="mr-3 flex-shrink-0 d-flex flex-items-center"
         style={{ width: 16 }}
       >
-        <SymlinkFileIcon />
+        {isBroken ? WarningIcon : <LoadingSpinnerIcon />}
       </div>
-
       <div role="rowheader" className="flex-auto min-width-0 col-md-2 mr-3">
-        <span className="css-truncate css-truncate-target d-block width-fit">
-          <Link
-            path={path}
-            type="blob"
-            className={clsx('cursor-pointer', {
-              'Link--primary': !isPreviewedFile,
-            })}
-            title={`${name} → ${path}`}
-          >
-            {name}
-          </Link>
+        <span
+          className={clsx(
+            'css-truncate css-truncate-target d-block width-fit',
+            { 'color-fg-danger': isBroken },
+          )}
+        >
+          {isBroken ? `${name} (broken symlink)` : name}
         </span>
       </div>
-
-      <LatestItemCommitTableCell path={virtualPath} />
     </Row>
   )
+}
+
+const ItemIcon = ({
+  kind,
+  variant,
+  isExpanded,
+}: {
+  kind: SymlinkTarget['kind']
+  variant?: TreeItemProps['variant']
+  isExpanded: boolean
+}) => {
+  if (variant === 'submodule') {
+    return <SubmoduleIcon />
+  }
+  if (kind === 'file') {
+    return variant === 'symlink' ? <SymlinkFileIcon /> : <FileIcon />
+  }
+  if (variant === 'symlink') {
+    return <SymlinkDirIcon />
+  }
+  return isExpanded ? <DirectoryOpenIcon /> : <DirectoryClosedIcon />
 }
 
 const Row = ({

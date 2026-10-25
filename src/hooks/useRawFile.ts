@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import invariant from 'tiny-invariant'
 import { useTako } from '../components/Tako'
 import { PreviewFile } from '../types'
 
@@ -15,11 +16,15 @@ const betterAtob = (string: string) => {
   }
 }
 
-export const useRawFile = ({ file }: { file: PreviewFile }, config = {}) => {
+export const useRawFile = (
+  { file }: { file: PreviewFile | null },
+  config = {},
+) => {
   const tako = useTako()
   return useQuery({
     queryKey: ['file', file],
     queryFn: async () => {
+      invariant(file)
       const blob = await tako.client.repos.getContent({
         ...file.repository,
         path: file.path,
