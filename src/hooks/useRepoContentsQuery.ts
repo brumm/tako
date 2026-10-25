@@ -41,12 +41,30 @@ type RepoContentsResponse = {
         type: string
         mode: number
         oid: string
-        object?: {
-          commitUrl?: string
-        }
+        submodule?: {
+          gitUrl: string
+        } | null
       }>
     }
   }
+}
+
+// gitUrl can be ssh, https or relative to the parent repository
+const getSubmoduleUrl = (
+  tako: TakoContextProps,
+  gitUrl: string,
+  oid: string,
+) => {
+  const { owner, repo } = tako.repository
+  const { pathname } = new URL(
+    gitUrl.replace(/^git@github\.com:/, 'https://github.com/'),
+    `https://github.com/${owner}/${repo}/`,
+  )
+  const [submoduleOwner, submoduleRepo] = pathname
+    .slice(1)
+    .replace(/\.git$/, '')
+    .split('/')
+  return `https://github.com/${submoduleOwner}/${submoduleRepo}/tree/${oid}`
 }
 
 export const repoContentsQueryConfig = (tako: TakoContextProps, path: string) =>
@@ -64,10 +82,8 @@ export const repoContentsQueryConfig = (tako: TakoContextProps, path: string) =>
                 type
                 mode
                 oid
-                object {
-                  ... on Commit {
-                    commitUrl
-                  }
+                submodule {
+                  gitUrl
                 }
               }
             }
@@ -87,8 +103,8 @@ export const repoContentsQueryConfig = (tako: TakoContextProps, path: string) =>
         const baseUrl = `https://github.com/${tako.repository.owner}/${tako.repository.repo}`
 
         let html_url: string
-        if (type === 'submodule' && item.object?.commitUrl) {
-          html_url = item.object.commitUrl
+        if (type === 'submodule' && item.submodule) {
+          html_url = getSubmoduleUrl(tako, item.submodule.gitUrl, item.oid)
         } else if (type === 'dir') {
           html_url = `${baseUrl}/tree/${tako.repository.ref}/${item.path}`
         } else {
