@@ -22,7 +22,7 @@ if (
 
 const item = `publishers/${CWS_PUBLISHER_ID}/items/${CWS_EXTENSION_ID}`
 
-const token = await getAccessToken(JSON.parse(CWS_SERVICE_ACCOUNT_KEY))
+const token = await getAccessToken(parseServiceAccountKey())
 
 console.log(`Uploading ${zipPath} to ${item}`)
 let upload = await request(`${API}/upload/v2/${item}:upload`, {
@@ -50,6 +50,17 @@ const publish = await request(`${API}/v2/${item}:publish`, {
   headers: { 'Content-Type': 'application/json' },
 })
 console.log(JSON.stringify(publish, null, 2))
+
+// JSON.parse errors quote the input, which would leak key material into logs
+function parseServiceAccountKey() {
+  try {
+    const { client_email, private_key } = JSON.parse(CWS_SERVICE_ACCOUNT_KEY)
+    if (client_email && private_key) {
+      return { client_email, private_key }
+    }
+  } catch {}
+  fail('CWS_SERVICE_ACCOUNT_KEY is not a valid service account JSON key')
+}
 
 async function getAccessToken({ client_email, private_key }) {
   const now = Math.floor(Date.now() / 1000)
