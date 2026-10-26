@@ -4,9 +4,15 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish to the Chrome Web Store, e.g. v1.4.0
+        required: true
 
 jobs:
   build:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -42,8 +48,27 @@ jobs:
           files: tako-${{ steps.version.outputs.version }}.zip
           generate_release_notes: true
 
-      - name: Upload to Chrome Web Store
-        uses: PlasmoHQ/bpp@v3
+  publish-chrome:
+    needs: build
+    if: ${{ !cancelled() && needs.build.result != 'failure' }}
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          keys: ${{ secrets.BPP_KEYS }}
-          artifact: tako-${{ steps.version.outputs.version }}.zip
+          node-version: 20
+
+      - name: Download release zip
+        run: gh release download "$TAG" --pattern 'tako-*.zip' --dir release
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload and publish to Chrome Web Store
+        run: node .github/scripts/publish-chrome.mjs release/tako-*.zip
+        env:
+          CWS_SERVICE_ACCOUNT_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: fdmdpnmffpjdkjaapcbdnkhnidhgoabe
